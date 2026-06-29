@@ -1,7 +1,0 @@
-group,manifold,operation,method,rigid,kernel_trivial,kernel,Op
-"SO(2)","S^1","addition","symbolic","True","False","SO(2)","{e} (trivial)"
-"SO(2)","S^1","complex-mul","symbolic","False","True","{0}","SO(2) ≅ S^1"
-"SO(3)","SO(3)","addition","sampled(n=400)","True","False","frac_preserving=1.000","{e} (trivial)"
-"SO(3)","SO(3)","cross-product","sampled(n=400)","True","False","frac_preserving=1.000","{e} (trivial)"
-"SU(2)","S^3","addition","sampled(n=400)","True","False","frac_preserving=1.000","{e} (trivial)"
-"SU(2)","S^3","random-gate(seed=1)","sampled(n=400)","False","True","frac_preserving=0.000","SU(2) ≅ S^3"
