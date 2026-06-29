@@ -1,0 +1,327 @@
+\documentclass[11pt,twocolumn]{article}
+\usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[dvipsnames]{xcolor}\usepackage{booktabs,hyperref,enumitem}
+\setlist{nosep,leftmargin=1.5em}
+\hypersetup{colorlinks=true,linkcolor=blue!70!black,citecolor=green!50!black}
+\theoremstyle{plain}\newtheorem{theorem}{Theorem}\newtheorem{proposition}[theorem]{Proposition}\newtheorem{corollary}[theorem]{Corollary}\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Diff}{\mathrm{Diff}}
+\newcommand{\Ker}{\mathrm{Ker}}
+\newcommand{\Isom}{\mathrm{Isom}}
+\newcommand{\Lor}{\mathrm{Lor}}
+\newcommand{\Twin}{\mathrm{Twin}}
+\newcommand{\Poinc}{\mathrm{Poinc}}
+
+\title{\textbf{Relativity Without the Lagrangian:\\Deriving Einstein's and Lorentz's Equations\\from Orbital Structure and Energy Conservation}}
+\author{Jocelyn Nemb\'e\\
+\small Roots Insights Laboratory, Singapore\\
+\small National Institute of Management Sciences, Libreville\\
+\small \texttt{jnembe777@gmail.com, jnembe@root-insights.org}}
+\date{}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+We derive the equations of special and general relativity \textbf{without variational principles} --- no Lagrangian, no Hamiltonian, no action functional. The derivation uses three ingredients only: (1)~the \textbf{orbit-stabilizer structure} of the admissible transformation group $\mathcal{G}$ acting on spacetime; (2)~the \textbf{generalized Noether theorem} in the form ``every kernel symmetry produces a conserved current''; (3)~\textbf{uniqueness theorems} that constrain the field equations from the conservation and equivariance requirements.
+
+\textbf{Special Relativity} (Theorem~\ref{thm:SR}): The requirement of maximal symmetry ($\kappa = 10$ in 4D) selects constant-curvature spacetimes. Energy conservation under time translation, combined with the mass-shell constraint from the isometry group, yields $E^2 = p^2c^2 + m^2c^4$ and the Lorentz transformations.
+
+\textbf{General Relativity} (Theorem~\ref{thm:GR}): We prove that three axioms --- (A1)~$\Diff(\mathcal{M})$-equivariance (general covariance), (A2)~local energy--momentum conservation $\nabla_\mu T^{\mu\nu}=0$ (every Killing vector then produces a conserved current), (A3)~the field equation is second-order in the metric --- uniquely determine Einstein's equations $G_{\mu\nu} + \Lambda g_{\mu\nu} = 8\pi T_{\mu\nu}$. In place of the variational Bianchi identity, the derivation imposes local conservation, which forces $\nabla_\mu\mathcal{E}^{\mu\nu}\equiv0$, and then invokes Lovelock's uniqueness theorem --- so no action functional is varied. (General covariance \emph{alone} does not yield the divergence-free condition: $R_{\mu\nu}$ is covariant but not divergence-free.)
+
+The orbital approach reveals that Einstein's equations are not ``equations of motion'' but \textbf{integrability conditions}: they are the unique second-order constraints on the metric that are \emph{compatible} with the existence of conserved Noether currents for all Killing vectors.
+\end{abstract}
+
+\noindent\textbf{Keywords:} orbital derivation, Noether theorem, Bianchi identity, Lovelock theorem, Einstein equations, no variational principle
+
+
+% ============================================================================
+\section{Introduction: The Challenge}
+% ============================================================================
+
+Every textbook derives special relativity from Einstein's two postulates (constancy of $c$ + relativity principle) and general relativity from the Einstein-Hilbert action $S = \int R\sqrt{-g}\,d^4x$. Both derivations involve a variational step: minimizing proper time (SR) or varying the action (GR).
+
+We ask: \emph{can relativity be derived without any variational principle?}
+
+Our answer is yes, using three tools from the twin spaces framework:
+\begin{enumerate}
+    \item The \textbf{orbit-stabilizer structure} of the symmetry group.
+    \item The \textbf{Noether conservation principle}: kernel symmetry $\Rightarrow$ conserved current.
+    \item \textbf{Uniqueness theorems} (classification of maximally symmetric spaces; Lovelock's theorem).
+\end{enumerate}
+
+No action functional appears. No variation is performed. The equations emerge as the \emph{unique constraints compatible with the orbital structure and conservation}.
+
+
+% ============================================================================
+\section{The Orbital Framework}
+\label{sec:orbital}
+% ============================================================================
+
+\begin{definition}[Spacetime as $G$-Space]\label{def:gspace}
+A spacetime is a 4-manifold $\mathcal{M}$ with a Lorentzian metric $g$ and an admissible group $\mathcal{G}$ acting on $\mathcal{M}$. The \textbf{kernel} $\Ker(g) = \Isom(\mathcal{M}, g) = \{\psi \in \mathcal{G} : \psi^*g = g\}$ is the isometry group. The \textbf{twin space} $\Twin(g) = \mathcal{G}/\Ker(g)$ parameterizes physically distinct deformations.
+\end{definition}
+
+\begin{definition}[Kernel Dimension]\label{def:kappa}
+The \textbf{kernel dimension} $\kappa = \dim(\Ker(g))$ counts the independent symmetries. By Myers--Steenrod: $\kappa \leq n(n+1)/2 = 10$ in 4D.
+\end{definition}
+
+\begin{definition}[Conservation Principle]\label{def:conservation}
+For each Killing vector $\xi \in \mathfrak{ker}(g)$ (i.e., $\mathcal{L}_\xi g = 0$) and any divergence-free symmetric tensor $T^{\mu\nu}$ ($\nabla_\mu T^{\mu\nu} = 0$), the current $J^\mu_\xi = T^{\mu\nu}\xi_\nu$ is conserved: $\nabla_\mu J^\mu_\xi = 0$.
+\end{definition}
+
+\begin{remark}[No Lagrangian needed]
+Definition~\ref{def:conservation} is a \emph{purely geometric} statement: it follows from the Killing equation $\nabla_{(\mu}\xi_{\nu)} = 0$ and the divergence-free condition $\nabla_\mu T^{\mu\nu} = 0$, without any reference to an action functional. The ``source'' $T^{\mu\nu}$ is assumed to exist as a divergence-free tensor characterizing matter --- its existence is a physical axiom, not derived from a Lagrangian.
+\end{remark}
+
+
+% ============================================================================
+\section{Special Relativity from Maximal Symmetry}
+\label{sec:SR}
+% ============================================================================
+
+\begin{theorem}[SR from Orbital Structure]\label{thm:SR}
+Assume:
+\begin{enumerate}[label=(S\arabic*)]
+    \item \textbf{Maximal symmetry:} $\kappa = 10$ (the spacetime has the maximum number of independent isometries).
+    \item \textbf{Energy conservation:} there exists a timelike Killing vector $\xi = \partial_t$ and the associated Noether charge $E = -\int T^{0\nu}\xi_\nu\,dV$ is conserved.
+    \item \textbf{Homogeneity:} the isometry group acts transitively on spacelike hypersurfaces.
+\end{enumerate}
+Then:
+\begin{enumerate}[label=(\alph*)]
+    \item $(\mathcal{M}, g)$ has constant sectional curvature $K$. For $K = 0$: Minkowski space $(\mathbb{R}^{1,3}, \eta)$.
+    \item The isometry group is the Poincar\'e group $\Poinc(c) = \mathrm{SO}^+(1,3) \ltimes \mathbb{R}^4$ with a structural constant $c > 0$.
+    \item The energy-momentum of a free particle satisfies:
+    \begin{equation}
+    \boxed{E^2 = p^2c^2 + m^2c^4}
+    \end{equation}
+    \item The coordinate transformations between inertial observers are the Lorentz transformations.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Constant curvature from maximal symmetry.}
+A pseudo-Riemannian manifold with $\kappa = n(n+1)/2$ Killing vectors has constant sectional curvature (classification theorem, cf.\ Weinberg~\cite{weinberg1972}, Ch.~13). In 4D with $\kappa = 10$: $K = 0$ (Minkowski), $K > 0$ (de Sitter), or $K < 0$ (anti-de Sitter). Axiom (S3) and the requirement of a global timelike Killing vector (S2) select $K = 0$ (Minkowski) in the standard case.
+
+\textbf{Step 2: Poincar\'e group from the isometry algebra.}
+For $(\mathbb{R}^{1,3}, \eta)$: the Killing vectors are $\partial_\mu$ (4 translations) and $x_\mu\partial_\nu - x_\nu\partial_\mu$ (6 Lorentz generators), totaling 10. They generate $\Poinc(c)$. The parameter $c$ appears as the conversion factor in $\eta = \mathrm{diag}(-c^2, 1, 1, 1)$.
+
+\textbf{Step 3: Mass-shell from conservation on orbits.}
+A free particle follows a geodesic. Its 4-momentum $p^\mu = m\,dx^\mu/d\tau$ satisfies $\nabla_p p = 0$ (geodesic equation, which is the \emph{orbit equation} for the particle's worldline under the Poincaré group --- no variational principle needed; it is the condition that the deformation pattern propagates freely, cf.\ Vol.~17 Theorem~1.5).
+
+The conservation law for the timelike Killing vector $\xi = \partial_t$: $E = -g_{\mu\nu}p^\mu\xi^\nu = c^2 p^0$ (so $E = \gamma m c^2$). For spatial translations $\partial_i$: $p_i = g_{\mu\nu}p^\mu(\partial_i)^\nu$. The mass-shell condition $g^{\mu\nu}p_\mu p_\nu = -m^2c^2$ (which is the statement that $p$ lies on the orbit of a massive particle under the Lorentz group) gives:
+\begin{equation}
+-E^2/c^2 + |\vec{p}|^2 = -m^2c^2 \quad \Rightarrow \quad E^2 = p^2c^2 + m^2c^4
+\end{equation}
+
+\textbf{Step 4: Lorentz transformations from orbit structure.}
+The Poincar\'e group acts on the momentum space $p^\mu$ by: $p'^\mu = \Lambda^\mu{}_\nu p^\nu + a^\mu$. The orbits of $\mathrm{SO}^+(1,3)$ on the mass shell $p^2 = -m^2c^2$ are the hyperboloids $\{p : g(p,p) = -m^2c^2, p^0 > 0\}$. The Lorentz boosts $\Lambda_v$ parameterized by velocity $v$ are:
+\begin{equation}
+\Lambda_v = \begin{pmatrix} \gamma & -\gamma v/c \\ -\gamma v/c & \gamma \end{pmatrix}, \quad \gamma = (1-v^2/c^2)^{-1/2}
+\end{equation}
+These are determined by the requirement that they preserve $\eta_{\mu\nu}p^\mu p^\nu$ and form a group (orbit-stabilizer structure of $\mathrm{SO}^+(1,3)$ acting on the mass shell).
+\end{proof}
+
+\begin{remark}[What was NOT used]
+No action $S = -mc\int ds$ was minimized. No Lagrangian was varied. The geodesic equation is the \textbf{free propagation condition} (deformation shape is parallel-transported), and the mass-shell condition is the \textbf{orbit constraint} (the momentum lies on a specific orbit of the Lorentz group). Energy conservation is the Noether charge associated to $\partial_t \in \mathfrak{ker}(\eta)$.
+\end{remark}
+
+
+% ============================================================================
+\section{General Relativity from Equivariance + Conservation + Uniqueness}
+\label{sec:GR}
+% ============================================================================
+
+We now derive the Einstein equations without any variational principle.
+
+\subsection{The Three Axioms}
+
+\begin{definition}[Axioms for the Gravitational Field Equation]\label{def:axioms}
+We seek a tensor equation $\mathcal{E}_{\mu\nu}[g] = \kappa\, T_{\mu\nu}$ relating the metric $g$ to matter $T$, satisfying:
+\begin{enumerate}[label=(A\arabic*)]
+    \item \textbf{$\Diff(\mathcal{M})$-equivariance}: for all $\psi \in \Diff(\mathcal{M})$, $\mathcal{E}_{\mu\nu}[\psi^*g] = \psi^*\mathcal{E}_{\mu\nu}[g]$. (The field equation has the same form in all coordinate systems --- general covariance.)
+    \item \textbf{Local conservation}: the source obeys $\nabla_\mu T^{\mu\nu} = 0$ (equivalence principle). For every Killing vector $\xi \in \mathfrak{ker}(g)$ the current $J^\mu_\xi = T^{\mu\nu}\xi_\nu$ is then conserved, $\nabla_\mu J^\mu_\xi = 0$ (Definition~\ref{def:conservation}).
+    \item \textbf{Second-order}: $\mathcal{E}_{\mu\nu}$ depends on $g$, $\partial g$, $\partial^2 g$ only (no higher derivatives).
+\end{enumerate}
+\end{definition}
+
+
+\subsection{The Noether--Bianchi Bridge}
+
+The central insight: axioms (A1) and (A2) together force the field equation to satisfy an \emph{identity}, without any variational argument.
+
+\begin{proposition}[Divergence-free condition from conservation]\label{thm:noether2}
+Suppose the field equation $\mathcal{E}_{\mu\nu}[g] = \kappa\, T_{\mu\nu}$ is required to hold for matter obeying local conservation $\nabla_\mu T^{\mu\nu} = 0$ (A2), across configurations rich enough that $g$ may be arbitrary. Then
+\begin{equation}
+\boxed{\nabla_\mu \mathcal{E}^{\mu\nu} \equiv 0 \quad \text{(identically, for all $g$)}.}
+\end{equation}
+This is \textbf{not} an equation of motion but a constraint on the \emph{form} of $\mathcal{E}_{\mu\nu}$.
+\end{proposition}
+
+\begin{proof}
+With $\mathcal{E}_{\mu\nu} = \kappa T_{\mu\nu}$, the conservation law $\nabla_\mu T^{\mu\nu} = 0$ gives $\nabla_\mu\mathcal{E}^{\mu\nu}[g] = 0$ for every metric $g$ sourced by conserved matter. Requiring the theory to be consistent for an arbitrary metric configuration forces the identity to hold for all $g$.
+\end{proof}
+
+\begin{remark}[Covariance alone is not enough]\label{rem:cov-not-enough}
+It is tempting to claim that $\Diff(\mathcal{M})$-equivariance (A1) \emph{by itself} forces $\nabla_\mu\mathcal{E}^{\mu\nu}\equiv0$. This is \textbf{false}: the Ricci tensor $R_{\mu\nu}$ is a covariant, second-order tensor, yet $\nabla_\mu R^{\mu\nu} = \tfrac12\nabla^\nu R \neq 0$ in general. Covariance constrains the equation to be \emph{tensorial} (the same form in all coordinates); it does not constrain its divergence. In the variational formulation the identity $\nabla_\mu\mathcal{E}^{\mu\nu}\equiv0$ is supplied by Noether's \emph{second} theorem applied to a $\Diff$-invariant \emph{action}~\cite{noether1918}. Using no action, we instead obtain the identity from local conservation (Proposition~\ref{thm:noether2}): the equivalence principle requires $\nabla_\mu T^{\mu\nu}=0$, and the field equation must be compatible with it. The contracted Bianchi identity $\nabla_\mu G^{\mu\nu}=0$ is then the purely geometric statement that $G_{\mu\nu}$ already meets this requirement.
+\end{remark}
+
+\begin{corollary}[Two faces of one requirement]\label{cor:conservation}
+Given $\mathcal{E}_{\mu\nu} = \kappa T_{\mu\nu}$, the divergence-free condition $\nabla_\mu\mathcal{E}^{\mu\nu} \equiv 0$ and matter conservation $\nabla_\mu T^{\mu\nu} = 0$ are equivalent; under either, the Noether currents $J^\mu_\xi = T^{\mu\nu}\xi_\nu$ are conserved for all Killing vectors $\xi$ (axiom (A2)). Neither follows from covariance alone (Remark~\ref{rem:cov-not-enough}).
+\end{corollary}
+
+
+\subsection{Uniqueness: Lovelock's Theorem}
+
+\begin{theorem}[Lovelock, 1971~\cite{lovelock1971}]\label{thm:lovelock}
+In 4 dimensions, the only symmetric, divergence-free ($\nabla_\mu\mathcal{E}^{\mu\nu} = 0$), second-order tensor built from $g_{\mu\nu}$, $\partial_\alpha g_{\mu\nu}$, and $\partial_\alpha\partial_\beta g_{\mu\nu}$ is:
+\begin{equation}
+\mathcal{E}_{\mu\nu} = a\, G_{\mu\nu} + b\, g_{\mu\nu}
+\end{equation}
+where $G_{\mu\nu} = R_{\mu\nu} - \frac{1}{2}Rg_{\mu\nu}$ is the Einstein tensor and $a, b$ are constants.
+\end{theorem}
+
+
+\subsection{The Main Theorem}
+
+\begin{theorem}[Einstein's Equations from Orbital Structure]\label{thm:GR}
+Axioms (A1)--(A3) uniquely determine the gravitational field equation:
+\begin{equation}
+\boxed{G_{\mu\nu} + \Lambda g_{\mu\nu} = 8\pi T_{\mu\nu}}
+\end{equation}
+where $\Lambda = b/a$ is the cosmological constant and $8\pi = \kappa/a$ is fixed by the Newtonian limit.
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1} (A2 $\Rightarrow$ divergence-free): With $\mathcal{E}_{\mu\nu} = \kappa T_{\mu\nu}$, local conservation $\nabla_\mu T^{\mu\nu} = 0$ (A2) forces $\nabla_\mu\mathcal{E}^{\mu\nu} \equiv 0$ (Proposition~\ref{thm:noether2}). Covariance (A1) ensures $\mathcal{E}_{\mu\nu}$ is a natural symmetric tensor built from $g$.
+
+\textbf{Step 2} ((A1),(A3) $\Rightarrow$ Lovelock): The second-order condition (A3), $\Diff$-covariance (A1), symmetry, and $\nabla_\mu\mathcal{E}^{\mu\nu} = 0$ give, by Lovelock's theorem: $\mathcal{E}_{\mu\nu} = aG_{\mu\nu} + bg_{\mu\nu}$.
+
+\textbf{Step 3} (conserved charges): For each $\xi \in \mathfrak{ker}(g)$, $\nabla_\mu T^{\mu\nu} = 0$ and $\mathcal{L}_\xi g = 0$ give $\nabla_\mu(T^{\mu\nu}\xi_\nu) = 0$, so $Q_\xi = \int T^{\mu\nu}\xi_\nu\,d\Sigma_\mu$ is conserved.
+
+\textbf{Step 4} (Newtonian limit fixes constants): In the weak-field, slow-motion limit ($g_{\mu\nu} = \eta_{\mu\nu} + h_{\mu\nu}$, $|h| \ll 1$, $v \ll c$): $G_{00} \approx \nabla^2\Phi/c^2$ where $\Phi$ is the Newtonian potential. Newton's equation $\nabla^2\Phi = 4\pi G\rho$ gives $a = 1$ and $\kappa = 8\pi G/c^4$.
+
+\textbf{No variational principle was used.} The Einstein equations emerge as the \emph{unique} second-order, $\Diff$-equivariant tensor equation whose solutions automatically conserve energy for every Killing vector.
+\end{proof}
+
+
+% ============================================================================
+\begin{remark}[The cosmological term and the maximally symmetric vacua]\label{rem:lambda-vacua}
+The constant $b=a\Lambda$ in Lovelock's tensor (Theorem~\ref{thm:lovelock}) is not optional: it is the most
+general divergence-free, second-order, covariant term of zeroth order in derivatives. Its content unifies this
+derivation with the special-relativistic one. The maximally symmetric ($\kappa=10$) vacua ($T_{\mu\nu}=0$) of
+$G_{\mu\nu}+\Lambda g_{\mu\nu}=0$ satisfy $R_{\mu\nu}=\Lambda g_{\mu\nu}$ (trace: $R=4\Lambda$) and constant
+sectional curvature $K=\Lambda/3$; they are exactly the spacetimes of Theorem~\ref{thm:SR}, Step~1: Minkowski
+for $\Lambda=0$ ($K=0$), de Sitter for $\Lambda>0$ ($K>0$), anti--de Sitter for $\Lambda<0$ ($K<0$). Thus the
+$K=0,>0,<0$ trichotomy that selected Minkowski in the SR theorem is precisely the sign of the cosmological term
+forced by Lovelock in the GR theorem, and special relativity is the $\Lambda=0$ maximally symmetric sector of
+general relativity.
+\end{remark}
+
+% ============================================================================
+\section{The Orbital Interpretation}
+\label{sec:interpretation}
+% ============================================================================
+
+\begin{remark}[Einstein's equations as integrability conditions]
+The standard interpretation: ``$G_{\mu\nu} = 8\pi T_{\mu\nu}$ are the equations of motion for the metric.'' Our interpretation: \textbf{Einstein's equations are the integrability conditions for the existence of a consistent family of Noether currents.}
+
+If we demand that:
+\begin{itemize}
+    \item Every isometry of $g$ produces a conserved current (A2),
+    \item The field equation is covariant under all diffeomorphisms (A1),
+    \item The equation involves at most second derivatives (A3),
+\end{itemize}
+then the Einstein equations are the \emph{only} consistent choice. They are not derived from an action --- they are forced by the requirement that the orbital structure (symmetries, orbits, conservation) is self-consistent.
+\end{remark}
+
+\begin{remark}[The role of each axiom]
+\begin{center}\small
+\begin{tabular}{lll}\toprule
+\textbf{Axiom} & \textbf{Mathematical content} & \textbf{Physical meaning} \\\midrule
+(A1) & $\Diff$-equivariance & General covariance \\
+& $\Rightarrow \mathcal{E}_{\mu\nu}$ a natural tensor & (same form in all coords) \\
+(A2) & $\nabla_\mu T^{\mu\nu}=0 \Rightarrow \nabla_\mu\mathcal{E}^{\mu\nu}=0$ & Local conservation \\
+& (independent of (A1)) & (equivalence principle) \\
+(A3) & Second-order in $g$ & No ghosts, stability \\
+& $+$(A1),(A2)$\Rightarrow$ Lovelock & Selects $G_{\mu\nu} + \Lambda g_{\mu\nu}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The three axioms are independent: covariance (A1) does \emph{not} imply the divergence-free condition (A2), as the covariant but non-conserved tensor $R_{\mu\nu}$ shows (Remark~\ref{rem:cov-not-enough}). All three --- covariance, conservation, and second-order --- are needed for the Lovelock characterization.
+\end{remark}
+
+
+% ============================================================================
+\section{SR as the $\kappa = 10$ Limit}
+\label{sec:SR-limit}
+% ============================================================================
+
+\begin{corollary}[SR as maximal kernel]\label{cor:sr-limit}
+Special relativity is the limit $\kappa \to 10$ of general relativity: when the kernel is maximal, the curvature vanishes, and the Einstein equations reduce to $T_{\mu\nu} = 0$ (vacuum) on Minkowski space. All 10 Killing vectors produce conserved quantities: energy (1), momentum (3), angular momentum (3), and boost charges (3). The Lorentz transformations are the orbit maps of the Poincar\'e group on the mass shell.
+\end{corollary}
+
+\begin{corollary}[Kernel dimension as complexity measure]\label{cor:complexity}
+The kernel dimension $\kappa$ measures the ``simplicity'' of the gravitational field:
+\begin{itemize}
+    \item $\kappa = 10$: SR (maximum symmetry, no gravity, 10 conservation laws).
+    \item $\kappa = 4$: Schwarzschild (4 conservation laws: $E$, $\vec{L}$).
+    \item $\kappa = 2$: Kerr (2 conservation laws: $E$, $L_z$).
+    \item $\kappa = 0$: generic GR (no exact conservation, maximum gravitational complexity).
+\end{itemize}
+The ``amount of gravity'' is $10 - \kappa$: the number of broken symmetries, each corresponding to a gravitational degree of freedom.
+\end{corollary}
+
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+% ============================================================================
+
+We have derived both special and general relativity without any variational principle:
+
+\begin{center}\small
+\begin{tabular}{lll}\toprule
+& \textbf{Ingredient} & \textbf{Result} \\\midrule
+\textbf{SR} & Maximal symmetry ($\kappa = 10$) & Minkowski space \\
+& + mass-shell orbit constraint & $E^2 = p^2c^2 + m^2c^4$ \\
+& + orbit maps of $\mathrm{SO}^+(1,3)$ & Lorentz transformations \\
+\midrule
+\textbf{GR} & local conservation (A2) & $\nabla_\mu\mathcal{E}^{\mu\nu} = 0$ \\
+& + covariance (A1), 2nd-order (A3) & $\mathcal{E} = G_{\mu\nu} + \Lambda g_{\mu\nu}$ (Lovelock) \\
+& + Newtonian limit & $G_{\mu\nu} + \Lambda g_{\mu\nu} = 8\pi T_{\mu\nu}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{The key insight:} Einstein's equations are not equations of motion but \textbf{integrability conditions} --- the unique second-order constraints that make the orbital structure (symmetries + conservation) self-consistent. The Lagrangian formulation, while elegant, is \emph{not necessary}: the physics is in the orbits.
+
+
+% ============================================================================
+\begin{thebibliography}{12}
+
+\bibitem{noether1918} E.~Noether, ``Invariante Variationsprobleme,'' \emph{Nachr.\ Ges.\ Wiss.\ G\"ottingen}, pp.~235--257, 1918.
+
+\bibitem{lovelock1971} D.~Lovelock, ``The Einstein tensor and its generalizations,'' \emph{J.\ Math.\ Phys.}, vol.~12, pp.~498--501, 1971.
+
+\bibitem{weinberg1972} S.~Weinberg, \emph{Gravitation and Cosmology}, Wiley, 1972.
+
+\bibitem{wald1984} R.M.~Wald, \emph{General Relativity}, U.~Chicago Press, 1984.
+
+\bibitem{myers1939} S.B.~Myers, N.E.~Steenrod, ``The group of isometries of a Riemannian manifold,'' \emph{Ann.\ Math.}, vol.~40, pp.~400--416, 1939.
+
+\bibitem{palais1979} R.S.~Palais, ``The principle of symmetric criticality,'' \emph{Comm.\ Math.\ Phys.}, vol.~69, pp.~19--30, 1979.
+
+\bibitem{nembe2026vol17} J.~Nemb\'e, ``Twin General Relativity,'' \emph{ROOTS-INSIGHTS}, Vol.~17, 2026.
+
+\bibitem{hawking1973} S.W.~Hawking, G.F.R.~Ellis, \emph{The Large Scale Structure of Space-Time}, CUP, 1973.
+
+\bibitem{misner1973} C.W.~Misner, K.S.~Thorne, J.A.~Wheeler, \emph{Gravitation}, Freeman, 1973.
+
+\end{thebibliography}
+
+\end{document}

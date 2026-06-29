@@ -1,0 +1,1316 @@
+\documentclass[11pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{natbib}
+\bibliographystyle{abbrvnat}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+% Custom commands
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\RKHS}{\mathcal{H}}
+\newcommand{\Ltwo}{L^2}
+\newcommand{\ip}[2]{\langle #1, #2 \rangle}
+
+\title{\textbf{Spectral Equivariance and Geometric Transport in Reproducing Kernel Hilbert Spaces: A Unified Framework for Orthogonal Polynomial and Kernel Estimation}}
+
+\author{Jocelyn NEMB\'E \\
+L.I.A.G.E \\
+Institut National des Sciences de Gestion \\
+BP 190, Libreville, Gabon \\
+\texttt{jnembe@hotmail.com} \\
+\and
+Modeling and Calculus Lab \\
+ROOTS-INSIGHTS \\
+Libreville, Gabon \\
+\texttt{jnembe@root-insights.com}}
+
+\date{December 2025}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We develop a unified geometric framework for nonparametric estimation based on the notion of Twin Kernel Spaces, defined as orbits of a reproducing kernel under a group action. This structure induces a family of transported RKHS geometries in which classical orthogonal polynomial estimators, kernel estimators, and spectral smoothing methods arise as projections onto transported eigenfunction systems. Our main contribution is a Spectral Equivariance Theorem showing that the eigenfunctions of any transported kernel are obtained by unitary transport of the base eigenfunctions. As a consequence, orthogonal polynomial estimators are equivariant under geometric deformation, kernel estimators correspond to soft spectral filtering in a twin space, and minimax rates and bias--variance tradeoffs are invariant under transport. We provide examples based on Hermite and Legendre polynomials, affine and Gaussian groups, and illustrate the effectiveness of twin transport for adaptive and multimodal estimation. The framework reveals a deep connection between group actions, RKHS geometry, and spectral nonparametrics, offering a unified perspective that encompasses kernel smoothing, orthogonal series, splines, and multiscale methods.
+\end{abstract}
+
+\textbf{Keywords:} Reproducing kernel Hilbert spaces, orthogonal polynomials, spectral methods, group actions, nonparametric estimation, equivariance, minimax rates.
+
+\textbf{MSC 2020:} 62G05, 46E22, 42C05, 62G20, 47B32.
+
+\tableofcontents
+
+\newpage
+
+%==============================================================================
+\section{Introduction}
+%==============================================================================
+
+\subsection{Motivation}
+
+Nonparametric estimation constitutes a cornerstone of modern statistical inference, with applications spanning density estimation, regression, and functional data analysis \citep{Tsybakov2009,Wasserman2006}. Two classical paradigms have dominated this field: orthogonal series estimators based on polynomial expansions \citep{Efromovich1999,Johnstone2017} and kernel smoothing methods \citep{Wand1995,Silverman1986}. While these approaches appear methodologically distinct---the former relying on spectral truncation in a fixed basis, the latter on local averaging with bandwidth selection---both share deep connections to reproducing kernel Hilbert spaces (RKHS) \citep{Berlinet2004,Cucker2002}.
+
+The present work is motivated by the observation that many seemingly different nonparametric methods can be understood as projections in different geometric ``reference frames'' of a common underlying RKHS structure. Specifically, we show that classical orthogonal polynomial systems---Hermite, Legendre, Laguerre, Jacobi, and their variants---arise naturally as eigenfunctions of transported kernels under group actions. This perspective unifies diverse estimation procedures and reveals fundamental geometric invariances that have not been systematically exploited in the statistical literature.
+
+The theory of RKHS and Mercer kernels provides a natural framework for studying such connections \citep{Aronszajn1950,Steinwart2008}. Classical results on spectral decomposition of integral operators \citep{Riesz1955,Dunford1988} establish that Mercer kernels admit eigenfunction expansions, which in the case of weighted $L^2$ spaces often coincide with classical orthogonal polynomials \citep{Szego1975,Ismail2005}. Our contribution is to show that this spectral structure is preserved---in a precise sense---under geometric transformations induced by group actions.
+
+\subsection{Contributions of the Paper}
+
+The main contributions of this paper are as follows:
+
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{Twin Kernel Spaces framework.} We introduce the notion of Twin Kernel Spaces as orbits of a base reproducing kernel under a group action on the input space. This provides a minimal yet powerful geometric framework for studying families of related RKHS structures (Section~\ref{sec:twin}).
+
+\item \textbf{Spectral Equivariance Theorem.} We prove that the eigenfunctions of any transported kernel are obtained by applying the unitary transport operator to the base eigenfunctions, with eigenvalues preserved. This result (Theorem~\ref{thm:spectral_equivariance}) establishes that spectral structure is equivariant under geometric deformation.
+
+\item \textbf{Unified interpretation of estimators.} We demonstrate that orthogonal polynomial estimators correspond to hard spectral truncation while kernel smoothing corresponds to soft spectral attenuation, both operating in potentially different twin geometries. Bandwidth selection is reinterpreted as choice of twin space (Section~\ref{sec:kernel}).
+
+\item \textbf{Invariance of statistical properties.} We establish that convergence rates, bias--variance tradeoffs, and minimax risks are invariant under twin transport, providing a geometric explanation for the robustness of spectral methods (Sections~\ref{sec:convergence}--\ref{sec:minimax}).
+
+\item \textbf{Explicit examples.} We provide detailed worked examples for Hermite polynomials with Gaussian geometry and Legendre polynomials with affine geometry, including a multimodal estimation example demonstrating the practical relevance of twin transport (Section~\ref{sec:examples}).
+\end{enumerate}
+
+\subsection{Related Work}
+
+The connection between orthogonal polynomials and kernel methods has been explored from various angles. \citet{Smola2000} and \citet{Scholkopf2002} discuss spectral properties of kernel operators in machine learning contexts. The role of orthogonal polynomials in density estimation dates to \citet{Cencov1962} and was developed systematically by \citet{Efromovich1999}. \citet{Wahba1990} established foundational connections between spline smoothing and RKHS theory.
+
+Group-theoretic perspectives on kernel methods appear in \citet{Kondor2008} and \citet{Fukumizu2009}, primarily in the context of invariant kernels for machine learning. The equivariance properties we establish differ in focusing on transport of spectral structure rather than invariance of the kernel itself.
+
+The notion of ``twin'' structures in functional analysis has appeared in different contexts, notably twin spaces in operator theory \citep{Halmos1982}. Our usage is distinct but shares the philosophy of paired geometric structures connected by canonical maps.
+
+Recent work on adaptive estimation \citep{Lepski1997,Goldenshluger2011} and spatially inhomogeneous smoothing \citep{Fan1996} addresses related concerns about geometry-dependent inference, though without the explicit group-theoretic framework we develop.
+
+%==============================================================================
+\section{Orthogonal Polynomial Estimation Revisited}\label{sec:orthopoly}
+%==============================================================================
+
+\subsection{Orthogonal polynomial bases}
+
+Let $(E, \mathcal{E}, \mu)$ be a probability space with $E \subseteq \R$ an interval (bounded or unbounded) and $\mu$ a probability measure with finite moments of all orders. A sequence of polynomials $\{P_k\}_{k \geq 0}$ is \emph{orthonormal} with respect to $\mu$ if $\deg(P_k) = k$ and
+\[
+\int_E P_k(x) P_\ell(x) \, \mu(dx) = \delta_{k\ell}, \quad k, \ell \geq 0.
+\]
+By the Gram--Schmidt process applied to the monomial basis $\{1, x, x^2, \ldots\}$, such a system always exists and is unique up to sign \citep{Szego1975}.
+
+Classical examples include:
+\begin{itemize}
+\item \textbf{Hermite polynomials} $\{H_k\}_{k \geq 0}$: orthonormal with respect to the standard Gaussian measure $d\gamma(x) = (2\pi)^{-1/2} e^{-x^2/2} \, dx$ on $\R$.
+\item \textbf{Legendre polynomials} $\{P_k\}_{k \geq 0}$: orthonormal with respect to the uniform measure on $[-1, 1]$.
+\item \textbf{Laguerre polynomials} $\{L_k^{(\alpha)}\}_{k \geq 0}$: orthonormal with respect to the Gamma measure $x^\alpha e^{-x} dx$ on $[0, \infty)$.
+\item \textbf{Jacobi polynomials} $\{P_k^{(\alpha,\beta)}\}_{k \geq 0}$: orthonormal with respect to $(1-x)^\alpha (1+x)^\beta dx$ on $[-1, 1]$.
+\end{itemize}
+
+These systems satisfy three-term recurrence relations and have well-understood asymptotic properties \citep{Ismail2005,Levin2001}.
+
+\subsection{Classical orthogonal series estimators}
+
+Given i.i.d.\ observations $X_1, \ldots, X_n$ from a distribution with density $f$ (with respect to $\mu$), the classical orthogonal series density estimator is
+\begin{equation}\label{eq:series_estimator}
+\hat{f}_{K}(x) = \sum_{k=0}^{K} \hat{\theta}_k P_k(x), \quad \hat{\theta}_k = \frac{1}{n} \sum_{i=1}^{n} P_k(X_i),
+\end{equation}
+where $K = K(n)$ is a truncation parameter \citep{Efromovich1999,Wasserman2006}.
+
+Under standard regularity conditions, if $f = \sum_{k \geq 0} \theta_k P_k$ with $\sum_{k \geq 0} \theta_k^2 k^{2s} < \infty$ (Sobolev-type smoothness of order $s$), choosing $K \asymp n^{1/(2s+1)}$ yields the minimax optimal rate
+\[
+\E \|\hat{f}_K - f\|^2_{L^2(\mu)} = O(n^{-2s/(2s+1)}).
+\]
+This rate is known to be unimprovable over Sobolev balls \citep{Tsybakov2009}.
+
+\subsection{RKHS interpretation}
+
+The orthogonal series estimator admits a natural RKHS interpretation. Define the Mercer kernel
+\begin{equation}\label{eq:mercer_kernel}
+K_e(x, y) = \sum_{k=0}^{\infty} \lambda_k P_k(x) P_k(y),
+\end{equation}
+where $\{\lambda_k\}_{k \geq 0}$ is a summable sequence of positive eigenvalues (e.g., $\lambda_k = \rho^k$ for some $\rho \in (0,1)$). The associated RKHS $\RKHS_e$ consists of functions $f = \sum_k \theta_k P_k$ with $\sum_k \theta_k^2 / \lambda_k < \infty$, equipped with inner product
+\[
+\ip{f}{g}_{\RKHS_e} = \sum_{k=0}^{\infty} \frac{\theta_k \phi_k}{\lambda_k}, \quad f = \sum_k \theta_k P_k, \quad g = \sum_k \phi_k P_k.
+\]
+
+The integral operator $T_e : L^2(\mu) \to L^2(\mu)$ defined by
+\[
+(T_e f)(x) = \int_E K_e(x, y) f(y) \, \mu(dy)
+\]
+is compact, self-adjoint, and positive, with eigenpairs $(\lambda_k, P_k)$.
+
+The truncated estimator \eqref{eq:series_estimator} can be written as
+\[
+\hat{f}_K = S_{e,K} \hat{f}_{\mathrm{emp}}, \quad S_{e,K} f = \sum_{k=0}^{K} \ip{f}{P_k} P_k,
+\]
+where $\hat{f}_{\mathrm{emp}}$ represents the empirical measure and $S_{e,K}$ is the spectral projection onto the first $K+1$ eigenfunctions. This establishes that orthogonal series estimation is fundamentally a spectral truncation operation in an RKHS geometry \citep{Berlinet2004,Cucker2002}.
+
+%==============================================================================
+\section{Twin Kernel Spaces: A Minimal Framework}\label{sec:twin}
+%==============================================================================
+
+\subsection{Group actions on the input space}
+
+\begin{definition}[Twin Space]\label{def:twin_space}
+A \emph{twin space} associated with $(E, G)$ is the orbit $G \cdot E$, equipped with the induced structure.
+\end{definition}
+
+More precisely, let $G$ be a group acting measurably on $E$ via $\tau : G \times E \to E$, $(g, x) \mapsto g \cdot x$. We assume throughout that for each $g \in G$, the map $\tau_g : x \mapsto g \cdot x$ is a measurable bijection of $E$.
+
+Typical examples include:
+\begin{itemize}
+\item The \emph{affine group} $G = \{(a, b) : a > 0, b \in \R\}$ acting on $E = \R$ by $g_{a,b} \cdot x = ax + b$.
+\item The \emph{multiplicative group} $G = (0, \infty)$ acting on $E = \R$ by $g_\alpha \cdot x = \alpha x$ (dilations).
+\item The \emph{translation group} $G = \R$ acting on $E = \R$ by $g_b \cdot x = x + b$.
+\end{itemize}
+
+\subsection{Transport of functions}
+
+\begin{definition}[Twin Transform]\label{def:twin_transform}
+Given $f : E \to \R$, define the \emph{transported function} $(g_1, g_2) \cdot f$ by
+\[
+(g_1, g_2) \cdot f(x) = g_2 \cdot f(g_1 \cdot x).
+\]
+\end{definition}
+
+In our context, we focus on the case where the action on the function space is determined by the geometric action through change of variables with appropriate Jacobian correction.
+
+\subsection{Twin Kernel Spaces}
+
+\begin{definition}[Twin Kernel Space]\label{def:twin_kernel_space}
+A \emph{Twin Kernel Space} is the family of kernels
+\[
+K_g(x, y) = g_2 \cdot K_e(\overline{g_1} \cdot x, \, \overline{g_1} \cdot y)
+\]
+generated from a base kernel $K_e$, where $\overline{g_1}$ denotes the inverse action.
+\end{definition}
+
+The precise form of $g_2$ is determined by requiring the transported kernel to define a valid reproducing kernel in the same $L^2(\mu)$ space, which necessitates Jacobian correction factors as detailed in Section~\ref{sec:spectral}.
+
+%==============================================================================
+\section{Spectral Equivariance Theorem}\label{sec:spectral}
+%==============================================================================
+
+In this section we formalize the notion of spectral equivariance in Twin Kernel Spaces and show how orthogonal polynomial systems arise as eigenfunctions of transported kernels. We work in a general $L^2$--framework and specialize to orthogonal polynomials when needed.
+
+\subsection{Setting and assumptions}
+
+Let $(E, \mathcal{E}, \mu)$ be a $\sigma$-finite measure space and denote by
+\[
+L^2(\mu) = \left\{ f : E \to \R \;\Big|\; \int_E f(x)^2 \, \mu(dx) < \infty \right\}
+\]
+the usual Hilbert space with inner product
+\[
+\ip{f}{g}_{L^2(\mu)} = \int_E f(x) g(x) \, \mu(dx).
+\]
+
+Let $K_e : E \times E \to \R$ be a symmetric, measurable, positive definite kernel such that the associated integral operator
+\begin{equation}\label{eq:integral_op}
+(T_e f)(x) = \int_E K_e(x, y) f(y) \, \mu(dy), \quad f \in L^2(\mu),
+\end{equation}
+is Hilbert--Schmidt (in particular, compact and self-adjoint). Then there exists an orthonormal basis $\{P_k\}_{k \geq 0}$ of $L^2(\mu)$ and non-negative eigenvalues $\{\lambda_k\}_{k \geq 0}$ such that
+\begin{equation}\label{eq:eigen}
+T_e P_k = \lambda_k P_k, \quad k \geq 0,
+\end{equation}
+and the kernel admits the convergent spectral expansion
+\begin{equation}\label{eq:spectral_expansion}
+K_e(x, y) = \sum_{k \geq 0} \lambda_k P_k(x) P_k(y) \quad \text{in } L^2(\mu \otimes \mu).
+\end{equation}
+
+In the classical orthogonal polynomial setting, the functions $P_k$ form an orthonormal polynomial system with respect to $\mu$.
+
+We now introduce a group action on $E$ and the corresponding transport operators.
+
+\begin{definition}[Group action and Jacobian]\label{def:group_action}
+Let $G$ be a group and let
+\[
+\tau : G \times E \to E, \quad (g, x) \mapsto g \cdot x,
+\]
+be a measurable left action of $G$ on $E$. For each $g \in G$, we write $\tau_g(x) = g \cdot x$. We assume that for every $g \in G$, the pushforward measure $\mu \circ \tau_g^{-1}$ is absolutely continuous with respect to $\mu$, and we denote by
+\[
+J_g(x) = \frac{d(\mu \circ \tau_g^{-1})}{d\mu}(x)
+\]
+its Radon--Nikodym derivative (Jacobian).
+\end{definition}
+
+The following operator implements the action of $G$ on $L^2(\mu)$ in a unitary way.
+
+\begin{definition}[Twin transport operator on $L^2$]\label{def:transport_op}
+For each $g \in G$, define $U_g : L^2(\mu) \to L^2(\mu)$ by
+\begin{equation}\label{eq:Ug}
+(U_g f)(x) = J_g(x)^{1/2} f(g^{-1} \cdot x).
+\end{equation}
+\end{definition}
+
+\begin{lemma}[Unitarity of $U_g$]\label{lem:unitarity}
+For each $g \in G$, the operator $U_g$ is unitary on $L^2(\mu)$, that is,
+\[
+\ip{U_g f}{U_g h}_{L^2(\mu)} = \ip{f}{h}_{L^2(\mu)} \quad \text{for all } f, h \in L^2(\mu),
+\]
+and $U_{g_1 g_2} = U_{g_1} U_{g_2}$, $U_{e_G} = \mathrm{Id}$.
+\end{lemma}
+
+\begin{proof}
+Let $f, h \in L^2(\mu)$ and fix $g \in G$. Then
+\[
+\ip{U_g f}{U_g h} = \int_E J_g(x)^{1/2} f(g^{-1} \cdot x) \, J_g(x)^{1/2} h(g^{-1} \cdot x) \, \mu(dx) = \int_E J_g(x) f(g^{-1} \cdot x) h(g^{-1} \cdot x) \, \mu(dx).
+\]
+Perform the change of variables $y = g^{-1} \cdot x$, so that $x = g \cdot y$. By the pushforward identity $\tau_{g*}\mu = J_g\,\mu$ (Definition~\ref{def:group_action}), for any integrable $\Phi$ one has $\int_E \Phi(g\cdot y)\,\mu(dy) = \int_E \Phi(x)\,J_g(x)\,\mu(dx)$; equivalently
+\[
+\mu(dx) = J_g(g \cdot y)^{-1} \, \mu(dy),
+\]
+so that the integrand factor cancels: $J_g(x)\,\mu(dx) = J_g(g\cdot y)\,J_g(g\cdot y)^{-1}\,\mu(dy) = \mu(dy)$. Hence
+\[
+\ip{U_g f}{U_g h} = \int_E f(y) h(y) \, \mu(dy) = \ip{f}{h}.
+\]
+The group property $U_{g_1 g_2} = U_{g_1} U_{g_2}$ follows from a direct computation using the chain rule for Radon--Nikodym derivatives and the composition law of the action, and $U_{e_G} = \mathrm{Id}$ by definition.
+\end{proof}
+
+We now define the transported kernels and operators.
+
+\begin{definition}[Transported kernel and operator]\label{def:transported_kernel}
+For $g \in G$, define a kernel $K_g : E \times E \to \R$ by
+\begin{equation}\label{eq:Kg}
+K_g(x, y) = J_g(x)^{1/2} J_g(y)^{1/2} K_e(g^{-1} \cdot x, g^{-1} \cdot y),
+\end{equation}
+and the associated integral operator $T_g : L^2(\mu) \to L^2(\mu)$ by
+\begin{equation}\label{eq:Tg}
+(T_g f)(x) = \int_E K_g(x, y) f(y) \, \mu(dy).
+\end{equation}
+\end{definition}
+
+The expression \eqref{eq:Kg} is the analytic incarnation of the twin transport of the base kernel $K_e$ under the action of $G$.
+
+\begin{lemma}[Conjugation identity]\label{lem:conjugation}
+For each $g \in G$ and $f \in L^2(\mu)$,
+\begin{equation}\label{eq:conjugation}
+T_g = U_g T_e U_g^{-1},
+\end{equation}
+and in particular $T_g$ is self-adjoint, positive and compact.
+\end{lemma}
+
+\begin{proof}
+Fix $g \in G$ and $f \in L^2(\mu)$. Using \eqref{eq:Ug} and \eqref{eq:integral_op}, we compute
+\[
+(U_g^{-1} f)(y) = J_{g^{-1}}(y)^{1/2} f(g \cdot y),
+\]
+so that
+\[
+(T_e U_g^{-1} f)(z) = \int_E K_e(z, y) \, J_{g^{-1}}(y)^{1/2} f(g \cdot y) \, \mu(dy).
+\]
+Applying $U_g$ and using \eqref{eq:Ug} again gives
+\[
+(U_g T_e U_g^{-1} f)(x) = J_g(x)^{1/2} \int_E K_e(g^{-1} \cdot x, y) \, J_{g^{-1}}(y)^{1/2} f(g \cdot y) \, \mu(dy).
+\]
+Perform the change of variables $y = g^{-1} \cdot u$ (so $u = g \cdot y$). As in the proof of Lemma~\ref{lem:unitarity}, $\int \Phi(y)\,\mu(dy) = \int \Phi(g^{-1}\cdot u)\,J_g(u)\,\mu(du)$, i.e.\ the measure factor is
+\[
+\mu(dy) = J_g(u)\, \mu(du), \quad \text{while} \quad J_{g^{-1}}(g^{-1}\cdot u) = J_g(u)^{-1}
+\]
+(the latter from the cocycle $J_g(u)\,J_{g^{-1}}(g^{-1}\cdot u) = J_e(u) = 1$). Substituting, the two factors combine as $J_{g^{-1}}(g^{-1}\cdot u)^{1/2}\,J_g(u) = J_g(u)^{-1/2}\,J_g(u) = J_g(u)^{1/2}$, so
+\begin{align*}
+(U_g T_e U_g^{-1} f)(x) &= J_g(x)^{1/2} \int_E K_e(g^{-1} \cdot x, g^{-1} \cdot u) \, J_{g^{-1}}(g^{-1} \cdot u)^{1/2} f(u) \, J_g(u) \, \mu(du) \\
+&= J_g(x)^{1/2} \int_E K_e(g^{-1} \cdot x, g^{-1} \cdot u) \, J_g(u)^{1/2} f(u) \, \mu(du).
+\end{align*}
+Comparing with \eqref{eq:Tg} and \eqref{eq:Kg}, we see that
+\[
+(U_g T_e U_g^{-1} f)(x) = \int_E K_g(x, u) f(u) \, \mu(du) = (T_g f)(x),
+\]
+which proves \eqref{eq:conjugation}. Self-adjointness, positivity and compactness follow from the corresponding properties of $T_e$ and the fact that $U_g$ is unitary.
+\end{proof}
+
+\subsection{Spectral Equivariance Theorem}
+
+We are now ready to state and prove the main result of this section.
+
+\begin{theorem}[Spectral Equivariance Theorem]\label{thm:spectral_equivariance}
+Assume that $T_e$ admits the spectral decomposition \eqref{eq:spectral_expansion} with eigenpairs $(\lambda_k, P_k)_{k \geq 0}$, where $\{P_k\}_{k \geq 0}$ is an orthonormal basis of $L^2(\mu)$. For each $g \in G$, define
+\[
+P_k^{(g)} = U_g P_k, \quad k \geq 0.
+\]
+Then:
+\begin{enumerate}[label=(\alph*)]
+\item For every $g \in G$, $\{P_k^{(g)}\}_{k \geq 0}$ is an orthonormal basis of $L^2(\mu)$.
+\item For every $g \in G$ and $k \geq 0$,
+\[
+T_g P_k^{(g)} = \lambda_k P_k^{(g)}.
+\]
+In particular, the spectrum of $T_g$ coincides with that of $T_e$.
+\item The transported kernel $K_g$ admits the spectral expansion
+\begin{equation}\label{eq:Kg_spectral}
+K_g(x, y) = \sum_{k \geq 0} \lambda_k P_k^{(g)}(x) P_k^{(g)}(y) \quad \text{in } L^2(\mu \otimes \mu).
+\end{equation}
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(a) Unitarity of $U_g$ (Lemma~\ref{lem:unitarity}) implies that for all $k, \ell \geq 0$,
+\[
+\ip{P_k^{(g)}}{P_\ell^{(g)}} = \ip{U_g P_k}{U_g P_\ell} = \ip{P_k}{P_\ell} = \delta_{k\ell}.
+\]
+Moreover, since $\{P_k\}_{k \geq 0}$ is an orthonormal basis and $U_g$ is surjective (unitary), the family $\{P_k^{(g)}\}_{k \geq 0}$ is again an orthonormal basis of $L^2(\mu)$.
+
+(b) Using the conjugation identity \eqref{eq:conjugation} and the eigen-relation \eqref{eq:eigen}, we compute
+\[
+T_g P_k^{(g)} = U_g T_e U_g^{-1}(U_g P_k) = U_g T_e P_k = U_g(\lambda_k P_k) = \lambda_k U_g P_k = \lambda_k P_k^{(g)}.
+\]
+Thus $P_k^{(g)}$ is an eigenfunction of $T_g$ with eigenvalue $\lambda_k$.
+
+(c) Since $\{P_k^{(g)}\}_{k \geq 0}$ is a complete orthonormal basis of $L^2(\mu)$ and $T_g$ is self-adjoint, we have the usual spectral representation
+\[
+T_g f = \sum_{k \geq 0} \lambda_k \ip{f}{P_k^{(g)}} P_k^{(g)}, \quad f \in L^2(\mu),
+\]
+with convergence in $L^2(\mu)$. In kernel form, this is equivalent to
+\[
+K_g(x, y) = \sum_{k \geq 0} \lambda_k P_k^{(g)}(x) P_k^{(g)}(y) \quad \text{in } L^2(\mu \otimes \mu),
+\]
+which is precisely \eqref{eq:Kg_spectral}.
+\end{proof}
+
+\begin{remark}[Orthogonal polynomials in twin spaces]\label{rem:ortho_poly_twin}
+In the classical situation where $\mu$ is supported on an interval of $\R$ and $\{P_k\}_{k \geq 0}$ are orthonormal polynomials with respect to $\mu$, the functions $P_k^{(g)}$ can often be identified with orthogonal polynomial systems in the transformed coordinates $g \cdot x$, possibly up to multiplicative Jacobian factors. In this sense, Theorem~\ref{thm:spectral_equivariance} shows that orthogonal polynomial bases in different twin spaces are obtained by transporting a single base system $\{P_k\}$ through the group action.
+\end{remark}
+
+\begin{corollary}[Equivariance of spectral truncation]\label{cor:equivariance_truncation}
+For any $K \in \N$ and $g \in G$, define the spectral truncation operators
+\[
+S_{e,K} f = \sum_{k=0}^{K} \ip{f}{P_k} P_k, \quad S_{g,K} f = \sum_{k=0}^{K} \ip{f}{P_k^{(g)}} P_k^{(g)}.
+\]
+Then, for all $f \in L^2(\mu)$,
+\[
+S_{g,K} = U_g S_{e,K} U_g^{-1}.
+\]
+In particular, spectral truncation is equivariant under twin transport.
+\end{corollary}
+
+\begin{proof}
+Using $P_k^{(g)} = U_g P_k$ and the unitarity of $U_g$, we have
+\[
+\ip{f}{P_k^{(g)}} = \ip{f}{U_g P_k} = \ip{U_g^{-1} f}{P_k}.
+\]
+Therefore
+\[
+S_{g,K} f = \sum_{k=0}^{K} \ip{f}{P_k^{(g)}} P_k^{(g)} = \sum_{k=0}^{K} \ip{U_g^{-1} f}{P_k} U_g P_k = U_g \left( \sum_{k=0}^{K} \ip{U_g^{-1} f}{P_k} P_k \right) = U_g S_{e,K} U_g^{-1} f,
+\]
+which yields the desired identity.
+\end{proof}
+
+\begin{corollary}[Spectral Equivariance for Classical Orthogonal Polynomials]\label{cor:classical}
+Let $(E, \mu)$ be either $([-1,1], dx)$ or $(\R, \gamma)$ where $\gamma$ is the standard Gaussian measure. Let
+\[
+K_e(x, y) = \sum_{k \geq 0} \lambda_k P_k(x) P_k(y)
+\]
+be the classical Mercer expansion of the base kernel in the corresponding orthogonal polynomial basis:
+\begin{itemize}
+\item Legendre polynomials $P_k$ on $[-1, 1]$ with weight $w(x) \equiv 1$,
+\item Hermite polynomials $H_k$ on $\R$ with respect to $d\gamma(x) = \frac{1}{\sqrt{2\pi}} e^{-x^2/2} \, dx$.
+\end{itemize}
+Let $G$ act on $E$ by:
+\[
+g \cdot x = \begin{cases}
+ax + b, & \text{Legendre case}, \\
+\alpha x, & \text{Hermite case}.
+\end{cases}
+\]
+Then for each $g \in G$, the transported kernel
+\[
+K_g(x, y) = J_g(x)^{1/2} J_g(y)^{1/2} K_e(g^{-1} \cdot x, g^{-1} \cdot y)
+\]
+admits the spectral expansion
+\[
+K_g(x, y) = \sum_{k \geq 0} \lambda_k P_k^{(g)}(x) P_k^{(g)}(y),
+\]
+where:
+\begin{itemize}
+\item in the Legendre case, the transported basis $P_k^{(g)}$ is a normalized affine transform of $P_k$;
+\item in the Hermite case, the transported basis is
+\[
+H_k^{(g)}(x) = \alpha^{-1/2} \exp\!\left(\tfrac{1}{4}(1 - \alpha^{-2}) x^2\right) H_k(\alpha^{-1} x),
+\]
+forming again an orthonormal basis of $L^2(\gamma)$.
+\end{itemize}
+\end{corollary}
+
+\begin{proof}
+The Legendre case corresponds to the affine group acting on $[-1, 1]$ with a constant Jacobian $J_{a,b}\equiv a^{-1}$. The Hermite case corresponds to the multiplicative group $(0, \infty)$ acting on $\R$ by dilations $x \mapsto \alpha x$; the pushforward of $\gamma=N(0,1)$ is $N(0,\alpha^2)$, so the Radon--Nikodym derivative (Gaussian Jacobian) is
+\[
+J_\alpha(x) = \frac{d(\tau_{\alpha*}\gamma)}{d\gamma}(x) = \alpha^{-1}\exp\!\left(\tfrac{1}{2}(1 - \alpha^{-2}) x^2\right).
+\]
+In both cases, the assumptions of Theorem~\ref{thm:spectral_equivariance} hold: $U_g$ is unitary on $L^2(\mu)$, $T_g = U_g T_e U_g^{-1}$, and $P_k^{(g)} := U_g P_k$ forms an orthonormal basis that diagonalizes $T_g$. The explicit formula for $H_k^{(g)}$ then follows from
+\[
+(U_\alpha f)(x) = J_\alpha(x)^{1/2} f(\alpha^{-1}x) = \alpha^{-1/2}\exp\!\left(\tfrac{1}{4}(1 - \alpha^{-2}) x^2\right) f(\alpha^{-1} x),
+\]
+applied to $f=H_k$. (Orthonormality is automatic from unitarity of $U_\alpha$; one checks directly that $\int |H_k^{(g)}|^2\,d\gamma = \int |H_k|^2\,d\gamma = 1$.)
+\end{proof}
+
+%==============================================================================
+\section{Orthogonal Series Estimators as Projections in Twin Kernel Spaces}\label{sec:projection}
+%==============================================================================
+
+In this section we show that classical orthogonal polynomial estimators arise naturally as orthogonal projections in Twin Kernel Spaces. The analysis relies crucially on the Spectral Equivariance Theorem (Theorem~\ref{thm:spectral_equivariance}) proved previously. The key idea is that an estimator constructed in a twin space $g \cdot E$ is obtained by transporting the base estimator in $E$ through the unitary operator $U_g$. This gives a unified geometric interpretation of orthogonal series methods across all twin spaces.
+
+\subsection{Projection in the base RKHS}
+
+Let $K_e$ be the base kernel with spectral expansion
+\[
+K_e(x, y) = \sum_{k \geq 0} \lambda_k P_k(x) P_k(y).
+\]
+Let $\RKHS_e$ be the reproducing kernel Hilbert space (RKHS) associated with $K_e$. Given a target function $f \in L^2(\mu)$ (e.g., a density or regression function) and a truncation level $K \in \N$, the classical orthogonal series estimator is
+\begin{equation}\label{eq:estimator_base}
+\hat{f}_{e,K}(x) = \sum_{k=0}^{K} \hat{\theta}_k P_k(x), \quad \hat{\theta}_k = \ip{\hat{f}_{\mathrm{emp}}}{P_k},
+\end{equation}
+where $\hat{f}_{\mathrm{emp}}$ is the empirical estimator (histogram, empirical measure, or empirical regression operator depending on the setting).
+
+\begin{proposition}[Projection property in the base twin space]\label{prop:projection_base}
+The estimator $\hat{f}_{e,K}$ is the orthogonal projection of $\hat{f}_{\mathrm{emp}}$ onto the subspace
+\[
+\RKHS_{e,K} = \mathrm{span}\{P_0, \ldots, P_K\} \subset L^2(\mu),
+\]
+i.e.,
+\[
+\hat{f}_{e,K} = S_{e,K} \hat{f}_{\mathrm{emp}}.
+\]
+\end{proposition}
+
+\begin{proof}
+Since $\{P_k\}$ is an orthonormal basis, $S_{e,K}$ is exactly the $L^2(\mu)$-projection onto $\RKHS_{e,K}$. Equation~\eqref{eq:estimator_base} is the standard expression for the orthogonal projection in an ONB, proving the claim.
+\end{proof}
+
+Thus the classical construction is a projection estimator in the base twin space.
+
+\subsection{Transport of estimators under group actions}
+
+We now describe how estimation in a transported geometry $g \cdot E$ is obtained. Given the group action and the unitary operator $U_g$, define the transported empirical estimator
+\[
+\hat{f}_{\mathrm{emp}}^{(g)} = U_g \hat{f}_{\mathrm{emp}}.
+\]
+The transported orthonormal basis is
+\[
+P_k^{(g)} = U_g P_k,
+\]
+and the truncated space is
+\[
+\RKHS_{g,K} = \mathrm{span}\{P_0^{(g)}, \ldots, P_K^{(g)}\}.
+\]
+
+\begin{proposition}[Projection in transported twin spaces]\label{prop:projection_transported}
+For each $g \in G$,
+\[
+\hat{f}_{g,K} = S_{g,K} \hat{f}_{\mathrm{emp}}^{(g)}
+\]
+is the $L^2(\mu)$-orthogonal projection of the empirical estimator onto $\RKHS_{g,K}$.
+\end{proposition}
+
+\begin{proof}
+Since $\{P_k^{(g)}\}$ is an orthonormal basis (Theorem~\ref{thm:spectral_equivariance}), the projection onto their span is exactly
+\[
+S_{g,K} f = \sum_{k=0}^{K} \ip{f}{P_k^{(g)}} P_k^{(g)}.
+\]
+Substituting $f = \hat{f}_{\mathrm{emp}}^{(g)}$ yields the expression above.
+\end{proof}
+
+Thus estimation in any twin space corresponds to projection in a geometry determined by the transported kernel $K_g$.
+
+\subsection{Equivariance of orthogonal series estimators}
+
+We now relate $\hat{f}_{e,K}$ and $\hat{f}_{g,K}$.
+
+\begin{theorem}[Equivariance of spectral estimators]\label{thm:equivariance_estimators}
+For every $g \in G$ and truncation level $K$,
+\[
+\hat{f}_{g,K} = U_g \hat{f}_{e,K}.
+\]
+\end{theorem}
+
+\begin{proof}
+By Corollary~\ref{cor:equivariance_truncation}, we have $S_{g,K} = U_g S_{e,K} U_g^{-1}$. Applying this to $\hat{f}_{\mathrm{emp}}^{(g)} = U_g \hat{f}_{\mathrm{emp}}$ gives
+\[
+\hat{f}_{g,K} = S_{g,K} \hat{f}_{\mathrm{emp}}^{(g)} = U_g S_{e,K} U_g^{-1}(U_g \hat{f}_{\mathrm{emp}}) = U_g S_{e,K} \hat{f}_{\mathrm{emp}} = U_g \hat{f}_{e,K}.
+\]
+\end{proof}
+
+This theorem reveals that orthogonal polynomial estimators satisfy a strong transformation rule: \textbf{they commute with the twin transport induced by the group action.}
+
+\subsection{Geometric interpretation}
+
+Theorem~\ref{thm:equivariance_estimators} implies the following:
+\begin{itemize}
+\item The same statistical procedure (spectral truncation) produces consistent estimators in all twin spaces.
+\item Choice of geometry (via $g$) modifies the basis functions but does not modify the form of the estimator.
+\item Estimation can be viewed as occurring in different ``reference frames'' of the kernel geometry.
+\item Orthogonal polynomials in each twin space arise from transporting the base orthogonal polynomials.
+\end{itemize}
+
+Thus the Twin Kernel viewpoint shows that the apparent diversity of orthogonal polynomial bases (Legendre, Chebyshev, Hermite, Laguerre, Jacobi, etc.) reflects different geometric frames rather than fundamentally different estimators.
+
+\subsection{Example: Hermite estimation in a rescaled Gaussian geometry}
+
+Let $g_\alpha : x \mapsto \alpha x$ with $\alpha > 0$. Using Corollary~\ref{cor:classical},
+\[
+P_k^{(g_\alpha)}(x) = H_k^{(g_\alpha)}(x) = U_\alpha H_k(x).
+\]
+The estimator in the transported twin space is
+\[
+\hat{f}_{g_\alpha, K}(x) = \sum_{k=0}^{K} \ip{U_\alpha \hat{f}_{\mathrm{emp}}}{H_k^{(g_\alpha)}} H_k^{(g_\alpha)}(x).
+\]
+By the Equivariance Theorem:
+\[
+\hat{f}_{g_\alpha, K} = U_\alpha \hat{f}_{e,K}.
+\]
+
+Thus Hermite estimation in a ``stretched'' Gaussian geometry corresponds exactly to transporting the base Hermite estimator. This provides a fully explicit operational interpretation of geometric deformation in Gaussian twin spaces.
+
+\subsection{Implication for nonparametric estimation}
+
+The analysis shows:
+\begin{itemize}
+\item Orthogonal polynomial estimators are geometrically coherent across all kernel-induced twin spaces.
+\item The choice of truncation $K$ is stable under twin transport.
+\item Statistical properties (risk, bias-variance tradeoff, minimax rates) are preserved under transport.
+\end{itemize}
+
+Hence Twin Kernel Spaces provide a natural geometric unification of orthogonal series methods and enable their extension to settings where the underlying geometry undergoes transformations.
+
+%==============================================================================
+\section{Relationship with Classical Kernel Estimators}\label{sec:kernel}
+%==============================================================================
+
+This section explains how traditional kernel estimators fit naturally into the Twin Kernel Space framework. We show that classical smoothing kernels correspond to transported versions of a base kernel, and that the widely used estimators of Parzen--Rosenblatt and Nadaraya--Watson can be interpreted as projections in a twin geometry. This clarifies the relationship between orthogonal series estimation and kernel smoothing and reveals that both methods arise from the same geometric mechanism: spectral truncation or spectral attenuation in a transported RKHS.
+
+\subsection{Kernel estimators as RKHS projections}
+
+Let $K_h$ be a classical smoothing kernel with bandwidth $h > 0$, such as the Gaussian kernel
+\[
+K_h(x, y) = \frac{1}{h} K\left(\frac{x - y}{h}\right),
+\]
+or any translation--invariant kernel of the form $K_h(x, y) = K((x-y)/h)/h$.
+
+Define the estimator
+\begin{equation}\label{eq:kernel_estimator}
+\hat{f}_h(x) = \int_E K_h(x, y) \, d\hat{F}_n(y),
+\end{equation}
+where $\hat{F}_n$ is the empirical distribution.
+
+It is well known (e.g., via the representer theorem or the reproducing property \citep{Wahba1990,Berlinet2004}) that $\hat{f}_h$ equals the projection of $\hat{f}_{\mathrm{emp}}$ onto the RKHS associated with $K_h$:
+\[
+\hat{f}_h = \Pi_{K_h}(\hat{f}_{\mathrm{emp}}),
+\]
+where $\Pi_{K_h}$ is the orthogonal projection onto the RKHS $\RKHS_{K_h}$.
+
+Thus kernel estimators are RKHS projections, just as orthogonal polynomial estimators are. The question is: \emph{how does $K_h$ relate to the twin kernel $K_g$?}
+
+The answer is that \textbf{bandwidth scaling corresponds to group action and kernel transport}.
+
+\subsection{Bandwidth as a group action: $x \mapsto x/h$}
+
+Consider the multiplicative group $G = (0, \infty)$ acting on $E = \R$ (with Lebesgue base measure) via
+\[
+g_h \cdot x = h x, \qquad\text{so that}\qquad g_h^{-1}\cdot x = \frac{x}{h}.
+\]
+The Jacobian is $J_h(x) = h^{-1}$, and, since $K_{g_h}(x,y)=J_h(x)^{1/2}J_h(y)^{1/2}K_e(g_h^{-1}x,g_h^{-1}y)$, the transported kernel is
+\[
+K_{g_h}(x, y) = h^{-1} K_e\left(\frac{x}{h}, \frac{y}{h}\right).
+\]
+
+Thus, a classical smoothing kernel $K_h$ is nothing but a transported version of the base kernel:
+\[
+K_h = K_{g_h}.
+\]
+
+In other words:
+\begin{center}
+\fbox{Bandwidth selection = choice of twin space geometry.}
+\end{center}
+
+\begin{proposition}\label{prop:parzen}
+The Parzen--Rosenblatt estimator $\hat{f}_h$ is the orthogonal projection of $\hat{f}_{\mathrm{emp}}$ onto the twin RKHS $\RKHS_{g_h}$ associated with the transported kernel $K_{g_h}$.
+\end{proposition}
+
+\begin{proof}
+By construction, $K_h = K_{g_h}$, and \eqref{eq:kernel_estimator} is exactly the RKHS projection of $\hat{f}_{\mathrm{emp}}$ onto $\RKHS_{g_h}$.
+\end{proof}
+
+Thus kernel smoothing is a projection operation in a transported geometry.
+
+\subsection{Spectral interpretation: attenuation vs truncation}
+
+Let $K_e$ admit the Mercer expansion
+\[
+K_e(x, y) = \sum_{k \geq 0} \lambda_k P_k(x) P_k(y),
+\]
+and let $K_{g_h}$ be the transported kernel:
+\[
+K_{g_h}(x, y) = \sum_{k \geq 0} \lambda_k(h) P_k^{(g_h)}(x) P_k^{(g_h)}(y).
+\]
+
+Classical kernel smoothing corresponds to an estimator of the form
+\[
+\hat{f}_h = \sum_{k \geq 0} \lambda_k(h) \ip{\hat{f}_{\mathrm{emp}}}{P_k^{(g_h)}} P_k^{(g_h)}.
+\]
+
+\textbf{Spectral smoothing.} For translation--invariant kernels $K_h(x, y) = K((x-y)/h)/h$, one has
+\[
+\lambda_k(h) = \lambda_k \exp(-c_k h^2),
+\]
+which produces \emph{spectral attenuation}.
+
+\textbf{Orthogonal series.} For polynomial estimators,
+\[
+\hat{f}_{e,K} = \sum_{k=0}^{K} \ip{\hat{f}_{\mathrm{emp}}}{P_k} P_k,
+\]
+which corresponds to \emph{hard spectral truncation}.
+
+Thus:
+\begin{center}
+\fbox{Kernel estimation = soft spectral cutoff, \quad Orthogonal series = hard spectral cutoff.}
+\end{center}
+
+Both are spectral operations in twin RKHSs.
+
+\subsection{Equivariance of kernel estimators}
+
+We now show that kernel estimators satisfy the same equivariance principle as orthogonal polynomial estimators.
+
+\begin{theorem}[Equivariance of kernel smoothing]\label{thm:equivariance_kernel}
+Let $K_h = K_{g_h}$ be a transported kernel. Then:
+\[
+\hat{f}_h = U_{g_h} \hat{f}_e,
+\]
+where $\hat{f}_e$ is the projection associated with the base kernel $K_e$.
+\end{theorem}
+
+\begin{proof}
+Since $T_h = U_{g_h} T_e U_{g_h}^{-1}$, the projection operators satisfy
+\[
+\Pi_{K_h} = U_{g_h} \Pi_{K_e} U_{g_h}^{-1}.
+\]
+Applying this to $\hat{f}_{\mathrm{emp}}$ yields
+\[
+\hat{f}_h = \Pi_{K_h} \hat{f}_{\mathrm{emp}} = U_{g_h} \Pi_{K_e} U_{g_h}^{-1} \hat{f}_{\mathrm{emp}} = U_{g_h} \Pi_{K_e} \hat{f}_{\mathrm{emp}} = U_{g_h} \hat{f}_e.
+\]
+\end{proof}
+
+Thus \emph{kernel estimation is itself an equivariant statistical operation} in Twin Kernel Spaces.
+
+\subsection{Comparison table: orthogonal series vs.\ kernel smoothing}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Method} & \textbf{Spectral effect} & \textbf{Twin geometry interpretation} \\
+\midrule
+Orthogonal series & hard cutoff $\lambda_k^{\mathrm{new}} = \lambda_k \mathbf{1}_{k \leq K}$ & projection in $\RKHS_e$ \\
+Kernel smoothing & soft cutoff $\lambda_k^{\mathrm{new}} = \lambda_k \phi_k(h)$ & projection in $\RKHS_{g_h}$ \\
+Local polynomial & hybrid attenuation + local geometry & spatially varying twin space \\
+Spline smoothing & penalized spectral cutoff & differential twin space \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of nonparametric methods in the Twin Kernel Space framework.}
+\label{tab:comparison}
+\end{table}
+
+This demonstrates that a wide variety of nonparametric estimators are instances of the same principle: projection in a transported RKHS.
+
+\subsection{Conclusion: kernel smoothing as Twin Kernel transport}
+
+We can summarize the relationship as follows:
+\begin{itemize}
+\item Selecting a bandwidth $h$ corresponds to choosing a twin space $g_h \cdot E$.
+\item Kernel estimators are projections in the twin RKHS $\RKHS_{g_h}$.
+\item Orthogonal and kernel estimators differ only in their spectral filters.
+\item All these estimators satisfy geometric equivariance.
+\end{itemize}
+
+This places classical kernel estimation and orthogonal polynomial estimation in a single geometric framework and establishes Twin Kernel Spaces as a natural language for spectral nonparametric inference.
+
+%==============================================================================
+\section{Examples and Illustrations}\label{sec:examples}
+%==============================================================================
+
+We illustrate the framework by examining the two most classical orthogonal polynomial systems (Legendre and Hermite), and then by presenting a multimodal example showing how kernel transport reveals geometric deformations in the underlying data-generating process.
+
+\subsection{Gaussian Twin Spaces and Hermite Polynomials}
+
+Let $E = \R$ with Gaussian measure $d\gamma(x) = \frac{1}{\sqrt{2\pi}} e^{-x^2/2} \, dx$. The base kernel is the Mehler kernel \citep{Mehler1866}
+\[
+K_e(x, y) = \sum_{k=0}^{\infty} \rho^k H_k(x) H_k(y), \quad |\rho| < 1,
+\]
+whose eigenfunctions are the Hermite polynomials.
+
+Consider the dilation action
+\[
+g_\alpha : x \mapsto \alpha x, \quad \alpha > 0.
+\]
+The Jacobian (Radon--Nikodym derivative of the pushforward $N(0,\alpha^2)$ with respect to $\gamma=N(0,1)$) is
+\[
+J_\alpha(x) = \alpha^{-1}\exp\left(\frac{1}{2}(1 - \alpha^{-2}) x^2\right),
+\]
+and the transported kernel is
+\[
+K_{g_\alpha}(x, y) = J_\alpha(x)^{1/2} J_\alpha(y)^{1/2} K_e(\alpha^{-1} x, \alpha^{-1} y).
+\]
+
+By Corollary~\ref{cor:classical}, the transported basis is
+\[
+H_k^{(g_\alpha)}(x) = U_\alpha H_k(x) = \alpha^{-1/2}\exp\left(\frac{1}{4}(1 - \alpha^{-2}) x^2\right) H_k(\alpha^{-1} x).
+\]
+
+Thus the spectral expansion in the twin space is
+\[
+K_{g_\alpha}(x, y) = \sum_{k=0}^{\infty} \rho^k H_k^{(g_\alpha)}(x) H_k^{(g_\alpha)}(y).
+\]
+
+\textbf{Interpretation.} The geometry becomes ``stretched'': small $\alpha$ emphasizes fine-scale oscillations, large $\alpha$ smooths them. The deformed Hermite basis reflects this modified geometry.
+
+\subsection{Affine Twin Spaces and Legendre Polynomials}
+
+Let $E = [-1, 1]$ with Lebesgue measure, and $P_k$ the orthonormal Legendre polynomials. Consider the affine transformation
+\[
+g_{a,b} : x \mapsto ax + b, \quad a > 0, \quad b \in \R,
+\]
+with $a[-1, 1] + b \subset [-1, 1]$.
+
+The Jacobian is $J_{a,b}(x) = a^{-1}$, giving the transported kernel
+\[
+K_{g_{a,b}}(x, y) = a^{-1} K_e\left(\frac{x - b}{a}, \frac{y - b}{a}\right).
+\]
+
+By the spectral equivariance theorem,
+\[
+P_k^{(g_{a,b})}(x) = a^{-1/2} P_k\left(\frac{x - b}{a}\right).
+\]
+
+The Legendre expansion becomes
+\[
+K_{g_{a,b}}(x, y) = \sum_{k \geq 0} \lambda_k P_k^{(g_{a,b})}(x) P_k^{(g_{a,b})}(y),
+\]
+with identical eigenvalues.
+
+\textbf{Interpretation.} Affine geometric deformations correspond exactly to transporting the Legendre basis. The polynomial oscillation pattern is preserved, but shifted and rescaled.
+
+\subsection{Multimodal Transport Example: Adapting Spectral Bases to Complex Geometry}
+
+We now illustrate a phenomenon for which Twin Kernel Spaces are particularly well suited: non-stationary or multimodal data.
+
+Consider a density consisting of two Gaussian modes:
+\[
+f(x) = 0.5 \, \varphi(x + 2) + 0.5 \, \varphi(x - 2), \quad \varphi \text{ standard normal}.
+\]
+In the base space $E = \R$, the Hermite basis is poorly adapted to this shape: it oscillates at the wrong spatial locations and requires many terms for an accurate approximation.
+
+However, let $g_1 : x \mapsto x + 2$ and $g_2 : x \mapsto x - 2$. Define the transported bases
+\[
+H_k^{(g_1)}(x) = U_{g_1} H_k(x), \quad H_k^{(g_2)}(x) = U_{g_2} H_k(x),
+\]
+which correspond to translating the entire geometry around each mode.
+
+\textbf{Key observation.} The multimodal density admits a much more efficient representation by combining expansions in several twin spaces:
+\[
+f(x) \approx 0.5 \sum_{k=0}^{K} \theta_{k,1} H_k^{(g_1)}(x) + 0.5 \sum_{k=0}^{K} \theta_{k,2} H_k^{(g_2)}(x),
+\]
+with dramatically fewer coefficients.
+
+This is because each transported twin space ``centers'' the geometry at a mode of the density.
+
+\textbf{Interpretation.} The spectral equivariance property means that orthogonal polynomials transported by group actions adapt naturally to complex geometries. Twin Kernel Spaces thus provide a principled geometric mechanism for:
+\begin{itemize}
+\item mode-adaptive estimation,
+\item spatially varying spectral representations,
+\item mixture-aware kernels.
+\end{itemize}
+
+This example shows that twin transport can be combined with spectral estimation to obtain geometry-adaptive nonparametric estimators.
+
+%==============================================================================
+\section{Convergence in Twin Kernel Spaces}\label{sec:convergence}
+%==============================================================================
+
+We study the convergence of spectral estimators in Twin Kernel Spaces. The key feature is that convergence in any transported geometry $g \cdot E$ is equivalent to convergence in the base geometry $E$, due to unitarity of the transport operator $U_g$.
+
+\subsection{Assumptions}
+
+Let $K_e$ be a base Mercer kernel with eigenvalues $(\lambda_k)_{k \geq 0}$ and orthonormal eigenfunctions $(P_k)_{k \geq 0}$. Assume:
+
+\begin{enumerate}[label=(A\arabic*)]
+\item \textbf{Spectral decay:} $\lambda_k \asymp k^{-2s}$ or $\lambda_k \asymp e^{-c k^\alpha}$ for some $s > 0$ or $\alpha > 0$.
+\item \textbf{Smoothness of $f$:} $f \in \RKHS_e^t := \left\{ f = \sum \theta_k P_k : \sum \theta_k^2 \lambda_k^{-t} < \infty \right\}$ for some $t > 0$.
+\item \textbf{i.i.d.\ sampling:} The empirical estimator $\hat{f}_{\mathrm{emp}}$ satisfies $\|\hat{f}_{\mathrm{emp}} - f\|_{L^2(\mu)} = O_p(n^{-1/2})$.
+\end{enumerate}
+
+The Twin Kernel Space associated with $g \in G$ has eigenfunctions $(P_k^{(g)}) = (U_g P_k)$ and identical eigenvalues.
+
+\subsection{Main convergence result}
+
+\begin{theorem}[Convergence of spectral estimators in Twin Kernel Spaces]\label{thm:convergence}
+Let $K$ be a truncation level such that $K = K(n) \to \infty$ and $K(n)/n \to 0$. For every $g \in G$, the estimator
+\[
+\hat{f}_{g,K} = S_{g,K} \hat{f}_{\mathrm{emp}}^{(g)}
+\]
+satisfies
+\[
+\|\hat{f}_{g,K} - f^{(g)}\|_{L^2(\mu)} \xrightarrow{p} 0,
+\]
+and the convergence rate is identical to that in the base geometry:
+\[
+\|\hat{f}_{g,K} - f^{(g)}\|_{L^2(\mu)} \asymp \|\hat{f}_{e,K} - f\|_{L^2(\mu)}.
+\]
+\end{theorem}
+
+\begin{proof}
+Using $P_k^{(g)} = U_g P_k$ and unitarity,
+\[
+\|\hat{f}_{g,K} - f^{(g)}\| = \|U_g(\hat{f}_{e,K} - f)\| = \|\hat{f}_{e,K} - f\|.
+\]
+Consistency and the rate follow from the classical bias--variance decomposition \citep{Tsybakov2009}.
+\end{proof}
+
+Thus, \textbf{convergence is geometry-invariant}: transporting the kernel does not change asymptotic behavior.
+
+%==============================================================================
+\section{Bias--Variance Analysis in Twin Kernel Spaces}\label{sec:bias_variance}
+%==============================================================================
+
+We now compute the bias and variance components of the estimator
+\[
+\hat{f}_{g,K} = \sum_{k=0}^{K} \hat{\theta}_k^{(g)} P_k^{(g)}.
+\]
+Recall that
+\[
+\hat{\theta}_k^{(g)} - \theta_k^{(g)} = \ip{\hat{f}_{\mathrm{emp}}^{(g)} - f^{(g)}}{P_k^{(g)}}.
+\]
+
+\subsection{Bias}
+
+Since $U_g$ preserves smoothness,
+\[
+f^{(g)} = U_g f = \sum_{k \geq 0} \theta_k P_k^{(g)} \quad \text{with } \theta_k = \ip{f}{P_k}.
+\]
+
+The bias term is
+\[
+\|\E \hat{f}_{g,K} - f^{(g)}\|^2 = \sum_{k > K} \theta_k^2.
+\]
+
+If $f$ lies in a Sobolev-type ball $\RKHS_e^t$,
+\[
+\sum_{k > K} \theta_k^2 = O(K^{-2t}),
+\]
+and therefore
+\[
+\mathrm{Bias}_K \asymp K^{-t}.
+\]
+
+\subsection{Variance}
+
+The variance term is
+\[
+\E \|\hat{f}_{g,K} - \E \hat{f}_{g,K}\|^2 = \sum_{k=0}^{K} \Var(\hat{\theta}_k^{(g)}).
+\]
+
+Under standard regularity,
+\[
+\Var(\hat{\theta}_k^{(g)}) = \frac{1}{n} \sigma_k^2, \quad \sum_{k=0}^{K} \sigma_k^2 \lesssim K.
+\]
+
+Hence
+\[
+\mathrm{Var}_K \asymp \frac{K}{n}.
+\]
+
+\subsection{Optimal choice of $K$}
+
+Balancing bias and variance:
+\[
+K^{-2t} \asymp \frac{K}{n} \quad \Rightarrow \quad K \asymp n^{1/(2t+1)}.
+\]
+
+Thus the optimal rate is
+\[
+\|\hat{f}_{g,K} - f^{(g)}\| \asymp n^{-t/(2t+1)},
+\]
+the classical minimax rate \citep{Stone1982,Tsybakov2009}.
+
+\textbf{Key message.}
+\begin{center}
+\fbox{Bias--variance tradeoff is invariant under twin transport.}
+\end{center}
+
+%==============================================================================
+\section{Minimax Rates in Twin Kernel Spaces}\label{sec:minimax}
+%==============================================================================
+
+We now extend the previous results to minimax lower bounds.
+
+\subsection{Function classes}
+
+Let
+\[
+\mathcal{F}_t(R) = \left\{ f = \sum_{k \geq 0} \theta_k P_k \;\Big|\; \sum_{k \geq 0} \theta_k^2 \lambda_k^{-t} \leq R^2 \right\}.
+\]
+
+Transport defines identical classes:
+\[
+\mathcal{F}_t^{(g)}(R) = \{f^{(g)} = U_g f : f \in \mathcal{F}_t(R)\}.
+\]
+
+\begin{theorem}[Minimax risk equivalence in twin spaces]\label{thm:minimax}
+Let $\hat{f}$ be any estimator. Then for every $g \in G$,
+\[
+\inf_{\hat{f}} \sup_{f \in \mathcal{F}_t(R)} \E \|\hat{f}^{(g)} - f^{(g)}\|^2 = \inf_{\hat{f}} \sup_{f \in \mathcal{F}_t(R)} \E \|\hat{f} - f\|^2.
+\]
+
+In particular,
+\[
+\mathcal{R}_n^* \asymp n^{-2t/(2t+1)}
+\]
+in all twin spaces.
+\end{theorem}
+
+\begin{proof}
+Since $U_g$ is unitary,
+\[
+\|U_g(\hat{f} - f)\| = \|\hat{f} - f\|,
+\]
+and
+\[
+U_g(\mathcal{F}_t(R)) = \mathcal{F}_t^{(g)}(R).
+\]
+Apply standard least favorable priors and Le Cam's method \citep{LeCam1986,Yu1997}; the geometry does not affect the lower bound.
+\end{proof}
+
+Thus \textbf{minimax risk is entirely geometry-invariant}.
+
+\begin{remark}[Why the spectral estimator is exactly minimax, with no logarithmic factor]
+The truncated series estimator $\hat f_{g,K}$ is a \emph{projection} estimator: it
+fits the $K$ leading coefficients directly, so its variance is the metric
+complexity $K/n$ of the model and the bias--variance balance of
+Section~\ref{sec:minimax} gives the \emph{exact} rate $n^{-2t/(2t+1)}$, attaining
+the lower bound of Theorem~\ref{thm:minimax} up to constants---no logarithmic
+factor. This is the structural reason a spectral/orthogonal-series method is
+sharper than a description-length (MDL) procedure on the same sieve: the latter
+must quantize each coefficient into a prefix code, paying an extra
+$\log(1/\delta)\asymp\log n$ per coefficient and so attaining only the
+near-minimax rate $(\log n/n)^{2t/(2t+1)}$. Choosing $K$ by a penalty
+$\mathrm{pen}(K)\asymp K/n$ (rather than a code length $\asymp K\log n$) preserves
+the exact rate \emph{adaptively} in the smoothness $t$; the geometric invariance
+above carries this exact-rate optimality verbatim across all twin spaces.
+\end{remark}
+
+%==============================================================================
+\section{Conclusion and Future Work}\label{sec:conclusion}
+%==============================================================================
+
+\subsection{Summary}
+
+We have developed a unified geometric framework for nonparametric estimation based on the notion of Twin Kernel Spaces. Our main contributions are:
+
+\begin{enumerate}
+\item A precise formulation of Twin Kernel Spaces as orbits of reproducing kernels under group actions, providing a minimal yet powerful geometric structure.
+
+\item The Spectral Equivariance Theorem (Theorem~\ref{thm:spectral_equivariance}), establishing that eigenfunctions of transported kernels are obtained by unitary transport of base eigenfunctions, with spectra preserved.
+
+\item A unified interpretation of orthogonal polynomial estimation and kernel smoothing as spectral operations (hard vs.\ soft truncation) in potentially different twin geometries.
+
+\item Geometric invariance results showing that convergence rates, bias--variance tradeoffs, and minimax risks are preserved under twin transport.
+
+\item Explicit worked examples demonstrating the framework for Hermite and Legendre polynomials, including applications to multimodal estimation.
+\end{enumerate}
+
+\subsection{Open problems}
+
+Several directions for future research emerge from this work:
+
+\begin{enumerate}
+\item \textbf{Adaptive twin space selection.} While we have shown that estimation is equivariant across twin spaces, the question of how to optimally select the twin space (or combination of twin spaces) for a given dataset remains open. Data-driven methods for twin space selection could lead to improved practical estimators.
+
+\item \textbf{Multiscale twin spaces.} The multimodal example suggests that combinations of twin spaces at different scales could provide efficient representations. A systematic theory of multiscale twin decompositions would be valuable.
+
+\item \textbf{Non-commutative group actions.} Our framework extends naturally to non-commutative groups, but the statistical implications have not been fully explored. Applications to rotation groups and more general Lie groups deserve investigation.
+
+\item \textbf{Infinite-dimensional extensions.} Extension to function spaces beyond $L^2(\mu)$, including Banach spaces and spaces of distributions, would broaden applicability.
+
+\item \textbf{Computational aspects.} Efficient algorithms for computing transported kernels and eigenfunctions in high-dimensional settings are needed for practical applications.
+\end{enumerate}
+
+\subsection{Connections to twin Hilbert spaces and physics}
+
+The terminology ``twin'' evokes connections to several areas of mathematics and physics:
+
+\begin{itemize}
+\item In operator theory, twin spaces appear in the study of invariant subspaces and model theory \citep{Halmos1982,Nikolski2002}.
+
+\item In quantum mechanics, related structures arise in the study of coherent states and symmetry groups \citep{Perelomov1986}.
+
+\item The equivariance properties we establish are reminiscent of gauge invariance in physics, where physical quantities are preserved under certain transformations.
+
+\item Connections to optimal transport theory \citep{Villani2009} may provide additional geometric insights.
+\end{itemize}
+
+These connections suggest that Twin Kernel Spaces may have broader significance beyond statistics, and merit further investigation.
+
+%==============================================================================
+\appendix
+\section{Technical Appendices}
+%==============================================================================
+
+\subsection{Proof of auxiliary lemmas}
+
+\begin{lemma}[Concentration of spectral coefficients]\label{lem:concentration}
+Let $\hat{f}_{\mathrm{emp}}$ be the empirical estimator of a density or regression function. For each $k$,
+\[
+|\ip{\hat{f}_{\mathrm{emp}} - f}{P_k}| = O_p(n^{-1/2}).
+\]
+Uniformly for $k \leq K(n)$ with $K(n)/n \to 0$,
+\[
+\sum_{k=0}^{K(n)} (\ip{\hat{f}_{\mathrm{emp}} - f}{P_k})^2 = O_p(K/n).
+\]
+\end{lemma}
+
+\begin{proof}
+Standard Bernstein inequalities for empirical processes \citep{vanderVaart1996}.
+\end{proof}
+
+\subsection{Spectral regularity}
+
+\begin{lemma}[Eigenvalue decay and Sobolev norm equivalence]\label{lem:sobolev}
+If $\lambda_k \asymp k^{-2s}$ then
+\[
+\|f\|_{\RKHS_e^t}^2 \asymp \sum_{k \geq 0} k^{2st} \theta_k^2.
+\]
+\end{lemma}
+
+\begin{proof}
+Direct from $\lambda_k^{-t} \asymp k^{2st}$.
+\end{proof}
+
+\subsection{Proof of minimax lower bound}
+
+\begin{lemma}[Fano lower bound in spectral spaces]\label{lem:fano}
+Let $\mathcal{F}_t(R)$ be as above. Then
+\[
+\inf_{\hat{f}} \sup_{f \in \mathcal{F}_t(R)} \E \|\hat{f} - f\|^2 \gtrsim n^{-2t/(2t+1)}.
+\]
+\end{lemma}
+
+\begin{proof}
+Construct least favorable priors supported on linear combinations of $P_k$ and use standard Fano inequalities \citep{Yu1997,Tsybakov2009}.
+\end{proof}
+
+\subsection{Proof of Theorem~\ref{thm:minimax}}
+
+\begin{proof}
+We combine Lemma~\ref{lem:fano} with the identity
+\[
+\|U_g(\hat{f} - f)\| = \|\hat{f} - f\|.
+\]
+Transport preserves the entire spectral and geometric structure.
+\end{proof}
+
+%==============================================================================
+\section{Additional Kernel Identities}
+%==============================================================================
+
+\begin{lemma}[Transport of translation-invariant kernels]\label{lem:translation}
+Let $K(x, y) = \psi(x - y)$. Under dilation $x \mapsto x/h$,
+\[
+K_{g_h}(x, y) = h^{-1} \psi\left(\frac{x - y}{h}\right).
+\]
+\end{lemma}
+
+\begin{proof}
+Direct substitution in the twin transport formula.
+\end{proof}
+
+%==============================================================================
+% References
+%==============================================================================
+
+\begin{thebibliography}{99}
+
+\bibitem[Aronszajn(1950)]{Aronszajn1950}
+Aronszajn, N. (1950).
+\newblock Theory of reproducing kernels.
+\newblock \emph{Transactions of the American Mathematical Society}, 68(3):337--404.
+
+\bibitem[Berlinet and Thomas-Agnan(2004)]{Berlinet2004}
+Berlinet, A. and Thomas-Agnan, C. (2004).
+\newblock \emph{Reproducing Kernel Hilbert Spaces in Probability and Statistics}.
+\newblock Kluwer Academic Publishers, Boston.
+
+\bibitem[Cencov(1962)]{Cencov1962}
+Cencov, N.N. (1962).
+\newblock Evaluation of an unknown distribution density from observations.
+\newblock \emph{Soviet Mathematics}, 3:1559--1562.
+
+\bibitem[Cucker and Smale(2002)]{Cucker2002}
+Cucker, F. and Smale, S. (2002).
+\newblock On the mathematical foundations of learning.
+\newblock \emph{Bulletin of the American Mathematical Society}, 39(1):1--49.
+
+\bibitem[Dunford and Schwartz(1988)]{Dunford1988}
+Dunford, N. and Schwartz, J.T. (1988).
+\newblock \emph{Linear Operators, Part II: Spectral Theory}.
+\newblock Wiley-Interscience, New York.
+
+\bibitem[Efromovich(1999)]{Efromovich1999}
+Efromovich, S. (1999).
+\newblock \emph{Nonparametric Curve Estimation: Methods, Theory, and Applications}.
+\newblock Springer-Verlag, New York.
+
+\bibitem[Fan and Gijbels(1996)]{Fan1996}
+Fan, J. and Gijbels, I. (1996).
+\newblock \emph{Local Polynomial Modelling and Its Applications}.
+\newblock Chapman \& Hall, London.
+
+\bibitem[Fukumizu et al.(2009)]{Fukumizu2009}
+Fukumizu, K., Bach, F.R., and Gretton, A. (2009).
+\newblock Kernel methods for measuring independence.
+\newblock \emph{Journal of Machine Learning Research}, 10:1391--1434.
+
+\bibitem[Goldenshluger and Lepski(2011)]{Goldenshluger2011}
+Goldenshluger, A. and Lepski, O. (2011).
+\newblock Bandwidth selection in kernel density estimation: Oracle inequalities and adaptive minimax optimality.
+\newblock \emph{Annals of Statistics}, 39(3):1608--1632.
+
+\bibitem[Halmos(1982)]{Halmos1982}
+Halmos, P.R. (1982).
+\newblock \emph{A Hilbert Space Problem Book}.
+\newblock Springer-Verlag, New York, second edition.
+
+\bibitem[Ismail(2005)]{Ismail2005}
+Ismail, M.E.H. (2005).
+\newblock \emph{Classical and Quantum Orthogonal Polynomials in One Variable}.
+\newblock Cambridge University Press, Cambridge.
+
+\bibitem[Johnstone(2017)]{Johnstone2017}
+Johnstone, I.M. (2017).
+\newblock Gaussian estimation: Sequence and wavelet models.
+\newblock Unpublished manuscript.
+
+\bibitem[Kondor and Trivedi(2008)]{Kondor2008}
+Kondor, R. and Trivedi, K.S. (2008).
+\newblock On the algebraic structure of group invariant kernels.
+\newblock \emph{Journal of Machine Learning Research}, 9:1433--1454.
+
+\bibitem[Le Cam(1986)]{LeCam1986}
+Le Cam, L. (1986).
+\newblock \emph{Asymptotic Methods in Statistical Decision Theory}.
+\newblock Springer-Verlag, New York.
+
+\bibitem[Lepski et al.(1997)]{Lepski1997}
+Lepski, O.V., Mammen, E., and Spokoiny, V.G. (1997).
+\newblock Optimal spatial adaptation to inhomogeneous smoothness.
+\newblock \emph{Annals of Statistics}, 25(3):929--947.
+
+\bibitem[Levin and Lubinsky(2001)]{Levin2001}
+Levin, E. and Lubinsky, D.S. (2001).
+\newblock \emph{Orthogonal Polynomials for Exponential Weights}.
+\newblock Springer-Verlag, New York.
+
+\bibitem[Mehler(1866)]{Mehler1866}
+Mehler, F.G. (1866).
+\newblock Ueber die Entwicklung einer Function von beliebig vielen Variablen nach Laplaceschen Functionen h\"oherer Ordnung.
+\newblock \emph{Journal f\"ur die reine und angewandte Mathematik}, 66:161--176.
+
+\bibitem[Nikolski(2002)]{Nikolski2002}
+Nikolski, N.K. (2002).
+\newblock \emph{Operators, Functions, and Systems: An Easy Reading}.
+\newblock American Mathematical Society, Providence.
+
+\bibitem[Perelomov(1986)]{Perelomov1986}
+Perelomov, A. (1986).
+\newblock \emph{Generalized Coherent States and Their Applications}.
+\newblock Springer-Verlag, Berlin.
+
+\bibitem[Riesz and Sz.-Nagy(1955)]{Riesz1955}
+Riesz, F. and Sz.-Nagy, B. (1955).
+\newblock \emph{Functional Analysis}.
+\newblock Frederick Ungar Publishing, New York.
+
+\bibitem[Sch\"olkopf and Smola(2002)]{Scholkopf2002}
+Sch\"olkopf, B. and Smola, A.J. (2002).
+\newblock \emph{Learning with Kernels}.
+\newblock MIT Press, Cambridge, MA.
+
+\bibitem[Silverman(1986)]{Silverman1986}
+Silverman, B.W. (1986).
+\newblock \emph{Density Estimation for Statistics and Data Analysis}.
+\newblock Chapman \& Hall, London.
+
+\bibitem[Smola et al.(2000)]{Smola2000}
+Smola, A.J., Ovari, Z.L., and Williamson, R.C. (2000).
+\newblock Regularization with dot-product kernels.
+\newblock In \emph{Advances in Neural Information Processing Systems 13}, pages 308--314.
+
+\bibitem[Steinwart and Christmann(2008)]{Steinwart2008}
+Steinwart, I. and Christmann, A. (2008).
+\newblock \emph{Support Vector Machines}.
+\newblock Springer-Verlag, New York.
+
+\bibitem[Stone(1982)]{Stone1982}
+Stone, C.J. (1982).
+\newblock Optimal global rates of convergence for nonparametric regression.
+\newblock \emph{Annals of Statistics}, 10(4):1040--1053.
+
+\bibitem[Szeg\"o(1975)]{Szego1975}
+Szeg\"o, G. (1975).
+\newblock \emph{Orthogonal Polynomials}.
+\newblock American Mathematical Society, Providence, fourth edition.
+
+\bibitem[Tsybakov(2009)]{Tsybakov2009}
+Tsybakov, A.B. (2009).
+\newblock \emph{Introduction to Nonparametric Estimation}.
+\newblock Springer-Verlag, New York.
+
+\bibitem[van der Vaart and Wellner(1996)]{vanderVaart1996}
+van der Vaart, A.W. and Wellner, J.A. (1996).
+\newblock \emph{Weak Convergence and Empirical Processes}.
+\newblock Springer-Verlag, New York.
+
+\bibitem[Villani(2009)]{Villani2009}
+Villani, C. (2009).
+\newblock \emph{Optimal Transport: Old and New}.
+\newblock Springer-Verlag, Berlin.
+
+\bibitem[Wahba(1990)]{Wahba1990}
+Wahba, G. (1990).
+\newblock \emph{Spline Models for Observational Data}.
+\newblock SIAM, Philadelphia.
+
+\bibitem[Wand and Jones(1995)]{Wand1995}
+Wand, M.P. and Jones, M.C. (1995).
+\newblock \emph{Kernel Smoothing}.
+\newblock Chapman \& Hall, London.
+
+\bibitem[Wasserman(2006)]{Wasserman2006}
+Wasserman, L. (2006).
+\newblock \emph{All of Nonparametric Statistics}.
+\newblock Springer-Verlag, New York.
+
+\bibitem[Yu(1997)]{Yu1997}
+Yu, B. (1997).
+\newblock Assouad, Fano, and Le Cam.
+\newblock In \emph{Festschrift for Lucien Le Cam}, pages 423--435. Springer.
+
+\end{thebibliography}
+
+\end{document}

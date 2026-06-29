@@ -1,0 +1,417 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,urlcolor=blue!60!black}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{assumption}{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\KL}{\mathrm{KL}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\dimm}{dim}
+
+\title{\textbf{Research Plan --- Minimax Estimation on Orbit Spaces:\\
+the Exact Rate Gain from Invariance via Orbital MDL\\
+and Concentration in the Multiplicative Twin Space}}
+\author{J.~Nemb\'e \\ \small (plan / extended abstract --- not for submission as is)}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This is a \emph{plan}, not a finished article: it fixes the target theorems and
+the proof architecture, reusing the building blocks already validated and
+corrected (orbital Glivenko--Cantelli/Donsker; Barron--Cover/Hellinger oracle
+inequality; Fano lower bound). The thesis is that orbit-based inference does
+carry genuine added value, but \emph{not} where it was originally placed. A
+global gauge conjugation is an isomorphism and cannot improve a convergence
+theorem; the value appears only when the orbit structure genuinely reduces the
+\emph{effective dimension} of the problem. We make this precise: for a
+$G$-invariant target on $E$, the minimax risk is governed by
+$d_{\mathrm{eff}}=\dimm(E/G)=\dimm E-\dimm(\text{orbit})$, and is achieved
+adaptively by an \emph{orbital minimum-description-length} estimator. The three
+tools of the program are slotted in their correct roles: (1) data complexity
+$\to$ \emph{metric entropy of the quotient}; (2) candidate complexity $\to$
+\emph{orbital approximation / description length}; (3) concentration in twin
+spaces $\to$ the \emph{multiplicative} (logarithmic-twin) space of Hellinger
+affinities, where the Barron--Cover partition-function bound is a genuine
+large-deviation estimate. The \emph{distinctive contribution} we target is the
+combination of the rate gain with a \emph{multiplicative/heavy-tailed} data
+regime (positive intensities, compositional data): there the affinity coordinate
+is canonical and scale-invariant, and the orbital MDL estimator attains the same
+gained rate where identity-coordinate concentration fails --- a regime outside
+the existing invariance-gain literature. A frank novelty assessment versus the
+recent ``sample-complexity gain from invariance'' literature closes the plan.
+\end{abstract}
+
+\tableofcontents
+
+\section{The conceptual correction (why the program is sound but was misplaced)}
+
+A twin space $(E,\odot_\phi)$ is the image of a classical structure under a
+bijection $\phi$ (the Transfer Theorem). Hence any concentration/large-deviation
+statement ``in the twin space'' is the exact push-forward of a classical one:
+conjugation by a bijection is an isomorphism and creates no information, tightens
+no bound, and cannot lower the effective sample size below the number of
+independent observations. This single fact explains every error corrected in the
+source notes (the spurious $\sqrt{m}$ sample inflation; the unconditional KL
+oracle inequality; the $\sup$ orbital metric).
+
+\medskip
+\noindent\textbf{Where the value actually is.} Two places, both used below:
+\begin{enumerate}[label=(\roman*)]
+\item \emph{Dimension reduction.} When $G$ acts with \emph{positive-dimensional}
+orbits, the invariant problem genuinely lives on the lower-dimensional quotient
+$E/G$. The minimax rate then improves from $n^{-2s/(2s+D)}$ to
+$n^{-2s/(2s+d_{\mathrm{eff}})}$. For a \emph{finite} group the orbits are
+$0$-dimensional, $d_{\mathrm{eff}}=D$, and the gain is only a constant factor ---
+exactly consistent with the corrected orbit-averaging theorem (variance reduced
+by at most $|G|$, never the rate).
+\item \emph{The right twin space for concentration.} The Hellinger affinity
+$\rho(P,Q)=\int\sqrt{dP\,dQ}$ is \emph{multiplicative} over products,
+$\rho(P^{\otimes n},Q^{\otimes n})=\rho(P,Q)^n$. Thus $-\log\rho$ is additive:
+the natural ``twin sum'' of evidence is the multiplication of likelihood ratios,
+i.e.\ addition in the logarithmic-twin coordinate. The Barron--Cover/Kraft
+partition-function bound is precisely a Cram\'er-type large-deviation estimate in
+\emph{this} twin space --- not in the data space. This is the legitimate form of
+the third pillar.
+\end{enumerate}
+
+\section{Setting and standing assumptions}
+
+\begin{assumption}[Geometry and group]\label{ass:geo}
+$(E,\rho_E)$ is a compact metric space (typically a compact Riemannian manifold
+of dimension $D$). A compact group $G$ acts continuously on $E$ by isometries,
+with closed orbits; generic orbits have dimension $r:=\dimm(G\cdot x)$. The
+quotient $E/G$ is a compact metric space for the \emph{orbital (infimum) metric}
+\[
+d_G([x],[y]) := \inf_{g\in G}\rho_E(x,\,g\cdot y),
+\]
+(the corrected metric --- the supremum form is not well defined on the quotient),
+with covering dimension $d_{\mathrm{eff}}:=\dimm(E/G)=D-r$ (for a smooth proper
+action).
+\end{assumption}
+
+\begin{assumption}[Reference measure and invariant class]\label{ass:class}
+Fix a $G$-invariant base measure $\mu$ on $E$ with push-forward $\mu_G:=\pi_*\mu$
+on $E/G$, $\pi:E\to E/G$. The target is \emph{known to be $G$-invariant},
+$f^\star=\tilde f^\star\circ\pi$, and $\tilde f^\star$ lies in the H\"older (or
+Sobolev) ball $\Sigma(s,L)$ of order $s>0$, radius $L$, on $(E/G,d_G,\mu_G)$. We
+write $\Sigma_{\mathrm{inv}}(s,L)$ for the pulled-back invariant class on $E$.
+\end{assumption}
+
+\begin{remark}
+Assumption~\ref{ass:class} (the target is invariant) is the \emph{structural
+prior} that makes the gain real; without it, orbit projection estimates only the
+invariant part $\pi_*P^\star$ and there is nothing to gain.
+\end{remark}
+
+\section{Tool 1 --- data complexity as metric entropy of the quotient}
+
+\begin{lemma}[Orbital covering numbers]\label{lem:cov}
+Under Assumptions~\ref{ass:geo}--\ref{ass:class}, the invariant class obeys
+\[
+\log N\big(\varepsilon,\ \Sigma_{\mathrm{inv}}(s,L),\ \|\cdot\|_\infty\big)
+\ \asymp\ \Big(\tfrac{L}{\varepsilon}\Big)^{d_{\mathrm{eff}}/s},
+\]
+governed by $d_{\mathrm{eff}}=\dimm(E/G)$, not by $D$.
+\end{lemma}
+
+\noindent\emph{Proof sketch.} A $G$-invariant function on $E$ is a function on
+$E/G$; cover $(E/G,d_G)$ by $\asymp(1/\varepsilon)^{d_{\mathrm{eff}}}$ balls and
+apply the standard entropy bound for H\"older balls on a
+$d_{\mathrm{eff}}$-dimensional metric space. This is the corrected covering-number
+lemma of the orbital-estimation note, restricted to the quotient. \hfill$\square$
+
+\section{Tool 2 --- candidate complexity by orbital approximation (description length)}
+
+\begin{lemma}[Orbital sieve and twin Jackson bound]\label{lem:sieve}
+There is a countable family of $G$-invariant models $\{\mathcal M_m\}_{m\in\mathcal I}$
+(invariant histograms/wavelets at resolution $2^k$ pulled back from $E/G$;
+$m=(k,\theta)$) with
+\[
+\dimm\mathcal M_k\ \asymp\ 2^{k\,d_{\mathrm{eff}}},\qquad
+\inf_{q\in\mathcal M_k}\KL(P^\star\|Q)\ \le\ C\,L^2\,2^{-2ks}
+\quad(f^\star\in\Sigma(s,L)),
+\]
+and description lengths $L(m)$ satisfying Kraft $\sum_m 2^{-L(m)}\le1$ with
+$L(k,\theta)\asymp \dimm\mathcal M_k\cdot\log(\cdot)$.
+\end{lemma}
+
+\noindent\emph{Proof sketch.} Pull a standard linear sieve on $E/G$ back through
+$\pi$; invariance is automatic. The approximation (Jackson) bound is the
+classical one on the $d_{\mathrm{eff}}$-dimensional quotient. Coding the
+resolution $k$ and the cell counts gives a prefix code; replace $L$ by $2L$ to
+secure the half-exponent Kraft condition $\sum 2^{-L(m)/2}\le1$ used in
+Tool~3. This is the orbital realization of ``choosing the candidate function from
+the orbit structure.'' \hfill$\square$
+
+\section{Tool 3 --- concentration in the multiplicative twin space}
+
+\begin{proposition}[Affinity is the twin sum of evidence]\label{prop:affinity}
+For the Hellinger affinity $\rho(P,Q)=\int\sqrt{dP\,dQ}\,d\mu$,
+$\rho(P^{\otimes n},Q^{\otimes n})=\rho(P,Q)^n$; equivalently
+$-\log\rho(P^{\otimes n},Q^{\otimes n})=n\,(-\log\rho(P,Q))$. Concentration of
+log-likelihood ratios is therefore additive in the logarithmic-twin coordinate,
+and the Kraft partition-function bound
+\[
+\E_{P^\star}\!\Big[2^{-L(\widehat m)/2}\textstyle\prod_{i=1}^n
+\sqrt{\widehat f(X_i)/f^\star(X_i)}\Big]\ \le\ \sum_m 2^{-L(m)/2}\,\rho(f^\star,f_m)^n\ \le\ 1
+\]
+is a Cram\'er-type large-deviation estimate in the multiplicative twin space
+$(\R_{>0},\times)$.
+\end{proposition}
+
+This is the corrected, well-posed third pillar: the relevant non-additive
+structure is the multiplicative space of affinities/likelihood ratios, where the
+``twin sum'' genuinely is multiplication.
+
+\begin{remark}[Why the affinity, and not a free coordinate choice]\label{rem:nofreelunch}
+The companion analysis (\texttt{concentration\_diffeomorphism\_corrected})
+establishes two facts that make Proposition~\ref{prop:affinity} the \emph{only}
+legitimate form of the third pillar. First, \emph{no free lunch}: for a fixed
+functional the bounded-difference/sub-Gaussian constants are
+\emph{coordinate-intrinsic}, so a gauge change cannot tighten a concentration
+bound (and the unnormalised optimum $\inf_\phi F[\mu,\phi]=0$ is degenerate).
+Hence concentration cannot, by itself, improve a convergence rate --- which is
+exactly why the rate gain here comes from dimension reduction (Tools~1--2), not
+from Tool~3. Second, the affinity $\rho$ is the canonical \emph{scale-invariant}
+concentration object: $-\log\rho$ is additive and unit-free, curing the
+scale-dependence that invalidated coordinate ``optimisation''. Tool~3 therefore
+serves to make the oracle inequality self-contained, not to create rate.
+\end{remark}
+
+\section{Main results (targets)}
+
+\begin{theorem}[Upper bound: adaptive orbital MDL]\label{thm:upper}
+Let $\widehat f=f_{\widehat m}$ be the orbital MDL estimator
+\[
+\widehat m\in\argmin_{m\in\mathcal I}\Big\{-\textstyle\sum_{i=1}^n\log f_m(X_i)+L(m)\log2\Big\}.
+\]
+Then, for every $f^\star\in\Sigma_{\mathrm{inv}}(s,L)$ and every $s\in(0,s_{\max}]$,
+\[
+\E\big[h^2(P^\star,\widehat f)\big]
+\ \le\ C\,\inf_{k}\Big\{L^2\,2^{-2ks}+\tfrac{2^{k\,d_{\mathrm{eff}}}\log n}{n}\Big\}
+\ \le\ C'\,\Big(\tfrac{\log n}{n}\Big)^{2s/(2s+d_{\mathrm{eff}})},
+\]
+\emph{adaptively} (the estimator does not use $s$); the $\log n$ is the two-stage
+description-length / adaptation cost, and is removed (exact rate, adaptively) by
+the projection estimators of \texttt{orbital\_upper\_bound\_proof}~\S6.
+\end{theorem}
+
+\noindent\emph{Proof sketch.} The corrected Barron--Cover argument
+(Proposition~\ref{prop:affinity}) yields the Hellinger oracle inequality
+$\E[h^2(P^\star,\widehat f)]\le C\inf_m\{\inf_{q\in\mathcal M_m}\KL(P^\star\|q)+\log2\,L(m)/n\}$.
+Insert the bias (Lemma~\ref{lem:sieve}) and $L(m)/n\asymp 2^{k d_{\mathrm{eff}}}/n$,
+then optimise $k$: $2^{k^\star}\asymp n^{1/(2s+d_{\mathrm{eff}})}$. Adaptivity is
+automatic because the penalised criterion selects $k$. \hfill$\square$
+
+\begin{theorem}[Lower bound: Fano on the quotient]\label{thm:lower}
+\[
+\inf_{\widehat f}\ \sup_{f^\star\in\Sigma_{\mathrm{inv}}(s,L)}
+\E\big[h^2(P^\star,\widehat f)\big]\ \ge\ c\,n^{-2s/(2s+d_{\mathrm{eff}})}.
+\]
+\end{theorem}
+
+\noindent\emph{Proof sketch.} Build $M\asymp\exp(2^{k d_{\mathrm{eff}}})$ invariant
+perturbations $f_\omega=f_0\big(1+\delta\sum_{j}\omega_j\,\psi_{k,j}\big)$ with
+$\omega\in\{\pm1\}^{N}$, $N\asymp2^{k d_{\mathrm{eff}}}$, where the bumps
+$\psi_{k,j}$ are supported on disjoint balls of the \emph{quotient}
+$(E/G,d_G)$ pulled back to $E$ (hence automatically $G$-invariant, by the
+\emph{infimum} metric of Assumption~\ref{ass:geo}). A Varshamov--Gilbert subset
+gives pairwise Hellinger separation $\beta\asymp\delta^2 2^{-k d_{\mathrm{eff}}}\cdot N\asymp\delta^2$
+and pairwise KL $\le\alpha$ with $n\alpha\asymp n\delta^2$. Using the
+\emph{corrected} Fano bound (the $n\alpha$ factor, not $\alpha$), balance
+$\delta^2\asymp 2^{-2ks}$ and $2^{k}\asymp n^{1/(2s+d_{\mathrm{eff}})}$. \hfill$\square$
+
+\begin{theorem}[Exact rate gain from invariance]\label{thm:main}
+Under Assumptions~\ref{ass:geo}--\ref{ass:class},
+\[
+\boxed{\ \mathcal R_n^\star\big(\Sigma_{\mathrm{inv}}(s,L)\big)\ \asymp\ n^{-2s/(2s+d_{\mathrm{eff}})},
+\qquad d_{\mathrm{eff}}=\dimm(E/G)=D-r.\ }
+\]
+The invariant rate strictly improves on the non-invariant rate
+$n^{-2s/(2s+D)}$ \emph{iff} the orbits are positive-dimensional ($r>0$); for
+finite $G$ ($r=0$) the gain is only a constant factor.
+\end{theorem}
+
+\begin{remark}[Exact rate, adaptively: the $\log$ is removed]
+$\mathcal R_n^\star$ denotes the minimax rate, and the box is now an honest
+two-sided match. The lower bound (Theorem~\ref{thm:lower}, proved in
+\texttt{orbital\_lower\_bound\_proof}) is $n^{-2s/(2s+d_{\mathrm{eff}})}$ exactly.
+The \emph{adaptive} orbital MDL of Theorem~\ref{thm:upper} attains it up to a
+$\log n$ two-stage/coding cost; but this $\log$ is \emph{not} intrinsic and is
+removed in \texttt{orbital\_upper\_bound\_proof} (\S6): a single-resolution
+\emph{projection} estimator attains $n^{-2s/(2s+d_{\mathrm{eff}})}$ exactly for
+known $s$, and a \emph{penalised projection} estimator (Birg\'e--Massart) attains
+it \emph{adaptively}. The reason is structural --- a projection / penalised
+estimator pays the model's metric complexity $D_k/n\asymp2^{kd_{\mathrm{eff}}}/n$,
+whereas the MDL code additionally pays $\log(1/\delta)\asymp\log n$ bits to
+quantise each coefficient; the geometric growth $D_k\asymp2^{kd_{\mathrm{eff}}}$
+keeps the selection weights summable with linear-in-$D_k$ exponents, so no $\log$
+re-enters. Hence the box holds at the \emph{exact} rate, both for known $s$ and
+adaptively.
+\end{remark}
+
+\section{Examples calibrating the gain (and the honest negative cases)}
+
+\begin{enumerate}[label=(\alph*)]
+\item \textbf{Radial densities.} $E=\R^D$ (or $S^D$), $G=SO(D)$:
+$d_{\mathrm{eff}}=1$, rate $n^{-2s/(2s+1)}$ vs.\ $n^{-2s/(2s+D)}$ --- maximal gain.
+\item \textbf{Partial translation invariance.} $E=\mathbb T^D$, $G=\mathbb T^k$:
+$d_{\mathrm{eff}}=D-k$.
+\item \textbf{Finite symmetry (negative control).} Compositional data on the
+simplex with $G=S_d$, or $m$-fold rotational symmetry $G=\mathbb Z_m$: $r=0$,
+\emph{no rate change}, only a constant ($1/|G|$) improvement --- exactly the
+corrected orbit-averaging statement. This example is kept deliberately, to show
+the theory predicts \emph{when there is no gain}.
+\item \textbf{Deformed-operation variant.} On positive/compositional data the
+natural ``addition'' is a twin operation $\odot$ (log-ratio, Einstein addition);
+$\Sigma(s,L)$ is then smoothness in the twin coordinate. The same theorems hold
+with the gauge built into $\pi$, illustrating the non-additive reach.
+\end{enumerate}
+
+\section{The multiplicative / heavy-tailed extension (the distinctive contribution)}
+\label{sec:multiplicative}
+
+This is the angle that sets the paper apart from the existing invariance-gain
+literature, which works in $L^2$/Sobolev/RKHS over Euclidean or bounded domains.
+Here the data are \emph{positive} or \emph{compositional}, the natural group
+acts through a twin (non-additive) operation, and the identity coordinate admits
+no usable concentration; yet the gained rate persists.
+
+\begin{assumption}[Multiplicative regime]\label{ass:mult}
+$E\subseteq(0,\infty)^D$ (or the simplex $\Delta^{D-1}$), with the gauge
+$\phi=\log$ (resp.\ the centred log-ratio) so that the base operation is the twin
+sum $x\odot y=\phi^{-1}(\phi(x)+\phi(y))$. The group $G$ acts by isometries of the
+twin coordinate $\phi(E)$, with orbital metric and quotient as in
+Assumption~\ref{ass:geo} computed in the $\phi$-chart; $d_{\mathrm{eff}}=\dimm(\phi(E)/G)$.
+Smoothness $\Sigma(s,L)$ is measured in the twin coordinate.
+\end{assumption}
+
+\begin{lemma}[Matched-coordinate concentration; from the corrected concentration note]\label{lem:matched}
+Let the per-coordinate (log-)ranges be $\log(b_i/a_i)$. Then for the
+multiplicative aggregate the deviation of $\log$ concentrates at the
+\emph{dimensionless} scale $\sum_i\log^2(b_i/a_i)$, and for heavy-tailed
+positive data with sub-Gaussian $\log X$ the affinity bound of
+Proposition~\ref{prop:affinity} holds in the $\phi$-chart even when no
+identity-coordinate (Hoeffding/Bernstein) bound exists. The improvement over the
+identity chart is \emph{qualitative} (finite vs.\ infinite), not a numerical
+factor on a common functional.
+\end{lemma}
+
+\noindent\emph{Proof sketch.} Apply Theorems ``product''/``heavy'' of
+\texttt{concentration\_diffeomorphism\_corrected} in the $\phi$-chart; the
+affinity is computed with respect to the twin-transported reference measure, and
+Proposition~\ref{prop:affinity} is unchanged because $\rho$ is invariant under
+the change of variables. \hfill$\square$
+
+\begin{theorem}[Orbital MDL on multiplicative data]\label{thm:mult}
+Under Assumptions~\ref{ass:geo},\ref{ass:class},\ref{ass:mult}, the orbital MDL
+estimator built on the $\phi$-chart sieve satisfies, for
+$f^\star\in\Sigma_{\mathrm{inv}}(s,L)$,
+\[
+\E\big[h^2(P^\star,\widehat f)\big]\ \le\ C'\,\Big(\tfrac{\log n}{n}\Big)^{2s/(2s+d_{\mathrm{eff}})},
+\]
+adaptively, with $d_{\mathrm{eff}}=\dimm(\phi(E)/G)$. The rate is identical to the
+additive case (Theorem~\ref{thm:upper}); the contribution is that it holds on
+positive/compositional, possibly heavy-tailed, data where identity-coordinate
+methods give no bound --- because the affinity oracle step is tail-free
+(\texttt{orbital\_upper\_bound\_proof}, Lemma on the partition bound).
+\end{theorem}
+
+\noindent\emph{Proof sketch.} Run the proof of Theorem~\ref{thm:upper} verbatim
+in the $\phi$-chart: Lemma~\ref{lem:cov} (quotient entropy) and
+Lemma~\ref{lem:sieve} (twin Jackson) are stated metrically and transport through
+$\phi$; the oracle inequality uses the scale-invariant affinity bound
+(Proposition~\ref{prop:affinity}, Lemma~\ref{lem:matched}); optimise $k$. The
+lower bound (Theorem~\ref{thm:lower}) transports identically since $h^2$ is
+invariant under the change of variables. \hfill$\square$
+
+\begin{remark}[What is genuinely new here]
+The rate gain itself (Theorem~\ref{thm:main}) overlaps known results; what is new
+is (a) the \emph{adaptive MDL / Hellinger} route, and (b)
+Theorem~\ref{thm:mult}: the gain on \emph{multiplicative / heavy-tailed} data via
+the canonical affinity coordinate, a regime the additive invariance-gain
+literature does not cover. Concrete instances: positive Poisson/point-process
+intensities, compositional (simplex) data, and multiplicative-noise diffusions
+--- the very models of the corrected MDL paper.
+\end{remark}
+
+\section{Paper outline (once the plan is executed)}
+\begin{enumerate}[label=\arabic*.]
+\item Introduction: invariance as effective-dimension reduction; the
+multiplicative-twin view of evidence.
+\item Geometry of the quotient and the orbital metric (Assumption~\ref{ass:geo}).
+\item Tool 1: quotient entropy (Lemma~\ref{lem:cov}).
+\item Tool 2: orbital sieve, twin Jackson, description length (Lemma~\ref{lem:sieve}).
+\item Tool 3: affinity concentration (Proposition~\ref{prop:affinity}).
+\item Upper bound, adaptivity (Theorem~\ref{thm:upper}).
+\item Lower bound (Theorem~\ref{thm:lower}); exact rate (Theorem~\ref{thm:main}).
+\item Examples; finite-group negative control.
+\item \textbf{Multiplicative/heavy-tailed extension} (Section~\ref{sec:multiplicative}):
+the distinctive contribution --- matched affinity coordinate, orbital MDL on
+positive/compositional data (Theorem~\ref{thm:mult}).
+\item Discussion: deformed operations; relation to invariant kernel methods.
+\end{enumerate}
+
+\section{Frank novelty assessment (read before writing)}
+\begin{itemize}[leftmargin=1.4em]
+\item \textbf{What is \emph{not} new.} The bare statement ``invariance lowers the
+effective dimension to $\dimm(E/G)$'' is, in the $L^2$/Sobolev and kernel-ridge
+settings, essentially established (Tahmasebi \& Jegelka, \emph{The exact sample
+complexity gain from invariances}, NeurIPS 2023; Bietti, Venturi, Bruna; Elesedy
+\& Zaidi). Theorem~\ref{thm:main} in those settings would be a reformulation and
+should not be sold as new.
+\item \textbf{What can be genuinely new.} (i) The \emph{information-theoretic /
+MDL} route: an \emph{adaptive} orbital description-length estimator achieving the
+gain in \emph{Hellinger} risk, with the rate emerging from the Kraft
+partition-function bound rather than from RKHS spectra. (ii) The extension to
+\emph{deformed (twin) operations}, where the invariance is with respect to a
+non-additive group of operations and smoothness is measured in the twin
+coordinate --- a regime outside the cited works. (iii) The unifying
+\emph{multiplicative-twin-space} formulation of concentration
+(Proposition~\ref{prop:affinity}) tying the program's third pillar to a standard
+large-deviation principle.
+\item \textbf{Recommendation.} Build the paper around (i)+(ii) with
+Theorem~\ref{thm:mult} (Section~\ref{sec:multiplicative}) as the headline:
+\emph{adaptive orbital MDL for invariant density estimation on multiplicative /
+heavy-tailed data}. Theorem~\ref{thm:main} calibrates the gain (and is positioned
+explicitly as a re-derivation in the cited additive setting), while the
+multiplicative regime is the part with clear, uncontested added value. The
+corrected concentration note supplies the self-contained, scale-invariant Tool~3
+(Remark~\ref{rem:nofreelunch}).
+\end{itemize}
+
+\section*{Remaining work / risks}
+\begin{itemize}[leftmargin=1.4em]
+\item Make Lemma~\ref{lem:sieve} fully rigorous on a curved quotient (orbifold
+points where the action is not free: $E/G$ may be a stratified space, and
+$d_{\mathrm{eff}}$ is the dimension of the top stratum).
+\item Confirm the Hellinger oracle constant and the half-Kraft normalisation
+(Tool~3) for the orbital sieve.
+\item Decide the deformed-operation scope (which gauges $\phi$ keep
+$\Sigma(s,L)$ a genuine smoothness class).
+\item Literature due diligence on the exact-gain papers to pin the precise delta.
+\item Multiplicative regime (Section~\ref{sec:multiplicative}): integrability of
+the twin-transported reference measure, and conditions on the tails of $\log X$
+ensuring the affinity bound and the twin Jackson estimate both hold.
+\end{itemize}
+
+\end{document}

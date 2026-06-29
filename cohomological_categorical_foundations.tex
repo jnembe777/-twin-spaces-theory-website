@@ -1,0 +1,327 @@
+\documentclass[11pt,twocolumn]{article}
+\usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,mathrsfs}
+\usepackage[dvipsnames]{xcolor}\usepackage{booktabs,hyperref,enumitem}
+\setlist{nosep,leftmargin=1.5em}
+\hypersetup{colorlinks=true,linkcolor=blue!70!black,citecolor=green!50!black}
+\theoremstyle{plain}\newtheorem{theorem}{Theorem}\newtheorem{proposition}[theorem]{Proposition}\newtheorem{corollary}[theorem]{Corollary}\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\HH}{\operatorname{HH}}
+\newcommand{\Aut}{\operatorname{Aut}}
+\newcommand{\End}{\operatorname{End}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\Ker}{\operatorname{Ker}}
+\newcommand{\GL}{\operatorname{GL}}
+\newcommand{\Spec}{\operatorname{Spec}}
+
+\title{\textbf{Cohomological and Categorical Foundations\\of Twin Operations:\\Deformation Theory, Rigidity, Quantum Groups,\\and Algebraic-Geometric Extensions}}
+\author{Jocelyn Nemb\'e\\
+\small Roots Insights Laboratory, Singapore\\
+\small National Institute of Management Sciences, Libreville\\
+\small \texttt{jnembe777@gmail.com, jnembe@root-insights.org}}
+\date{}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+We develop the cohomological and categorical foundations of twin operations $x \odot_g y = g^{-1}(g(x) \,\alpha\, g(y))$, the conjugated operations central to the twin spaces framework. Our principal results are:
+(1) the \textbf{deformation cohomology} of twin operations is controlled by Hochschild cohomology --- $\HH^1(G, \End(E))$ classifies infinitesimal deformations and $\HH^2(G, \End(E))$ contains obstructions to extension (Theorem~\ref{thm:cohom});
+(2) a \textbf{rigidity dichotomy} for finite group actions: either $L = G$ (all elements preserve $\alpha$, rigid case) or $[G:L] \geq 2$ (flexible case), decided by the stabilizer $L$ via orbit--stabilizer; this discrete flexibility is distinct from the infinitesimal cohomology $\HH^1$, which vanishes in the semisimple case (Theorem~\ref{thm:rigidity});
+(3) the quantum group $U_q(\mathfrak{sl}_2)$ is realized as a twin operation with $q \in \mathbb{C}^*$ as the group element (Theorem~\ref{thm:quantum});
+(4) twin operations form a \textbf{2-functor} from the groupoid of $G$-spaces to the 2-category of operation families (Theorem~\ref{thm:2functor});
+(5) $n$-ary twin operations carry a natural \textbf{operad structure} compatible with Hochschild cohomology (Theorem~\ref{thm:operad}).
+
+We extend the framework to algebraic geometry: the kernel ideal $\mathfrak{k}_G = \{r \in R : g \cdot r = r\}$ of a twin ring $(R, G)$ is the invariant subring $R^G$, connecting to the kernel concept of twin general relativity. Twin schemes are equivariant schemes in the sense of Mumford's GIT, and the cohomological obstruction of the Cramer article lives in the Brauer group of the invariant ring.
+\end{abstract}
+
+\noindent\textbf{Keywords:} twin operations, Hochschild cohomology, deformation theory, rigidity, quantum groups, operads, equivariant geometry
+
+\noindent\textbf{MSC 2020:} 20M30, 18M60, 18G60, 16E40, 17B37
+
+
+% ============================================================================
+\section{Introduction}
+% ============================================================================
+
+The twin operations $x \odot_g y = g^{-1}(g(x) \,\alpha\, g(y))$, introduced in the foundational theory of twin spaces~\cite{nembe2026vol1,nembe2026vol3}, appear throughout the ROOTS-INSIGHTS program: in information theory (orbit entropy~\cite{nembe2026vol16}), in relativity (Einstein addition as $\odot_g$ with $g = \mathrm{artanh}$~\cite{nembe2026vol17}), and in linear algebra (Cramer's rule with cohomological obstruction in $H^2(G, K_0^\times)$~\cite{nembe2026cramer}).
+
+This article develops the \emph{algebraic foundations}: what governs the space of twin operations, when are they rigid, how they relate to quantum groups, and what categorical and operadic structures they carry. We also establish the connection to equivariant algebraic geometry, showing that the twin framework provides a unified language that encompasses Mumford's geometric invariant theory~\cite{mumford1965}.
+
+
+% ============================================================================
+\section{Deformation Cohomology of Twin Operations}
+\label{sec:cohomology}
+% ============================================================================
+
+\begin{definition}[Hochschild Complex for Twin Operations]\label{def:hochschild}
+Let $(E, \alpha, G)$ be a magma with group action. The Hochschild cochain complex is $C^n(G, \End(E)) = \{f: G^n \to \End(E)\}$ with differential:
+\begin{align*}
+(\delta^n f)(g_1, \ldots, g_{n+1}) &= g_1 \cdot f(g_2, \ldots, g_{n+1}) \\
+&\quad + \sum_{i=1}^n (-1)^i f(g_1, \ldots, g_i g_{i+1}, \ldots, g_{n+1}) \\
+&\quad + (-1)^{n+1} f(g_1, \ldots, g_n)
+\end{align*}
+where $(g \cdot \phi)(x) = g \cdot \phi(g^{-1} \cdot x)$ is the conjugation action. The cohomology groups are $\HH^n(G, \End(E)) = \ker\delta^n / \mathrm{im}\,\delta^{n-1}$.
+\end{definition}
+
+\begin{theorem}[Deformation Cohomology]\label{thm:cohom}
+Let $(E, \alpha, G)$ be a magma with group action. Then:
+\begin{enumerate}[label=(\alph*)]
+    \item $\HH^0(G, \End(E)) = \End(E)^G$ is the ring of $G$-invariant endomorphisms.
+    \item $\HH^1(G, \End(E))$ classifies \textbf{infinitesimal deformations} of $\alpha$ through $G$: an element $[\eta] \in \HH^1$ corresponds to a first-order deformation $\alpha + \varepsilon\eta + O(\varepsilon^2)$ compatible with the $G$-action.
+    \item $\HH^2(G, \End(E))$ contains \textbf{obstructions}: given a first-order deformation $\eta$, the obstruction to extending it to second order is a class $[\omega(\eta)] \in \HH^2$. The deformation extends iff $[\omega(\eta)] = 0$.
+    \item The \textbf{linear subgroup} $L = \{g \in G : \odot_g = \alpha\}$ is the stabilizer subgroup $\mathrm{Stab}_G(\alpha)$ for the $G$-action on operations; it is a subgroup of $G$ (not a submodule of $\End(E)$), and the rigid case is $L = G$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+This follows the classical Gerstenhaber deformation theory~\cite{gerstenhaber1964} applied to the specific setting of conjugated operations.
+
+(a) $\HH^0 = \ker\delta^0 = \{\phi \in \End(E) : g \cdot \phi = \phi \;\forall g\} = \End(E)^G$.
+
+(b) An infinitesimal deformation of $\alpha$ compatible with $G$ is a family $\alpha_\varepsilon(x,y) = \alpha(x,y) + \varepsilon\eta(x,y) + O(\varepsilon^2)$ such that $g^{-1}(\alpha_\varepsilon(g \cdot x, g \cdot y))$ varies smoothly with $g$. The compatibility condition is $\delta^1\eta = 0$, and two deformations are equivalent iff they differ by $\delta^0\phi$ for some $\phi \in C^0$. So infinitesimal deformations = $\ker\delta^1/\mathrm{im}\,\delta^0 = \HH^1$.
+
+(c) Given $\eta$ with $\delta^1\eta = 0$, the second-order extension $\alpha + \varepsilon\eta + \varepsilon^2\mu$ requires $\delta^1\mu = -\frac{1}{2}[\eta, \eta]$ where $[\eta, \eta]$ is the Gerstenhaber bracket. The class $[\omega(\eta)] = [\frac{1}{2}[\eta,\eta]] \in \HH^2$ is the obstruction. If $[\omega] = 0$: $\exists \mu$ solving the equation.
+
+(d) $g \in L$ iff $\odot_g = \alpha$ iff $g^{-1}(\alpha(g \cdot x, g \cdot y)) = \alpha(x,y)$ for all $x,y$ iff $g$ commutes with $\alpha$ in the appropriate sense.
+\end{proof}
+
+\begin{corollary}[Connection to Cramer Obstruction]
+The cohomological obstruction $[c_P] \in H^2(G, K_0^\times)$ of the Cramer article~\cite{nembe2026cramer} is a special case: the coefficient module is $K_0^\times \subset \End(K_0)$, and $[c_P] = 0$ for Cramer's rule because the determinant is a natural transformation (hence $\eta = 0$, no deformation needed).
+\end{corollary}
+
+
+% ============================================================================
+\section{Rigidity Dichotomy}
+\label{sec:rigidity}
+% ============================================================================
+
+\begin{definition}[Orbit of Operations]\label{def:orbit-ops}
+The \textbf{orbit of $\alpha$ under $G$} is $\mathcal{O} = \{\odot_g : g \in G\} \cong G/L$ where $L = \{g : \odot_g = \alpha\}$ is the linear subgroup (the stabilizer of $\alpha$).
+\end{definition}
+
+\begin{theorem}[Rigidity Dichotomy]\label{thm:rigidity}
+Let $(E, \alpha, G)$ with $G$ finite. Exactly one of:
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{RIGID:} $\mathcal{O} = \{\alpha\}$, i.e., $L = G$. All elements of $G$ preserve $\alpha$.
+    \item \textbf{FLEXIBLE:} $|\mathcal{O}| \geq 2$, i.e., $[G:L] \geq 2$. There exist genuinely distinct twin operations.
+\end{enumerate}
+
+Detection criterion: the dichotomy is decided directly by the stabilizer, namely the rigid case occurs iff $L = G$, equivalently iff $G \subseteq \Aut(E,\alpha)$ (in the relevant sense). For abelian $G$:
+\begin{itemize}
+    \item If $\alpha$ is a group operation and $G \subseteq \Aut(E, \alpha)$: RIGID.
+    \item If $G \not\subseteq \Aut(E, \alpha)$: FLEXIBLE (and $[G:L]$ divides $|G|$).
+\end{itemize}
+\end{theorem}
+
+\begin{proof}
+The dichotomy is the orbit-stabilizer theorem: $|G| = |L| \cdot |\mathcal{O}|$, so $|\mathcal{O}| = 1$ or $|\mathcal{O}| \geq 2$.
+
+For the detection criterion, $\mathcal{O} = \{\alpha\}$ means $\odot_g = \alpha$ for all $g$, i.e.\ $L = G$; this is the orbit-stabilizer statement and requires no cohomology.
+
+For abelian $G$: if $G \subseteq \Aut(E, \alpha)$, then every $g \in G$ is an automorphism of $(E, \alpha)$, so $\odot_g = g^{-1} \circ \alpha \circ (g \times g) = \alpha$ (by the automorphism property). Thus $L = G$.
+\end{proof}
+
+\begin{remark}[Global flexibility vs.\ infinitesimal deformation]
+The dichotomy above concerns the \emph{discrete} orbit $\mathcal{O} = \{\odot_g\}$ and is governed entirely by the stabilizer $L$. It must not be conflated with $\HH^1(G,\End(E))$, which classifies \emph{infinitesimal} deformations of $\alpha$ (Theorem~\ref{thm:cohom}(b)). Indeed, when $G$ is finite with $\mathrm{char}(K)\nmid |G|$ the action is semisimple and Maschke's theorem forces $\HH^n(G,\End(E)) = 0$ for all $n \geq 1$, \emph{regardless of whether the case is rigid or flexible}. Thus $\HH^1$ does not detect global flexibility in the semisimple setting; vanishing infinitesimal cohomology and a nontrivial discrete orbit are entirely compatible.
+\end{remark}
+
+\begin{example}[Rigid vs.\ Flexible]
+$E = \mathbb{R}$, $\alpha = +$. (a) $G = \{x \mapsto a x : a \in \mathbb{Q}^\times\}$ (nonzero scalings): each $g$ is an automorphism of $(\mathbb{R},+)$, so $\odot_g(x,y) = a^{-1}(ax + ay) = x + y = +$ for all $g$. RIGID. (Note that translations $x\mapsto x+c$ are \emph{not} rigid: $\odot_g(x,y) = (x+c)+(y+c)-c = x+y+c \neq +$ for $c\neq 0$, since a translation is not an automorphism of $(\mathbb{R},+)$.) (b) $G = \langle \varphi \rangle$ with $\varphi = \exp$ (so $\varphi^{-1} = \log$, the monogenic exponential hierarchy): $\odot_\varphi(x,y) = \log(e^x + e^y)$ is the log-sum-exp operation $\neq +$. FLEXIBLE, with all iterates $\odot_{\varphi^n}$ distinct.
+\end{example}
+
+
+% ============================================================================
+\section{Quantum Group Realization}
+\label{sec:quantum}
+% ============================================================================
+
+\begin{theorem}[Quantum Groups as Twin Operations]\label{thm:quantum}
+The quantum group $U_q(\mathfrak{sl}_2)$ for $q \in \mathbb{C}^*$, $q \neq 1$, is realized as a twin operation space:
+\begin{itemize}
+    \item Base: $E = U(\mathfrak{sl}_2)$ (universal enveloping algebra).
+    \item Reference: $\alpha = [\cdot, \cdot]$ (Lie bracket).
+    \item Group: $G = (\mathbb{C}^*, \cdot)$ acting by $q$-scaling.
+    \item Twin bracket: $[X, Y]_q = q^{-1}(q \cdot [X, Y])$ where $q$ acts on $\mathfrak{sl}_2$ by rescaling the Cartan generator $H \mapsto H$, $E \mapsto q^{1/2}E$, $F \mapsto q^{-1/2}F$.
+\end{itemize}
+This produces the deformed relation $[E, F]_q = [H]_q$, where $[n]_q = (q^n - q^{-n})/(q - q^{-1})$ is the $q$-number and $[H]_q = (q^H - q^{-H})/(q-q^{-1}) = (K - K^{-1})/(q - q^{-1})$ with $K = q^H$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+The $q$-scaling action sends the standard Lie bracket relation $[E, F] = H$ to the $q$-deformed relation $[E, F]_q = [H]_q$, the defining $E$--$F$ relation of $U_q(\mathfrak{sl}_2)$ (cf.\ Drinfeld~\cite{drinfeld1987}, Jimbo~\cite{jimbo1985}). The twin operation framework provides a geometric interpretation: the deformation parameter $q$ is the group element, and the quantum bracket is the conjugated operation.
+\end{proof}
+
+\begin{remark}[Status of the correspondence]
+This is a \emph{formal} correspondence at the level of the deformed structure constants, not a literal isomorphism of algebras. Two caveats: (i) conjugating a fixed Lie bracket by an invertible rescaling yields a Lie algebra \emph{isomorphic} to the original, whereas $U_q(\mathfrak{sl}_2)$ is a genuine (non-trivial) Hopf-algebra deformation; the twin picture reproduces the deformed bracket relation but not the full Hopf structure (coproduct, antipode). (ii) In $U_q(\mathfrak{sl}_2)$ only the $E$--$F$ relation is $q$-deformed (to $[H]_q$); the Cartan relations $[H,E] = 2E$, $[H,F] = -2F$ remain \emph{undeformed} ($KEK^{-1} = q^2 E$, etc.). The framework should thus be read as a heuristic dictionary, motivating but not replacing the Drinfeld--Jimbo construction.
+\end{remark}
+
+\begin{remark}[Connection to Kontsevich formality]
+The Kontsevich formality theorem~\cite{kontsevich1997} states that every Poisson manifold admits a formal deformation quantization. In twin language: the deformation space $\mathcal{O}$ of the Poisson bracket under the group of formal diffeomorphisms is non-empty (FLEXIBLE), and the formality map identifies $\HH^2$ with the space of Poisson bivectors.
+\end{remark}
+
+
+% ============================================================================
+\section{Categorical Structure: Twin Operations as 2-Functor}
+\label{sec:categorical}
+% ============================================================================
+
+\begin{theorem}[2-Functor Structure]\label{thm:2functor}
+The assignment:
+\begin{align}
+\text{Objects:}&\quad (E, \alpha, G) \mapsto \{\odot_g : g \in G\} \\
+\text{1-morphisms:}&\quad \phi: (E_1, \alpha_1, G) \to (E_2, \alpha_2, G) \mapsto \{\phi_g\} \\
+\text{2-morphisms:}&\quad \text{natural transformations between families}
+\end{align}
+defines a 2-functor $\mathrm{Twin}: \mathbf{G\text{-}Mag} \to \mathbf{OpFam}$ from the 2-category of $G$-magmas to the 2-category of operation families.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Functoriality on 1-morphisms: if $\phi: (E_1, \alpha_1) \to (E_2, \alpha_2)$ is a $G$-equivariant magma homomorphism, then $\phi_g: (E_1, \odot_g^{(1)}) \to (E_2, \odot_g^{(2)})$ is a homomorphism for each $g$. Compatibility with composition follows from $\phi \circ \psi$ being $G$-equivariant iff both $\phi$ and $\psi$ are. The 2-morphisms (natural transformations) encode deformations of morphisms compatible with the $G$-action.
+\end{proof}
+
+
+% ============================================================================
+\section{Operadic Structure of $n$-ary Twin Operations}
+\label{sec:operads}
+% ============================================================================
+
+\begin{definition}[$n$-ary Twin Operation]\label{def:nary}
+For an $n$-ary operation $\alpha: E^n \to E$ and $g \in G$:
+$\alpha_g(x_1, \ldots, x_n) = g^{-1}(\alpha(g \cdot x_1, \ldots, g \cdot x_n))$.
+\end{definition}
+
+\begin{theorem}[Operad Structure]\label{thm:operad}
+The collection $\mathcal{P}(n) = \{\alpha_g^{(n)} : g \in G\}$ of $n$-ary twin operations carries the structure of an operad:
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{Composition:} $\gamma: \mathcal{P}(n) \times \mathcal{P}(k_1) \times \cdots \times \mathcal{P}(k_n) \to \mathcal{P}(k_1 + \cdots + k_n)$ by substitution.
+    \item \textbf{Equivariance:} $S_n$ acts on $\mathcal{P}(n)$ by permuting inputs; this action commutes with the $G$-transport.
+    \item \textbf{Unit:} $\mathrm{id} \in \mathcal{P}(1)$ is the identity.
+    \item \textbf{Cohomological compatibility:} The operadic cohomology of $\mathcal{P}$ is related to Hochschild cohomology by a spectral sequence:
+    $E_2^{p,q} = H^p(\mathcal{P}, \HH^q(G, \End(E))) \Rightarrow H^{p+q}_{\mathrm{op}}(\mathcal{P})$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+(a) Substitution: $(\alpha_g \circ (\beta_{h_1}, \ldots, \beta_{h_n}))(x_{11}, \ldots, x_{nk_n}) = g^{-1}(\alpha(g \cdot \beta_{h_1}(\ldots), \ldots, g \cdot \beta_{h_n}(\ldots)))$. This is well-defined and associative by associativity of function composition.
+(b) $S_n$ permutes the inputs: $(\sigma \cdot \alpha_g)(x_1, \ldots, x_n) = \alpha_g(x_{\sigma(1)}, \ldots, x_{\sigma(n)})$. Since $g$ acts on each input independently, the $S_n$-action commutes with $G$-transport.
+(c) The identity $\mathrm{id}(x) = x$ satisfies $\mathrm{id}_g = g^{-1} \circ g = \mathrm{id}$.
+(d) The spectral sequence arises from filtering the operadic cochain complex by the degree in $G$.
+\end{proof}
+
+\begin{remark}[Connection to Loday--Vallette]
+The operad $\mathcal{P}$ is a special case of the Loday--Vallette theory of algebraic operads~\cite{loday2012}: the twin operations form a \emph{parameterized operad} (an operad fibered over the group $G$). The Koszul duality of $\mathcal{P}$ encodes the relation between associative and Lie twin operations.
+\end{remark}
+
+
+% ============================================================================
+\section{Classification for Finite Groups}
+\label{sec:classification}
+% ============================================================================
+
+\begin{theorem}[Classification]\label{thm:classification}
+For finite group $G$ acting on a finite set $E$ with $|E| = n$:
+\begin{enumerate}[label=(\alph*)]
+    \item The number of distinct twin operations is $|\mathcal{O}| = [G:L]$, dividing $|G|$.
+    \item For $G = \mathbb{Z}/m\mathbb{Z}$ cyclic: $|\mathcal{O}|$ divides $m$, and the orbit of $\alpha$ under $G$ is periodic with period $[G:L]$.
+    \item For $G = S_n$ symmetric: the orbit $\mathcal{O}$ is determined by the cycle type of the permutations in $L$. The number of orbits is related to the number of conjugacy classes of subgroups of $S_n$.
+    \item For $\alpha$ associative: $L \supseteq \Aut(E, \alpha) \cap G$ (all group automorphisms that are also in $G$ preserve $\alpha$). If $G \subseteq \Aut(E, \alpha)$: RIGID.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(a) Orbit-stabilizer theorem.
+(b) For $\mathbb{Z}/m$: $L$ is a subgroup, hence $|L|$ divides $m$, so $|\mathcal{O}| = m/|L|$ divides $m$. Periodicity: $\odot_{g^{k}} = \odot_{g^{k + [G:L]}}$.
+(c) For $S_n$: $L$ is determined by which permutations commute with $\alpha$ in the required sense. The conjugacy class structure of $S_n$ partitions the permutations into families with the same orbit type.
+(d) If $g \in \Aut(E, \alpha)$: $g^{-1}(\alpha(g \cdot x, g \cdot y)) = g^{-1}(g(\alpha(x,y))) = \alpha(x,y)$, so $g \in L$.
+\end{proof}
+
+
+% ============================================================================
+\section{Algebraic-Geometric Extension: Twin Rings and Schemes}
+\label{sec:ag}
+% ============================================================================
+
+We now extend the twin framework to commutative algebra and algebraic geometry, connecting to equivariant geometry~\cite{mumford1965,thomason1987}.
+
+\begin{definition}[Twin Ring]\label{def:twin-ring}
+A \textbf{twin ring} is a pair $(R, G)$ where $R$ is a commutative ring and $G$ acts on $R$ by ring automorphisms. The \textbf{kernel ideal} is:
+\begin{equation}
+\mathfrak{k}_G = R^G = \{r \in R : g \cdot r = r \;\forall g \in G\}
+\end{equation}
+This is the \textbf{invariant subring} (a subring, not an ideal --- the name ``kernel ideal'' is by analogy with the kernel of Vol.~17~\cite{nembe2026vol17}).
+\end{definition}
+
+\begin{remark}[Connection to equivariant geometry]
+A twin ring $(R, G)$ is precisely a $G$-ring in the sense of equivariant algebra~\cite{mumford1965}. The twin scheme $\Spec(R, G)$ is the $G$-scheme $\Spec(R)$ with the induced $G$-action. We use ``twin'' terminology to maintain consistency with the ROOTS-INSIGHTS framework, but acknowledge that the mathematical content is Mumford's geometric invariant theory applied to the twin setting.
+\end{remark}
+
+\begin{proposition}[Structure of Twin Rings]\label{prop:twin-ring-structure}
+For a Noetherian twin ring $(R, G)$ with $G$ finite, $|G|$ invertible in $R$:
+\begin{enumerate}[label=(\alph*)]
+    \item $R^G$ is Noetherian (Noether's finiteness theorem for finite groups).
+    \item $R$ is integral over $R^G$ (lying-over theorem).
+    \item The quotient map $\pi: \Spec(R) \to \Spec(R^G)$ is the orbit map: points of $\Spec(R^G)$ correspond to $G$-orbits of prime ideals.
+    \item The Brauer group $\mathrm{Br}(R^G)$ controls obstructions to splitting twin modules, connecting to the $H^2(G, K_0^\times)$ obstruction of the Cramer article.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+(a) By Noether's theorem (E.\ Noether, 1926~\cite{noether1926}): if $R$ is Noetherian and $G$ is finite, $R^G$ is Noetherian.
+(b) For $r \in R$: the polynomial $\prod_{g \in G}(x - g \cdot r) \in R^G[x]$ has $r$ as a root, so $r$ is integral over $R^G$.
+(c) Standard GIT: $\Spec(R^G) = \Spec(R)/\!/G$.
+(d) The Brauer group $\mathrm{Br}(R^G)$ classifies Azumaya algebras over $R^G$; the image of $H^2(G, R^\times)$ in $\mathrm{Br}(R^G)$ measures obstructions to descending $R$-modules to $R^G$-modules.
+\end{proof}
+
+\begin{example}[CM Elliptic Curves]
+An elliptic curve $E/\mathbb{Q}$ with complex multiplication by $\mathcal{O}_K$ (ring of integers of an imaginary quadratic field $K$) is a twin variety $(E, G)$ with $G = \mathcal{O}_K^\times$. The Tate module $T_\ell(E)$ carries commuting actions of $\mathrm{Gal}(\bar{\mathbb{Q}}/\mathbb{Q})$ and $G$. The kernel ideal $R^G$ encodes the CM invariants, and the Galois representation factors through $G$, leading to explicit class field theory.
+\end{example}
+
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+% ============================================================================
+
+The twin operations $\odot_g$ carry rich cohomological structure (Hochschild cohomology controlling deformations), categorical structure (2-functor), and operadic structure ($n$-ary extension). The rigidity dichotomy provides a clean criterion for when the twin hierarchy is trivial vs.\ non-trivial. Quantum groups fit naturally as twin operations with $q \in \mathbb{C}^*$.
+
+The extension to algebraic geometry shows that twin rings and schemes are equivariant objects in the sense of Mumford's GIT, with the kernel ideal $R^G$ playing the same role as the isometry group $\Ker(g)$ in twin GR. The Brauer group obstruction connects the cohomological theory to the Cramer article's $H^2$-obstruction.
+
+\textbf{Open problems:} (1) Koszul duality for the twin operad and its relation to Lie-type twin operations. (2) Derived categories of twin sheaves and connection to motivic cohomology. (3) Higher categorical extensions (twin $\infty$-operads). (4) The twin Langlands correspondence: whether the functorial transport extends to automorphic forms.
+
+
+% ============================================================================
+\begin{thebibliography}{20}
+
+\bibitem{gerstenhaber1964} M.~Gerstenhaber, ``On the deformation of rings and algebras,'' \emph{Ann.\ Math.}, vol.~79, pp.~59--103, 1964.
+
+\bibitem{kontsevich1997} M.~Kontsevich, ``Deformation quantization of Poisson manifolds,'' \emph{Lett.\ Math.\ Phys.}, vol.~66, pp.~157--216, 2003 (preprint 1997).
+
+\bibitem{drinfeld1987} V.G.~Drinfeld, ``Quantum groups,'' in \emph{Proc.\ ICM Berkeley}, AMS, pp.~798--820, 1987.
+
+\bibitem{jimbo1985} M.~Jimbo, ``A $q$-difference analogue of $U(\mathfrak{g})$,'' \emph{Lett.\ Math.\ Phys.}, vol.~10, pp.~63--69, 1985.
+
+\bibitem{loday2012} J.-L.~Loday, B.~Vallette, \emph{Algebraic Operads}, Springer, 2012.
+
+\bibitem{mumford1965} D.~Mumford, \emph{Geometric Invariant Theory}, Springer, 1965.
+
+\bibitem{thomason1987} R.W.~Thomason, ``Algebraic $K$-theory of group scheme actions,'' \emph{Ann.\ Math.\ Studies}, vol.~113, pp.~539--563, 1987.
+
+\bibitem{noether1926} E.~Noether, ``Der Endlichkeitssatz der Invarianten endlicher Gruppen,'' \emph{Math.\ Ann.}, vol.~77, pp.~89--92, 1926.
+
+\bibitem{nembe2026vol1} J.~Nemb\'e, ``Twin Spaces: Foundations,'' \emph{ROOTS-INSIGHTS}, Vol.~1, 2026.
+
+\bibitem{nembe2026vol3} J.~Nemb\'e, ``The Transfer Theorem,'' \emph{ROOTS-INSIGHTS}, Vol.~3, 2026.
+
+\bibitem{nembe2026vol16} J.~Nemb\'e, ``Twin Information Theory,'' \emph{ROOTS-INSIGHTS}, Vol.~16, 2026.
+
+\bibitem{nembe2026vol17} J.~Nemb\'e, ``Twin General Relativity,'' \emph{ROOTS-INSIGHTS}, Vol.~17, 2026.
+
+\bibitem{nembe2026cramer} J.~Nemb\'e, ``Cramer's Rule in Twin Spaces,'' 2026.
+
+\end{thebibliography}
+
+\end{document}

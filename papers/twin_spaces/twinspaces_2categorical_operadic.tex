@@ -1,0 +1,863 @@
+\documentclass[11pt,a4paper]{article}
+
+% =========================================================
+% COMMON PACKAGES
+% =========================================================
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{csquotes}
+\usepackage{mathrsfs}
+\usepackage{thmtools}
+\usepackage{hyperref}
+\usepackage[nameinlink,capitalize]{cleveref}
+\usepackage{geometry}
+
+\geometry{
+	a4paper,
+	margin=2.8cm
+}
+
+% =========================================================
+% THEOREM STYLES
+% =========================================================
+\numberwithin{equation}{section}
+
+\declaretheoremstyle[
+headfont=\bfseries,
+bodyfont=\itshape,
+spaceabove=8pt,
+spacebelow=8pt
+]{plainstyle}
+
+\declaretheoremstyle[
+headfont=\bfseries,
+bodyfont=\normalfont,
+spaceabove=8pt,
+spacebelow=8pt
+]{defstyle}
+
+\declaretheoremstyle[
+headfont=\itshape,
+bodyfont=\normalfont,
+spaceabove=4pt,
+spacebelow=4pt
+]{remarkstyle}
+
+\declaretheorem[style=plainstyle,name=Theorem]{theorem}
+\declaretheorem[style=plainstyle,name=Proposition,sibling=theorem]{proposition}
+\declaretheorem[style=plainstyle,name=Lemma,sibling=theorem]{lemma}
+\declaretheorem[style=plainstyle,name=Corollary,sibling=theorem]{corollary}
+
+\declaretheorem[style=defstyle,name=Definition,sibling=theorem]{definition}
+\declaretheorem[style=defstyle,name=Example,sibling=theorem]{example}
+
+\declaretheorem[style=remarkstyle,name=Remark,sibling=theorem]{remark}
+
+% Cleveref names
+\crefname{theorem}{Theorem}{Theorems}
+\crefname{proposition}{Proposition}{Propositions}
+\crefname{lemma}{Lemma}{Lemmas}
+\crefname{corollary}{Corollary}{Corollaries}
+\crefname{definition}{Definition}{Definitions}
+\crefname{example}{Example}{Examples}
+\crefname{remark}{Remark}{Remarks}
+\crefname{equation}{Equation}{Equations}
+\crefname{section}{Section}{Sections}
+
+% =========================================================
+% COMMON MACROS FOR THE TWIN-SPACES SERIES
+% =========================================================
+
+% Sets and fields
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+
+% Operators
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\Ad}{Ad}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Img}{Im}
+\DeclareMathOperator{\HH}{HH}
+
+% Twin-space notation
+\newcommand{\TwinSpace}{(E,\alpha,G)}
+\newcommand{\Twin}{\mathcal{T}}
+\newcommand{\TwinOrbit}{O}
+\newcommand{\LinearSubgroup}{L}
+
+% Cohomology notation
+\newcommand{\Cochain}{C}
+\newcommand{\diff}{\delta}
+
+% Misc
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\bracket}[1]{\left\langle #1 \right\rangle}
+
+% =========================================================
+% METADATA FOR ARTICLE B
+% =========================================================
+
+\title{\textbf{Twin Spaces as 2-Categorical and Operadic Objects}}
+\author{Jocelyn Nembe}
+\date{\today}
+
+% =========================================================
+% DOCUMENT
+% =========================================================
+
+\begin{document}
+	
+	\maketitle
+	
+	\begin{abstract}
+		In Article~I we introduced \emph{twin operations} attached to a group action, and in Article~A we developed 
+		a deformation cohomology theory for twin spaces via a Hochschild-type complex $\Cochain^\bullet(G,\End(E))$.
+		The goal of the present article is to show that twin spaces carry a rich higher-structural content:
+		they naturally form a 2-category, admit a monoidal structure, and can be organized into operads whose algebras
+		encode classical and new symmetry-compatible algebraic structures.
+		
+		More precisely, we define a 2-category $\Twin$ whose objects are twin spaces $\TwinSpace$, 
+		whose 1-morphisms are equivariant structure-preserving maps, and whose 2-morphisms are natural
+		transformations compatible with the twin operations.
+		We construct a tensor product making $\Twin$ into a monoidal 2-category.
+		We then introduce a family of operads $\mathcal{O}_G$ of twin operations associated with a group $G$,
+		and show that many standard structures (associative $G$-algebras, $G$-equivariant module categories, 
+		and certain crossed product constructions) appear as algebras over these operads.
+		
+		Conceptually, this article clarifies the categorical level at which twin spaces live:
+		they are not just sets with operations, but 2-categorical and operadic objects whose deformation theory 
+		(Article~A) can be viewed as the first step towards a higher, possibly derived, theory of twin structures.
+	\end{abstract}
+	
+	\tableofcontents
+	
+	%===========================================================
+	\section{Introduction}
+	\label{sec:intro}
+	
+	Twin operations were introduced in Article~I as a new way to attach algebraic structure to a group action:
+	given a set $E$ with a left action of a group $G$ and a binary operation $\alpha : E\times E\to E$, one considers
+	the family of \emph{twin operations}
+	\begin{equation}\label{eq:twin-def-B}
+		\alpha_g(x,y) := g^{-1}\cdot \alpha(g\cdot x,\ g\cdot y), \qquad g\in G.
+	\end{equation}
+	The set $\TwinOrbit=\{\alpha_g : g\in G\}$ of such operations is canonically identified with the homogeneous space
+	$\LinearSubgroup\backslash G$ (right cosets; see \cref{prop:orbit}), where $\LinearSubgroup=\{g\in G : \alpha_g=\alpha\}$ is the linear subgroup.
+	A triple $\TwinSpace$ with this orbit structure was called a \emph{twin space}.
+	
+	In Article~A, we showed that twin spaces admit a deformation cohomology theory, based on a Hochschild-type
+	complex $\Cochain^\bullet(G,\End(E))$ whose cohomology $\HH^\bullet(G,\End(E))$ controls $G$-equivariant
+	deformations and rigidity of the twin structure.
+	
+	The aim of the present article is to study twin spaces from the \emph{higher-structural} point of view.
+	In particular:
+	
+	\begin{itemize}
+		\item we construct a 2-category $\Twin$, with twin spaces as objects, equivariant morphisms as 1-morphisms,
+		and compatible natural transformations as 2-morphisms;
+		\item we equip $\Twin$ with a tensor product making it a monoidal 2-category in the sense of 
+		higher category theory~\cite{MacLane1998,Leinster2004,Kelly1982};
+		\item for a fixed group $G$, we organize $G$-equivariant $n$-ary twin operations into an operad
+		$\mathcal{O}_G$, in the sense of May and Loday--Vallette~\cite{May1972,LodayVallette2012}, and show that various
+		algebraic structures correspond to algebras over $\mathcal{O}_G$;
+		\item we interpret some aspects of the deformation theory of twin spaces (Article~A) as living inside
+		this 2-categorical and operadic environment.
+	\end{itemize}
+	
+	Conceptually, the message is that twin spaces form not just a set-theoretic or algebraic construction,
+	but fit naturally into the framework of higher category theory and operads.
+	This clarifies the role of twin spaces as a \emph{foundational} object for subsequent work on 
+	derived, homotopical and quantum generalizations.
+
+	There are three independent reasons to expect this higher structure, and the article makes each precise.
+	First, the very definition of a twin space produces not one operation but an entire orbit
+	$\TwinOrbit\cong\LinearSubgroup\backslash G$, and an orbit of objects always asks for morphisms relating its
+	points---so a merely $1$-categorical packaging is incomplete. Second, the deformation theory of Article~A is
+	controlled by a differential graded Lie algebra (its Maurer--Cartan equation), and DGLAs are the infinitesimal
+	shadow of operadic and higher-categorical structure. Third, twin operations of higher arity compose by
+	substitution exactly as the operations of an operad do. The $2$-category, the monoidal structure, and the
+	operad constructed below are the precise homes for these three observations.
+	
+	The article is organized as follows.  
+	In \cref{sec:2cat}, we define the 2-category $\Twin$ of twin spaces.  
+	In \cref{sec:monoidal}, we construct a monoidal structure on $\Twin$.  
+	In \cref{sec:operads}, we introduce the operads of twin operations $\mathcal{O}_G$ and describe their algebras.
+	In \cref{sec:functoriality}, we discuss functoriality and 2-functors relating $\Twin$ to more classical categories.
+	In \cref{sec:interaction}, we sketch how the deformation cohomology of Article~A can be seen from a 2-categorical/operadic point of view.
+	Finally, in \cref{sec:examples} we illustrate the constructions on concrete examples.
+	
+	%===========================================================
+	\section{Twin Spaces as Objects of a 2-Category}
+	\label{sec:2cat}
+	
+	We begin by recalling the basic definition of a twin space and then organize twin spaces into a 2-category.
+	
+	\subsection{Twin spaces}
+	
+	Let $G$ be a group acting on a set $E$ from the left.
+	Given a binary operation $\alpha:E\times E\to E$, we define the family of twin operations
+	by \eqref{eq:twin-def-B}. Write again
+	\[
+	\TwinOrbit = \{\alpha_g : g\in G\}.
+	\]
+
+	\begin{proposition}[Orbit identification]\label{prop:orbit}
+		The map $g\mapsto\alpha_g$ has fibres the \emph{right} cosets of
+		$\LinearSubgroup=\{g\in G:\alpha_g=\alpha\}$: indeed $\alpha_{g_1}=\alpha_{g_2}$
+		iff $g_1 g_2^{-1}\in\LinearSubgroup$, i.e.\ iff $\LinearSubgroup g_1=\LinearSubgroup g_2$.
+		Hence $\TwinOrbit\cong\LinearSubgroup\backslash G$ (right cosets); when
+		$\LinearSubgroup\trianglelefteq G$ this coincides with $G/\LinearSubgroup$.
+	\end{proposition}
+	
+	\begin{definition}[Twin space]
+		A \emph{twin space} is a triple $\TwinSpace$, where:
+		\begin{itemize}
+			\item $E$ is a set (or object in a fixed ambient category, e.g.\ a vector space),
+			\item $G$ is a group acting on $E$,
+			\item $\alpha:E\times E\to E$ is a binary operation such that the orbit
+			$\TwinOrbit$ of \eqref{eq:twin-def-B} is well-defined and carries the induced $G$-action.
+		\end{itemize}
+		The associated \emph{linear subgroup} is $\LinearSubgroup := \{g\in G : \alpha_g=\alpha\}$.
+	\end{definition}
+	
+	In many settings, one requires $\alpha$ to satisfy extra identities (associativity, commutativity, etc.),
+	but for the 2-categorical structure the basic notion suffices.
+	
+	\subsection{1-morphisms: equivariant structure-preserving maps}
+	
+	We want morphisms that preserve both the $G$-action and the twin operation structure.
+	
+	\begin{definition}[1-morphisms of twin spaces]
+		Let $\TwinSpace$ and $(E',\alpha',G')$ be twin spaces.
+		A \emph{1-morphism} 
+		\[
+		F : (E,\alpha,G)\longrightarrow (E',\alpha',G')
+		\]
+		consists of:
+		\begin{itemize}
+			\item a group homomorphism $\phi:G\to G'$,
+			\item a map of sets (or linear map) $f:E\to E'$,
+		\end{itemize}
+		such that:
+		\begin{enumerate}[label=(\alph*)]
+			\item $f$ is $\phi$-equivariant:
+			\[
+			f(g\cdot x) = \phi(g)\cdot f(x), \qquad \forall g\in G,\ x\in E;
+			\]
+			\item $f$ is compatible with the operations:
+			\[
+			f(\alpha(x,y)) = \alpha'(f(x),f(y)), \qquad \forall x,y\in E.
+			\]
+		\end{enumerate}
+	\end{definition}
+	
+	\begin{remark}
+		Condition (b) can be strengthened if needed to require compatibility with \emph{all} twin operations
+		$\alpha_g$ and $\alpha'_{\phi(g)}$, but this already follows from (a) and the definition of twin operations:
+		\[
+		f(\alpha_g(x,y))
+		= f\big(g^{-1}\cdot \alpha(g\cdot x,g\cdot y)\big)
+		= \phi(g)^{-1}\cdot f(\alpha(g\cdot x,g\cdot y))
+		= \phi(g)^{-1}\cdot \alpha'(f(g\cdot x),f(g\cdot y)),
+		\]
+		and $f(g\cdot x)=\phi(g)\cdot f(x)$ implies
+		\[
+		f(\alpha_g(x,y)) = (\alpha')_{\phi(g)}(f(x),f(y)).
+		\]
+	\end{remark}
+	
+	\begin{example}[The determinant as a $1$-morphism]\label{ex:det-morphism}
+		Let $\TwinSpace$ be the matrix twin space $E=M_n(k)$, $\alpha(X,Y)=XY$, with $G=GL_n(k)$ acting by
+		conjugation, and let $(E',\alpha',G')=(k,\,\cdot\,,\{1\})$ be the multiplicative twin space on the ground
+		field with trivial group. The pair $F=(\det,\phi)$, with $f=\det:M_n(k)\to k$ and $\phi:GL_n(k)\to\{1\}$
+		the trivial homomorphism, is a $1$-morphism: equivariance holds because
+		$\det(gXg^{-1})=\det X=\phi(g)\cdot\det X$, and operation-compatibility is the multiplicativity
+		$\det(XY)=\det X\,\det Y$. Thus the determinant is not merely a function but a morphism of twin spaces,
+		collapsing the conjugation-invariant matrix multiplication onto ordinary multiplication of scalars.
+	\end{example}
+
+	\subsection{2-morphisms: compatible natural transformations}
+	
+	We now define 2-morphisms between 1-morphisms.
+	
+	\begin{definition}[2-morphisms of twin spaces]
+		Let $F=(f,\phi)$ and $F'=(f',\phi')$ be 1-morphisms from $\TwinSpace$ to $(E',\alpha',G')$.
+		A \emph{2-morphism}
+		\[
+		\eta : F \Rightarrow F'
+		\]
+		is a family of maps
+		\[
+		\eta_x : f(x) \to f'(x), \qquad x\in E,
+		\]
+		in the ambient category (typically $\id_{f(x)}$ if one stays within sets or vector spaces),
+		such that:
+		\begin{enumerate}[label=(\alph*)]
+			\item $\eta$ is $G$-equivariant:
+			\[
+			\eta_{g\cdot x} = \phi(g)\cdot \eta_x, \qquad \forall g\in G,\ x\in E,
+			\]
+			which is well-typed because $f(g\cdot x)=\phi(g)\cdot f(x)$ and $f'(g\cdot x)=\phi(g)\cdot f'(x)$, so that the
+			translate $\phi(g)\cdot\eta_x$ is again a morphism $f(g\cdot x)\to f'(g\cdot x)$;
+			\item $\eta$ is compatible with the operations:
+			\[
+			\eta_{\alpha(x,y)} = \alpha'\big(\eta_x,\eta_y\big),
+			\]
+		\end{enumerate}
+	\end{definition}
+	
+	\begin{remark}
+		In the purely set-theoretic case, the above notion collapses to the identity transformation
+		(i.e.\ 2-morphisms are trivial). The main interest is in enriched contexts, e.g.\ when $E$ is a category
+		or a module object, in which case $\eta_x$ is a genuine morphism in that category. In that enriched setting the
+		two conditions read transparently: equivariance says the component at $g\cdot x$ is the $\phi(g)$-translate of
+		the component at $x$, while operation-compatibility says that evaluating $\eta$ at $\alpha(x,y)$ agrees with
+		applying the operation $\alpha'$, viewed as a bifunctor, to the pair $(\eta_x,\eta_y)$. When the ambient
+		category is $\mathsf{Set}$ or $\mathsf{Vect}$ the only available components force $f=f'$ and $\eta=\id$, which
+		is exactly why the genuinely $2$-categorical content surfaces only after enrichment (for instance in
+		$\mathsf{Cat}$, where a $2$-morphism is a $G$-equivariant natural transformation between equivariant functors).
+		For clarity, we adopt the 2-categorical language even though in some basic examples the 2-morphisms are only identities.
+	\end{remark}
+	
+	\subsection{The 2-category \texorpdfstring{$\Twin$}{Twin}}
+	
+	\begin{theorem}\label{thm:Twin-2cat}
+		Twin spaces, 1-morphisms and 2-morphisms as above form a (strict) 2-category $\Twin$.
+	\end{theorem}
+	
+	\begin{proof}
+		The composition of 1-morphisms is defined componentwise:
+		if $F=(f,\phi):\TwinSpace\to (E',\alpha',G')$ and $F'=(f',\phi'):(E',\alpha',G')\to (E'',\alpha'',G'')$,
+		then
+		\[
+		F'\circ F = (f'\circ f,\ \phi'\circ \phi).
+		\]
+		Equivariance and compatibility with operations are preserved by composition.
+		The identity 1-morphism is $(\id_E,\id_G)$.
+		
+		The vertical and horizontal compositions of 2-morphisms are defined in the usual way for natural
+		transformations, and the coherence axioms of a 2-category are satisfied by standard arguments
+		(see e.g.~\cite{MacLane1998,Leinster2004}). The middle-four interchange law holds because it holds in the
+		ambient enriched category, and both the equivariance condition $\eta_{g\cdot x}=\phi(g)\cdot\eta_x$ and the
+		operation-compatibility condition are visibly closed under vertical and horizontal composition. Thus we obtain a strict 2-category.
+	\end{proof}
+	
+	%===========================================================
+	\section{Monoidal Structure on the 2-Category \texorpdfstring{$\Twin$}{Twin}}
+	\label{sec:monoidal}
+	
+	We now equip $\Twin$ with a tensor product, making it into a monoidal 2-category.
+	
+	\subsection{Tensor product of twin spaces}
+	
+	Let $\TwinSpace$ and $(E',\alpha',G')$ be twin spaces.
+	
+	\begin{definition}[Tensor product of twin spaces]
+		The \emph{tensor product} of $\TwinSpace$ and $(E',\alpha',G')$ is the twin space
+		\[
+		(E\otimes E',\ \alpha\otimes\alpha',\ G\times G'),
+		\]
+		defined as follows:
+		\begin{itemize}
+			\item the underlying object is $E\otimes E'$ (e.g.\ the cartesian product $E\times E'$ for sets,
+			the tensor product for vector spaces);
+			\item the group $G\times G'$ acts componentwise:
+			\[
+			(g,g')\cdot (x,x') := (g\cdot x,\ g'\cdot x');
+			\]
+			\item the operation $\alpha\otimes\alpha'$ is given by
+			\[
+			(\alpha\otimes\alpha')\big((x_1,x'_1),(x_2,x'_2)\big)
+			:=\big(\alpha(x_1,x_2),\ \alpha'(x'_1,x'_2)\big).
+			\]
+		\end{itemize}
+	\end{definition}
+	
+	\begin{proposition}
+		The triple $(E\otimes E',\alpha\otimes\alpha',G\times G')$ is a twin space, and twin operations satisfy
+		\[
+		(\alpha\otimes\alpha')_{(g,g')} = \alpha_g\otimes\alpha'_{g'}.
+		\]
+	\end{proposition}
+	
+	\begin{proof}
+		One checks directly that
+		\[
+		(\alpha\otimes\alpha')_{(g,g')}\big((x_1,x'_1),(x_2,x'_2)\big)
+		= (g,g')^{-1}\cdot (\alpha\otimes\alpha')\big((g,g')\cdot(x_1,x'_1),(g,g')\cdot(x_2,x'_2)\big)
+		\]
+		unwinds, using the componentwise action and the definition of $\alpha\otimes\alpha'$, as
+		\[
+			(g^{-1},g'^{-1})\cdot\big(\alpha(g\cdot x_1,g\cdot x_2),\,\alpha'(g'\cdot x'_1,g'\cdot x'_2)\big)
+			=\big(g^{-1}\cdot\alpha(g\cdot x_1,g\cdot x_2),\ g'^{-1}\cdot\alpha'(g'\cdot x'_1,g'\cdot x'_2)\big)
+			=\big(\alpha_g(x_1,x_2),\,\alpha'_{g'}(x'_1,x'_2)\big),
+		\]
+		which is precisely $(\alpha_g\otimes\alpha'_{g'})\big((x_1,x'_1),(x_2,x'_2)\big)$. That the triple is a twin
+		space is then immediate: the orbit of $\alpha\otimes\alpha'$ is the product of the two orbits.
+	\end{proof}
+	
+	\begin{remark}[Linear subgroup of a tensor product]\label{rem:tensor-L}
+		The linear subgroup of the tensor product is the product of the linear subgroups,
+		$\LinearSubgroup_{E\otimes E'}=\LinearSubgroup\times\LinearSubgroup'$, because
+		$(\alpha\otimes\alpha')_{(g,g')}=\alpha\otimes\alpha'$ holds iff $\alpha_g=\alpha$ and $\alpha'_{g'}=\alpha'$.
+		Hence the twin orbit of a tensor product factors as a product of orbits,
+		\[
+			(\LinearSubgroup\times\LinearSubgroup')\backslash(G\times G')\;\cong\;(\LinearSubgroup\backslash G)\times(\LinearSubgroup'\backslash G'),
+		\]
+		so the twin-orbit $2$-functor of \cref{sec:functoriality} is itself monoidal.
+	\end{remark}
+
+	\subsection{Tensor product of morphisms and monoidal axioms}
+	
+	\begin{definition}
+		Given 1-morphisms $F=(f,\phi):\TwinSpace\to (E_1,\alpha_1,G_1)$
+		and $F'=(f',\phi'):(E',\alpha',G')\to (E'_1,\alpha'_1,G'_1)$, we define
+		\[
+		F\otimes F' := (f\otimes f',\ \phi\times \phi'),
+		\]
+		where
+		\[
+		(f\otimes f')(x,x') := (f(x),f'(x')),\qquad
+		(\phi\times\phi')(g,g') := (\phi(g),\phi'(g')).
+		\]
+		Tensor product of 2-morphisms is defined pointwise.
+	\end{definition}
+	
+	\begin{theorem}\label{thm:Twin-monoidal}
+		Equipped with the tensor product above, the 2-category $\Twin$ becomes a monoidal 2-category.
+	\end{theorem}
+	
+	\begin{proof}
+		Associativity and unit constraints are inherited from the ambient category (e.g.\ Sets or Vect),
+		and the coherence axioms of a monoidal 2-category follow from standard arguments as in 
+		\cite{MacLane1998,Leinster2004}.
+	\end{proof}
+	
+	\begin{remark}
+		In many concrete settings (e.g.\ vector spaces over a fixed field), the monoidal structure is in fact strict
+		or can be strictified without loss of generality, so that associativity and unit isomorphisms can be taken
+		to be identities.
+	\end{remark}
+	
+	%===========================================================
+	\section{Operads of Twin Operations}
+	\label{sec:operads}
+	
+	We now introduce a family of operads whose operations are twin operations compatible with a given group action.
+	
+	\subsection{The underlying collections}
+	
+	Fix a group $G$ and a $G$-set (or $G$-object) $E$.
+	
+	\begin{definition}[Twin $n$-ary operations]
+		For $n\ge 1$, let
+		\[
+		\mathcal{O}_G(n) := \{ \alpha : E^n\to E \mid \alpha \text{ is $G$-equivariant in the sense of twin operations} \}.
+		\]
+		More precisely, $\alpha\in\mathcal{O}_G(n)$ if there exists a family
+		\[
+		\alpha_g : E^n\to E,\qquad g\in G,
+		\]
+		such that
+		\[
+		\alpha_g(x_1,\dots,x_n) = g^{-1}\cdot \alpha(g\cdot x_1,\dots,g\cdot x_n),
+		\]
+		and the map $g\mapsto \alpha_g$ is compatible with the group action (in the same spirit as in the binary case).
+	\end{definition}
+	
+	We think of $\mathcal{O}_G(n)$ as the space of $n$-ary twin operations on $E$.
+
+	\begin{remark}[$\mathcal{O}_G$ is the endomorphism operad internal to $G$-sets]\label{rem:OG-internal}
+		The existence of a transport family $g\mapsto\alpha_g$ is automatic: \emph{every} map $\alpha:E^n\to E$
+		admits one, namely $\alpha_g(\mathbf{x})=g^{-1}\cdot\alpha(g\cdot\mathbf{x})$. Thus, set-theoretically,
+		$\mathcal{O}_G(n)=\mathrm{Maps}(E^n,E)$ is the full endomorphism operad $\End_E(n)$; the twin viewpoint adds
+		not more operations but more \emph{structure}, namely the $G$-action $g\cdot\alpha:=\alpha_{g^{-1}}$ on each
+		$\End_E(n)$, compatible with substitution. In one phrase, $\mathcal{O}_G$ is the endomorphism operad
+		\emph{internal to the category of $G$-sets}, and the linear subgroup $\LinearSubgroup$ of a chosen $\alpha$
+		is simply its stabiliser under this action.
+	\end{remark}
+	
+	\subsection{Operadic composition}
+	
+	Let $\alpha\in\mathcal{O}_G(k)$ and $\beta_1\in\mathcal{O}_G(n_1),\dots,\beta_k\in\mathcal{O}_G(n_k)$.
+	We define their \emph{substitution}:
+	\[
+	\gamma = \alpha\circ(\beta_1,\dots,\beta_k) \in \mathcal{O}_G(n_1+\cdots+n_k)
+	\]
+	by
+	\[
+	\gamma(x_{1,1},\dots,x_{1,n_1};\dots;x_{k,1},\dots,x_{k,n_k})
+	= \alpha\big(\beta_1(x_{1,1},\dots,x_{1,n_1}),\dots,\beta_k(x_{k,1},\dots,x_{k,n_k})\big).
+	\]
+	
+	\begin{proposition}
+		The substitution $\circ$ above defines a well-defined operation
+		\[
+		\mathcal{O}_G(k)\times \mathcal{O}_G(n_1)\times\cdots\times\mathcal{O}_G(n_k)
+		\to \mathcal{O}_G(n_1+\cdots+n_k),
+		\]
+		compatible with the $G$-equivariance structure of twin operations.
+	\end{proposition}
+	
+	\begin{proof}
+		We must show that if $\alpha$ and each $\beta_i$ admit twin families $(\alpha_g)$ and $(\beta_{i,g})$,
+		then $\gamma$ admits a twin family $(\gamma_g)$ given by the same transport rule, i.e.
+		\[
+		\gamma_g(\mathbf{x}) = g^{-1}\cdot \gamma(g\cdot\mathbf{x}),
+		\]
+		with $\mathbf{x}$ denoting the whole tuple of variables.
+		Concretely, transport distributes over substitution. Using
+		$\alpha_g(y_1,\dots,y_k)=g^{-1}\cdot\alpha(g\cdot y_1,\dots,g\cdot y_k)$ and
+		$\beta_{i,g}(\mathbf{x}_i)=g^{-1}\cdot\beta_i(g\cdot\mathbf{x}_i)$, we compute
+		\[
+			\alpha_g\big(\beta_{1,g}(\mathbf{x}_1),\dots,\beta_{k,g}(\mathbf{x}_k)\big)
+			= g^{-1}\cdot\alpha\big(g\cdot\beta_{1,g}(\mathbf{x}_1),\dots\big)
+			= g^{-1}\cdot\alpha\big(\beta_1(g\cdot\mathbf{x}_1),\dots,\beta_k(g\cdot\mathbf{x}_k)\big)
+			= g^{-1}\cdot\gamma(g\cdot\mathbf{x}) = \gamma_g(\mathbf{x}),
+		\]
+		using $g\cdot\beta_{i,g}(\mathbf{x}_i)=\beta_i(g\cdot\mathbf{x}_i)$ in the middle step. Hence
+		$\gamma_g=\alpha_g\circ(\beta_{1,g},\dots,\beta_{k,g})$: the transport $\alpha\mapsto\alpha_g$ is an operad
+		endomorphism of $\End_E$, so a substitution of twin operations is again a twin operation.
+	\end{proof}
+	
+	\subsection{Symmetries and the symmetric operad structure}
+	
+	If $G$ acts on $E$ and the symmetric group $S_n$ acts on $E^n$ by permuting factors, we can also
+	consider the interaction of twins with these symmetric group actions.
+	
+	\begin{definition}
+		For $\sigma\in S_n$ and $\alpha\in\mathcal{O}_G(n)$, define
+		\[
+		(\alpha\cdot\sigma)(x_1,\dots,x_n)
+		:= \alpha(x_{\sigma^{-1}(1)},\dots,x_{\sigma^{-1}(n)}).
+		\]
+	\end{definition}
+	
+	\begin{proposition}
+		The collection $(\mathcal{O}_G(n))_{n\ge 1}$ with the substitution maps and the $S_n$-actions defined above
+		forms a (symmetric) operad in the sense of~\cite{May1972,LodayVallette2012}.
+	\end{proposition}
+	
+	\begin{proof}
+		The axioms of a symmetric operad (associativity of substitution, unit, equivariance with respect
+		to symmetric groups) are checked as in the standard example of the endomorphism operad of $E$,
+		with the further observation that the twin structure is preserved because it is defined by transport
+		along the group action, which commutes with the $S_n$-action.
+	\end{proof}
+	
+	\begin{definition}[Twin operad]
+		We call $\mathcal{O}_G$ the \emph{twin operad} associated with the $G$-object $E$.
+	\end{definition}
+	
+	%===========================================================
+	\section{Algebras over Twin Operads and Classical Structures}
+	\label{sec:algebras}
+
+	\begin{example}[Small cases of the twin operad]\label{ex:small-operad}
+		When $G=\{e\}$ the action is trivial and $\mathcal{O}_{\{e\}}=\End_E$ is the ordinary endomorphism operad; a
+		chosen associative $\alpha$ then determines an operad morphism $\mathsf{Assoc}\to\End_E$, as used below. For
+		finite $E$ with $\abs{E}=m$ each arity is finite, $\abs{\mathcal{O}_G(n)}\le m^{m^{\,n}}$; for instance with
+		$E=\Z/2$ there are $m^{m^2}=2^4=16$ binary operations, among which the unital associative commutative ones
+		realise $E$ as a monoid. The twin operad refines this finite set by recording how $G$ permutes the operations
+		through transport.
+	\end{example}
+	
+	We now explain how familiar objects appear as algebras over $\mathcal{O}_G$.
+	
+	\subsection{Twin operad algebras}
+	
+	\begin{definition}
+		Let $\mathcal{O}$ be an operad in a symmetric monoidal category $\mathcal{C}$.
+		An \emph{$\mathcal{O}$-algebra} is an object $X\in\mathcal{C}$ together with structure maps
+		\[
+		\mathcal{O}(n)\otimes X^{\otimes n} \to X
+		\]
+		satisfying the usual associativity, unit, and equivariance axioms.
+	\end{definition}
+	
+	\begin{definition}[Algebras over the twin operad]
+		An \emph{$\mathcal{O}_G$-algebra} is an object $X$ of the ambient category equipped with a morphism of operads
+		\[
+		\mathcal{O}_G \to \End_X,
+		\]
+		where $\End_X(n)=\Hom(X^{\otimes n},X)$ is the endomorphism operad of $X$.
+	\end{definition}
+	
+	\begin{remark}
+		Concretely, an $\mathcal{O}_G$-algebra is a $G$-object $X$ endowed with twin operations
+		acting on $X$ in a way compatible with operadic composition.
+	\end{remark}
+	
+	\subsection{Associative $G$-equivariant algebras}
+	
+	Let $G$ act by automorphisms on an associative algebra $A$.
+	
+	\begin{proposition}
+		If the action of $G$ preserves the associative multiplication of $A$, then $A$ is naturally an
+		algebra over a quotient of $\mathcal{O}_G$ corresponding to the associative operad $\mathsf{Assoc}$.
+	\end{proposition}
+	
+	\begin{proof}
+		The associative operad $\mathsf{Assoc}$ is generated by a single binary operation $\mu$ modulo
+		associativity, with $\mathsf{Assoc}(n)\cong k[S_n]$ the $n!$ orderings of the inputs. That $G$ preserves the
+		multiplication of $A$ means $\mu$ lies in the $\LinearSubgroup$-fixed part of $\mathcal{O}_G(2)$, i.e.\ it is
+		a genuine $G$-equivariant (twin) operation. A $G$-equivariant associative algebra structure 
+		on $A$ can be encoded as a morphism of operads
+		\[
+		\mathsf{Assoc}\to\mathcal{O}_G\to\End_A,
+		\]
+		where the first arrow picks out the twin lift of the associative operation, and the second arrow
+		evaluates it on $A$. The $G$-equivariance ensures compatibility with the twin structure.
+	\end{proof}
+	
+	\subsection{Other structures}
+	
+	Similarly, by choosing appropriate quotients or sub-operads of $\mathcal{O}_G$, one can encode:
+	
+	\begin{itemize}
+		\item commutative $G$-equivariant algebras via a commutative quotient of $\mathcal{O}_G$;
+		\item Lie-type twin structures via an operad obtained from $\mathcal{O}_G$ by imposing antisymmetry and Jacobi-type identities;
+		\item module structures and crossed products via colored or multi-sorted versions of $\mathcal{O}_G$.
+	\end{itemize}
+	
+	We do not pursue these constructions further here, as they require a case-by-case analysis 
+	depending on the type of algebraic identities involved.
+	
+	%===========================================================
+	\section{Functoriality and 2-Functors}
+	\label{sec:functoriality}
+	
+	The 2-category $\Twin$ comes with several natural 2-functors to more classical categories.
+	
+	\subsection{The forgetful 2-functor to $G$-objects}
+	
+	\begin{definition}
+		Define a 2-functor
+		\[
+		U:\Twin \to \mathsf{GObj},
+		\]
+		where $\mathsf{GObj}$ is the 2-category of pairs $(E,G)$ with group actions, 1-morphisms
+		given by equivariant maps, and 2-morphisms given by natural transformations (when enriched).
+		On objects, $U(E,\alpha,G)=(E,G)$; on morphisms, $U(f,\phi)=(f,\phi)$; and on 2-morphisms,
+		$U(\eta)=\eta$.
+	\end{definition}
+	
+	\begin{proposition}
+		$U$ is a strict 2-functor that is faithful on 1-morphisms and 2-morphisms.
+	\end{proposition}
+	
+	\begin{proof}
+		The functor $U$ simply forgets the twin operation $\alpha$; all coherence data for a strict
+		2-functor are inherited from the structure of $\Twin$ and $\mathsf{GObj}$.
+		Faithfulness follows from the fact that different 1- or 2-morphisms differ already at the level
+		of the underlying $G$-objects.
+	\end{proof}
+	
+	\subsection{The twin-orbit 2-functor}
+	
+	\begin{definition}
+		Define a 2-functor
+		\[
+		\mathcal{O} : \Twin \to \mathsf{HomogeneousSpaces},
+		\]
+		sending $\TwinSpace$ to the homogeneous space $\LinearSubgroup\backslash G$, and a 1-morphism
+		$F=(f,\phi)$ to the induced map of homogeneous spaces
+		\[
+		\LinearSubgroup\backslash G \to \LinearSubgroup'\backslash G',\qquad \LinearSubgroup g \mapsto \LinearSubgroup'\phi(g).
+		\]
+	\end{definition}
+	
+	\begin{proposition}
+		$\mathcal{O}$ is a well-defined $2$-functor on the sub-$2$-category $\Twin^{\mathrm{epi}}$ whose
+		$1$-morphisms have surjective underlying map $f$.
+	\end{proposition}
+	
+	\begin{proof}
+		Well-definedness on objects is \cref{prop:orbit}. For $1$-morphisms one must check $\phi(\LinearSubgroup)\subseteq\LinearSubgroup'$. Let
+		$g\in\LinearSubgroup$, so $\alpha(g\cdot x,g\cdot y)=g\cdot\alpha(x,y)$. For $x'=f(x),\,y'=f(y)$ in the image of $f$,
+		\[
+			\alpha'(\phi(g)\cdot x',\phi(g)\cdot y')=\alpha'\big(f(g\cdot x),f(g\cdot y)\big)=f\big(\alpha(g\cdot x,g\cdot y)\big)
+			=f\big(g\cdot\alpha(x,y)\big)=\phi(g)\cdot\alpha'(x',y').
+		\]
+		Since $f$ is surjective this holds for all $x',y'\in E'$, hence $\phi(g)\in\LinearSubgroup'$ and
+		$\phi(\LinearSubgroup)\subseteq\LinearSubgroup'$; the induced coset map
+		$\LinearSubgroup g\mapsto\LinearSubgroup'\phi(g)$ is therefore well-defined. (On a non-surjective image
+		the relation $\phi(g)\in\LinearSubgroup'$ may fail, which is why the hypothesis is needed.) On 2-morphisms, the effect is trivial at the level
+		of homogeneous spaces, so we obtain a strict 2-functor.
+	\end{proof}
+	
+	\begin{remark}
+		The 2-functor $\mathcal{O}$ encodes the geometric content of the twin structure: it ignores
+		the detailed algebraic operation and remembers only the orbit $\LinearSubgroup\backslash G$.
+		This reflects the central role of this homogeneous space in the deformation theory of twin spaces.
+	\end{remark}
+	
+	%===========================================================
+	\section{Interaction with Deformation Cohomology}
+	\label{sec:interaction}
+	
+	We briefly explain how the deformation cohomology of Article~A can be viewed from this 2-categorical
+	and operadic perspective.
+	
+	\subsection{From cochains to 2-endomorphisms}
+	
+	In Article~A, the deformation complex 
+	\[
+	\Cochain^\bullet(G,\End(E))
+	\]
+	was constructed as a Hochschild-type complex controlling deformations of $\TwinSpace$.
+	
+	\begin{remark}
+		At a conceptual level, $\Cochain^n(G,\End(E))$ can be thought of as $n$-fold higher endomorphisms
+		of the identity 1-morphism on $\TwinSpace$ in the 2-category $\Twin$, enriched appropriately.
+		The differential $\diff$ encodes the failure of these higher endomorphisms to be compatible under
+		composition, and the cohomology $\HH^\bullet$ measures higher deformations and obstructions to strictness.
+		This viewpoint parallels the interpretation of Hochschild cohomology as self-extensions in the derived
+		category of bimodules~\cite{Weibel1994}.
+	\end{remark}
+	
+	\subsection{Operadic interpretation of $\HH^1$ and $\HH^2$}
+	
+	The twin operad $\mathcal{O}_G$ controls the allowed types of operations on $E$. A deformation of the
+	twin structure can be seen as a deformation of the operad morphism
+	\[
+	\mathcal{O}_G \to \End_E.
+	\]
+	
+	\begin{proposition}[Heuristic]
+		Infinitesimal deformations parametrized by $\HH^1(G,\End(E))$ correspond to infinitesimal perturbations
+		of the operad morphism $\mathcal{O}_G\to\End_E$, and obstructions in $\HH^2(G,\End(E))$ correspond to failures
+		of extending such perturbations to higher order.
+	\end{proposition}
+	
+	\begin{proof}[Idea of proof]
+		Operadic deformation theory (as in the case of associative algebras) can be formulated in terms of Maurer--Cartan 
+		elements in suitable differential graded Lie algebras built from the endomorphism operad.
+		In the twin setting, the group action intertwines with the operadic structure, and the deformation 
+		complex acquires the form $\Cochain^\bullet(G,\End(E))$. The compatibility between operadic and group-theoretic 
+		structures yields the claimed identification, though a full proof would require setting up the operadic deformation
+		complex explicitly, which we leave for future work.
+	\end{proof}
+	
+	%===========================================================
+	\section{Examples}
+	\label{sec:examples}
+	
+	We conclude with a few examples illustrating the constructions above.
+	
+	\begin{example}[Matrix twin spaces]
+		Let $E=M_n(k)$ with the conjugation action of $G=GL_n(k)$, and let $\alpha(X,Y)=XY$ be matrix multiplication.
+		Then $(E,\alpha,G)$ is a twin space (as in Article~A), and 1-morphisms in $\Twin$ from this object to itself
+		include inner automorphisms of $M_n(k)$ and certain outer automorphisms induced by group automorphisms of $GL_n(k)$.
+		
+		The twin operad $\mathcal{O}_G$ on $E$ includes all $G$-equivariant $n$-ary multilinear operations on $M_n(k)$.
+		Algebras over suitable quotients of $\mathcal{O}_G$ recover associative $G$-equivariant algebra structures.
+	\end{example}
+	
+	\begin{example}[Compact Lie group actions on manifolds]
+		Let $G$ be a compact connected Lie group acting smoothly on a manifold $E$, and let $\alpha$ be a smooth
+		$G$-equivariant operation (e.g.\ a pointwise product of functions, or a convolution-type operation).
+		Then $(E,\alpha,G)$ is a twin space in the smooth category, yielding an object of $\Twin$.
+		The monoidal structure of \cref{sec:monoidal} allows us to construct twin spaces on products
+		of manifolds and group actions.
+	\end{example}
+	
+	\begin{example}[Discretized twin operads]
+		If $E$ is a finite $G$-set, then $\mathcal{O}_G(n)$ is a finite set of $G$-equivariant $n$-ary operations.
+		The twin operad $\mathcal{O}_G$ is thus a finite operad in the category of sets.
+		Algebras over $\mathcal{O}_G$ in the category of sets or vector spaces give discrete or linear models of
+		twin structures, suitable for combinatorial or computational applications.
+	\end{example}
+	
+	%===========================================================
+	\section{Conclusion and Outlook}
+	\label{sec:conclusion}
+	
+	In this article we have shown that twin spaces naturally form a 2-category $\Twin$ with a monoidal structure,
+	and that operations on twin spaces can be organized into an operad $\mathcal{O}_G$ whose algebras encode
+	a wide range of $G$-equivariant algebraic structures.
+	
+	From a conceptual perspective, the main outcome is that twin spaces live at the intersection of:
+	\begin{itemize}
+		\item group actions and homogeneous spaces ($\LinearSubgroup\backslash G$);
+		\item higher category theory (via the 2-category $\Twin$ and its monoidal structure);
+		\item operad theory (via the operads of twin operations and their algebras).
+	\end{itemize}
+	This viewpoint complements and enriches the deformation cohomology theory of Article~A, suggesting that
+	twin spaces should be treated as higher-structured objects whose deformations are naturally approached
+	via 2-categorical and operadic techniques.
+	
+	Possible directions for future work include:
+	\begin{enumerate}[label=(\alph*)]
+		\item \textbf{Enriched twin spaces.}
+		Developing twin spaces in enriched categories (e.g.\ dg-categories, $\infty$-categories) so that both
+		$\Twin$ and $\mathcal{O}_G$ become higher-categorical objects, suitable for derived deformation theory.
+		\item \textbf{Homotopical twin operads.}
+		Constructing model category structures on categories of twin operads and their algebras, allowing for 
+		homotopy invariance and derived deformation theory in the sense of Lurie and others.
+		\item \textbf{Applications to quantum groups and Hopf algebras.}
+		Interpreting quantized structures as deformations of twin operads or as algebras in $\Twin$ equipped with
+		additional duality and antipode data.
+		\item \textbf{Links with higher gauge theory.}
+		Investigating whether twin spaces and their 2-categorical structure can model aspects of higher gauge theories,
+		where fields and symmetries are naturally described by higher groupoids and 2-groups.
+	\end{enumerate}
+	
+	These directions suggest that twin spaces are not only a tool for organizing deformations of operations under 
+	group actions, but also a promising building block for a broader higher-structural framework at the interface 
+	of algebra, geometry, and mathematical physics.
+	
+	%===========================================================
+	\begin{thebibliography}{99}
+		
+		\bibitem{Gerstenhaber1964}
+		M.~Gerstenhaber,
+		\newblock On the deformation of rings and algebras,
+		\newblock {\em Ann. of Math. (2)} \textbf{79} (1964), 59--103.
+		
+		\bibitem{MacLane1998}
+		S.~Mac Lane,
+		\newblock {\em Categories for the Working Mathematician},
+		\newblock 2nd ed., Graduate Texts in Mathematics, 5, Springer, 1998.
+		
+		\bibitem{Leinster2004}
+		T.~Leinster,
+		\newblock {\em Higher Operads, Higher Categories},
+		\newblock London Math. Soc. Lecture Note Ser., 298, Cambridge Univ. Press, 2004.
+		
+		\bibitem{Kelly1982}
+		G.~M.~Kelly,
+		\newblock {\em Basic Concepts of Enriched Category Theory},
+		\newblock London Math. Soc. Lecture Note Ser., 64, Cambridge Univ. Press, 1982.
+		
+		\bibitem{May1972}
+		J.~P.~May,
+		\newblock {\em The Geometry of Iterated Loop Spaces},
+		\newblock Lecture Notes in Mathematics, 271, Springer, 1972.
+		
+		\bibitem{LodayVallette2012}
+		J.-L.~Loday and B.~Vallette,
+		\newblock {\em Algebraic Operads},
+		\newblock Grundlehren der Mathematischen Wissenschaften, 346, Springer, 2012.
+		
+		\bibitem{Weibel1994}
+		C.~A.~Weibel,
+		\newblock {\em An Introduction to Homological Algebra},
+		\newblock Cambridge Studies in Advanced Mathematics, 38, Cambridge Univ. Press, 1994.
+		
+	\end{thebibliography}
+	
+\end{document}

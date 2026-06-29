@@ -1,0 +1,619 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,mathrsfs}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{booktabs,enumitem,hyperref}
+\setlist{nosep,leftmargin=1.8em}
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,citecolor=green!40!black,urlcolor=blue!50!black}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{observation}{Unifying Observation}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem*{conjecture}{Conjecture}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Poinc}{\mathrm{Poinc}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\ISO}{\mathrm{ISO}}
+\newcommand{\Diff}{\mathrm{Diff}}
+\newcommand{\Ker}{\mathrm{Ker}}
+\newcommand{\Isom}{\mathrm{Isom}}
+\newcommand{\dd}{\mathrm{d}}
+
+\title{\textbf{The Equations of Physics from Orbital Structure:\\Quantum Field Theory, the Unifying Observation,\\and Constraints on Quantum Gravity}}
+
+\author{Jocelyn Nemb\'e\thanks{Email: jnembe777@gmail.com, jnembe@root-insights.org}\\[0.3em]
+\small Roots Insights Laboratory, Singapore\\
+\small National Institute of Management Sciences, Libreville, Gabon}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+This paper completes the ``Physics from Orbital Structure'' series by (I)~deriving the structure of quantum field theory --- the existence of quantum fields, the spin-statistics connection, the CPT theorem, and gauge invariance --- from the same three-step orbital pattern used for special relativity (Paper~1), general relativity (Paper~2), and quantum mechanics (Paper~3); and (II)~formalizing the observation that all four theories follow the same pattern as a \textbf{Unifying Observation} (not a theorem in the strict sense, but an empirical pattern across four rigorously proved instances).
+
+For QFT, the symmetry group is the Poincar\'e group acting on Fock space, the conservation principle is unitarity of the S-matrix combined with the \textbf{cluster decomposition principle}, and the uniqueness is provided by representation theory (following Weinberg's program). We show that (i)~the cluster decomposition principle is the multi-particle analog of the Bianchi identity (GR) and the Casimir eigenvalue (QM); (ii)~massless spin-2 particles force general covariance, closing a self-consistency loop with Paper~2; (iii)~a Lagrangian exists \emph{a posteriori} in every case (Cartan--Vermeil--Weyl for GR, Helmholtz for QM, Weinberg reconstruction for QFT); (iv)~seven constraints on quantum gravity follow from the empty corner of the classification grid $(\kappa, \rho, \sigma)$.
+
+We propose the \textbf{Orbital Integrability Conjecture}: the equations of physics are integrability conditions for the self-consistency of orbital structure.
+\end{abstract}
+
+\noindent\textbf{Keywords:} unification, orbital structure, quantum field theory, spin-statistics, cluster decomposition, Bianchi--Casimir--Cluster correspondence, quantum gravity constraints, Lagrangian-free foundations
+
+\noindent\textbf{MSC 2020:} 81T99, 83E99, 22E70, 53Z05
+
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+% ============================================================================
+
+\subsection{Summary of Papers 1--3}
+
+Papers~1--3 of this series~\cite{nembe2026p1,nembe2026p2,nembe2026p3a} derived the fundamental equations of special relativity, general relativity, and quantum mechanics from a single three-step pattern:
+\begin{center}
+\fbox{\textbf{Symmetry group} $\to$ \textbf{Conservation principle} $\to$ \textbf{Uniqueness theorem} $\to$ \textbf{The equation}}
+\end{center}
+No Lagrangian was used as input in any of the three derivations. The theories are classified by a pair $(\kappa, \rho)$: SR $= (10, \alpha)$; GR $= (<\!10, \alpha)$; QM $= (10, \beta)$.
+
+\subsection{What this paper adds}
+
+This capstone paper has two parts. \textbf{Part~I} (\S\S\ref{sec:fock}--\ref{sec:gauge}) extends the orbital pattern to quantum field theory, the multi-particle extension of QM. Following Weinberg~\cite{weinberg1995}, quantum fields \emph{emerge} from particles (Poincar\'e representations), unitarity, and the cluster decomposition principle --- no classical field is quantized. \textbf{Part~II} (\S\S\ref{sec:framework}--\ref{sec:oip}) formalizes the unifying observation, proves the structural correspondences, establishes the self-consistency loop, shows the Lagrangian is always a consequence, and derives constraints on quantum gravity.
+
+We note that the QFT derivation (Part~I) is essentially a reformulation of Weinberg's program~\cite{weinberg1995} in the orbital language. The genuinely new contributions are: the Bianchi--Casimir--Cluster correspondence (\S\ref{sec:correspondences}), the self-consistency loop (\S\ref{sec:loop}), and the QG constraints (\S\ref{sec:qg}).
+
+
+% ============================================================================
+% PART I: QFT FROM ORBITAL STRUCTURE
+% ============================================================================
+
+\part*{Part I: Quantum Field Theory from Orbital Structure}
+
+\section{From Particles to Fock Space}
+\label{sec:fock}
+% ============================================================================
+
+\begin{definition}[Multi-particle states]\label{def:fock}
+Given a single-particle Hilbert space $\mathcal{H}_1$ (an irreducible unitary representation of the Poincar\'e group with mass $m$ and spin $s$, cf.\ Paper~3a), the \textbf{Fock space} is:
+\begin{equation}
+\mathcal{F} = \bigoplus_{n=0}^{\infty} \mathcal{H}_n, \qquad \mathcal{H}_0 = \mathbb{C}\,|\Omega\rangle \;\text{(vacuum)},
+\end{equation}
+where $\mathcal{H}_n$ is the $n$-particle Hilbert space (to be specified as symmetric or antisymmetric tensor product --- this will be \emph{determined} by the theory, not postulated).
+\end{definition}
+
+\begin{definition}[Creation and annihilation]\label{def:creation}
+For each momentum $\mathbf{p}$ and spin component $\sigma$: $a^\dagger(\mathbf{p}, \sigma)$ creates a particle; $a(\mathbf{p}, \sigma)$ destroys one. The Poincar\'e group acts by:
+\begin{equation}\label{eq:poincare-on-a}
+U(\Lambda, a)\,a^\dagger(\mathbf{p}, \sigma)\,U^{-1}(\Lambda, a) = e^{i(\Lambda p)\cdot a}\sqrt{\frac{(\Lambda p)^0}{p^0}} \sum_{\bar\sigma} D^{(s)}_{\bar\sigma\sigma}(W(\Lambda, p))\,a^\dagger(\Lambda\mathbf{p}, \bar\sigma),
+\end{equation}
+where $W(\Lambda, p) = L^{-1}_{\Lambda p}\Lambda L_p$ is the Wigner rotation (an element of the little group) and $L_p$ is a standard boost~\cite{weinberg1995}.
+\end{definition}
+
+\begin{axiom}[Poincar\'e invariance of the S-matrix]\label{ax:QF1}
+The scattering operator $S$ commutes with all Poincar\'e transformations: $[U(\Lambda, a), S] = 0$.
+\end{axiom}
+
+\begin{axiom}[Unitarity]\label{ax:QF2}
+The S-matrix preserves probability: $S^\dagger S = SS^\dagger = 1$.
+\end{axiom}
+
+
+% ============================================================================
+\section{Cluster Decomposition and the Emergence of Fields}
+\label{sec:cluster}
+% ============================================================================
+
+\begin{axiom}[Cluster decomposition]\label{ax:QF3}
+If two sets of particles $A$ and $B$ are prepared at spacelike separation $d$ with $d \to \infty$:
+\begin{equation}\label{eq:cluster}
+S_{A \cup B} \to S_A \otimes S_B.
+\end{equation}
+The scattering of widely separated subsystems factorizes: distant experiments are statistically independent.
+\end{axiom}
+
+\begin{remark}[Physical content]
+Cluster decomposition is the mathematical expression of \emph{locality}: what happens in one laboratory does not instantaneously affect a distant laboratory. It is the multi-particle analog of the single-particle conservation principle (Paper~3a): both ensure that the physical structure is ``locally self-consistent.''
+\end{remark}
+
+\begin{theorem}[Quantum fields from cluster decomposition --- Weinberg~\cite{weinberg1995}]\label{thm:fields-from-cluster}
+Axioms QF1--QF3 imply that the interaction Hamiltonian can be written as:
+\begin{equation}\label{eq:H-local}
+V = \int \dd^3x\,\mathcal{H}(\mathbf{x}, t),
+\end{equation}
+where $\mathcal{H}(x)$ is a \emph{local} density constructed from \textbf{quantum fields}:
+\begin{equation}\label{eq:field}
+\phi_l(x) = \sum_\sigma \int \frac{\dd^3p}{(2\pi)^{3/2}\sqrt{2p^0}} \left[u_l(\mathbf{p}, \sigma)\,e^{ip\cdot x}\,a(\mathbf{p}, \sigma) + v_l(\mathbf{p}, \sigma)\,e^{-ip\cdot x}\,a^\dagger(\mathbf{p}, \sigma)\right],
+\end{equation}
+where $u_l$ and $v_l$ are coefficient functions determined by the Lorentz transformation properties of the field. The field $\phi_l(x)$ transforms under a finite-dimensional representation of the Lorentz group.
+\end{theorem}
+
+\begin{proof}[Proof outline]
+The proof follows Weinberg~\cite{weinberg1995}, Chapters~3--4. Write $S = \mathcal{T}\exp(-i\int V(t)\,\dd t)$ with $V(t) = \int \dd^3x\,\mathcal{H}(x)$. The connected part of the S-matrix, $S^c$, satisfies cluster decomposition iff $\mathcal{H}(x)$ is built from products of \emph{local} operators. Poincar\'e covariance of $S$ requires $\mathcal{H}(x)$ to transform as a Lorentz scalar under $U(\Lambda, a)$. The most general Lorentz-scalar local operator built from creation and annihilation operators is a polynomial in fields of the form~\eqref{eq:field}. The coefficient functions $u_l, v_l$ are determined by requiring $\phi_l(x)$ to transform under a definite finite-dimensional representation $(j_1, j_2)$ of $\SL(2, \mathbb{C})$.
+\end{proof}
+
+\begin{theorem}[Cluster decomposition as orbital integrability condition]\label{thm:cluster-integrability}
+The cluster decomposition principle plays the same structural role in QFT as the Bianchi identity in GR and the Casimir eigenvalue in QM:
+
+\begin{center}\small
+\begin{tabular}{llll}\toprule
+\textbf{Theory} & \textbf{Integrability condition} & \textbf{What it forces} & \textbf{Type} \\\midrule
+GR & $\nabla_\mu G^{\mu\nu} \equiv 0$ & Uniqueness of field eq. & Identity \\
+QM & $C_i = \lambda_i \cdot \mathrm{Id}$ & Uniqueness of wave eq. & Algebraic \\
+\textbf{QFT} & \textbf{Cluster decomposition} & \textbf{Existence of local fields} & \textbf{Asymptotic} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+All three are constraints that make the conservation/unitarity structure self-consistent: Bianchi ensures $\nabla_\mu T^{\mu\nu} = 0$ (energy conservation); Casimir eigenvalues ensure a well-defined Hamiltonian (unitary evolution); cluster decomposition ensures that unitarity is compatible with locality (distant experiments don't interfere).
+\end{theorem}
+
+
+% ============================================================================
+\section{The Spin-Statistics Connection}
+\label{sec:spinstat}
+% ============================================================================
+
+\begin{definition}[Causality condition]\label{def:causality}
+For the S-matrix to be both Lorentz-invariant and cluster-decomposing, the fields must satisfy a \textbf{microcausality condition}: for spacelike separation $(x - y)^2 > 0$,
+\begin{equation}\label{eq:causality}
+[\phi_l(x), \phi_{l'}^\dagger(y)]_\pm = 0,
+\end{equation}
+where $[\cdot, \cdot]_+$ is the anticommutator and $[\cdot, \cdot]_-$ the commutator. The question is: which sign applies for which spin?
+\end{definition}
+
+\begin{theorem}[Spin-statistics --- Weinberg~\cite{weinberg1995}, Pauli~\cite{pauli1940}]\label{thm:spinstat}
+For fields transforming in the $(j, 0) \oplus (0, j)$ representation of $\SL(2, \mathbb{C})$:
+\begin{enumerate}[label=(\alph*)]
+    \item \textbf{Integer spin} ($j \in \{0, 1, 2, \ldots\}$): the causality condition~\eqref{eq:causality} is satisfied only with the \emph{commutator} (minus sign). These fields obey \textbf{Bose--Einstein statistics}.
+    \item \textbf{Half-integer spin} ($j \in \{\frac{1}{2}, \frac{3}{2}, \ldots\}$): the causality condition is satisfied only with the \emph{anticommutator} (plus sign). These fields obey \textbf{Fermi--Dirac statistics}.
+\end{enumerate}
+Using the wrong statistics violates microcausality and hence Lorentz invariance or cluster decomposition.
+\end{theorem}
+
+\begin{proof}[Proof outline]
+Compute $[\phi(x), \phi^\dagger(y)]_\pm$ using the mode expansion~\eqref{eq:field}:
+\begin{equation}
+[\phi(x), \phi^\dagger(y)]_\pm = \int \frac{\dd^3p}{(2\pi)^3 2p^0}\left[|u|^2 e^{ip\cdot(x-y)} \pm |v|^2 e^{-ip\cdot(x-y)}\right].
+\end{equation}
+For spacelike $(x-y)$, one can perform a Lorentz transformation that reverses the sign of $(x-y)^0$. Under this transformation, $e^{ip\cdot(x-y)} \leftrightarrow e^{-ip\cdot(x-y)}$, and the coefficient functions transform as $|u|^2 \to |v|^2 \cdot (-1)^{2j}$ (the factor $(-1)^{2j}$ comes from the representation of the $2\pi$-rotation in $\SL(2, \mathbb{C})$).
+
+For integer $j$: $(-1)^{2j} = +1$, so the commutator ($-$ sign) gives two terms that cancel. The anticommutator ($+$ sign) would give a non-zero result at spacelike separation, violating causality.
+
+For half-integer $j$: $(-1)^{2j} = -1$, so the anticommutator ($+$ sign) gives cancellation. The commutator would violate causality.
+\end{proof}
+
+\begin{remark}[Orbital interpretation]
+The spin-statistics connection is a \emph{topological constraint on the orbit structure}. The double cover $\SL(2, \mathbb{C}) \to \SO^+(1,3)$ means that half-integer representations pick up a sign under a $2\pi$ rotation. This sign forces anticommutation (to maintain single-valued physics on the orbit space). The statistics is determined by the topology of the representation, not by any dynamical principle.
+\end{remark}
+
+
+% ============================================================================
+\begin{remark}[Resolving the Fock-space choice; the Pauli exclusion principle]\label{rmk:fock-resolved}
+This settles the symmetric-versus-antisymmetric ambiguity deliberately left open in
+Definition~\ref{def:fock}. The $n$-particle space $\mathcal{H}_n$ is the \emph{symmetric} tensor power
+$\mathrm{Sym}^n\mathcal{H}_1$ for integer-spin (Bose) fields and the \emph{antisymmetric} power
+$\Lambda^n\mathcal{H}_1$ for half-integer-spin (Fermi) fields --- the choice is forced, not postulated, by
+microcausality through the $(-1)^{2j}$ factor of Theorem~\ref{thm:spinstat}. The antisymmetry of
+$\Lambda^n\mathcal{H}_1$ is precisely the Pauli exclusion principle: a state with two identical fermions in the
+same mode vanishes, $a^\dagger(\mathbf{p},\sigma)^2=0$. Thus the exclusion principle --- the backbone of atomic
+structure and chemistry --- is a topological consequence of the double cover
+$\SL(2,\mathbb{C})\to\SO^+(1,3)$, not an independent postulate.
+\end{remark}
+
+% ============================================================================
+\section{The CPT Theorem}
+\label{sec:cpt}
+% ============================================================================
+
+\begin{theorem}[CPT --- L\"uders~\cite{luders1954}, Pauli~\cite{pauli1955}, Jost~\cite{jost1957}]\label{thm:cpt}
+Any quantum field theory satisfying Axioms QF1--QF3 (Poincar\'e invariance, unitarity, cluster decomposition) is invariant under the combined operation $\Theta = CPT$:
+\begin{equation}
+\Theta\,\phi_l(x)\,\Theta^{-1} = \eta_l\,\phi_l^\dagger(-x),
+\end{equation}
+where $\eta_l$ is a phase and $C$ is charge conjugation, $P$ parity, $T$ time reversal.
+\end{theorem}
+
+\begin{proof}[Proof idea]
+The Wightman functions (vacuum expectation values of products of fields) are boundary values of analytic functions in the complexified spacetime. The analytic continuation from the forward tube (where $\mathrm{Im}(x_1^0 - x_2^0) > 0$) to the backward tube implements the $PT$ transformation $x \mapsto -x$. Combined with the charge conjugation $C$ (which exchanges the creation and annihilation parts of the field), this gives the CPT transformation~\cite{jost1957,streater1964}.
+\end{proof}
+
+\begin{remark}
+CPT is a symmetry of the \emph{orbit space}: the complexified Lorentz group $\SO(4, \mathbb{C})$ connects the identity component $\SO^+(1,3)$ to the $PT$-transformed component. CPT invariance is forced by the analytic structure of the representation, not postulated.
+\end{remark}
+
+
+% ============================================================================
+\section{Massless Particles and Gauge Invariance}
+\label{sec:gauge}
+% ============================================================================
+
+\subsection{The little group for massless particles}
+
+For massless particles ($m = 0$), the little group (stabilizer of a reference null momentum $k^\mu = (\omega, 0, 0, \omega)$) is $\ISO(2) = \mathbb{R}^2 \rtimes \SO(2)$, the Euclidean group in 2 dimensions. The physical representations use only the $\SO(2)$ part: discrete helicity $\lambda = \pm s$. The $\mathbb{R}^2$ ``translation'' generators are set to zero to avoid continuous spin representations (which are not observed).
+
+\subsection{Gauge invariance from representation theory}
+
+\begin{theorem}[Gauge invariance for massless spin-1 --- Weinberg~\cite{weinberg1964a}]\label{thm:gauge}
+A massless spin-1 field $A_\mu(x)$ has 4 Lorentz components but only 2 physical polarizations (helicity $\pm 1$). Under a Lorentz transformation, $A_\mu$ transforms as:
+\begin{equation}\label{eq:gauge-transform}
+U(\Lambda)\,A_\mu(x)\,U^{-1}(\Lambda) = \Lambda_\mu{}^\nu A_\nu(\Lambda x) + \partial_\mu\Omega_\Lambda(x),
+\end{equation}
+where $\Omega_\Lambda$ is an operator-valued function arising from the $\mathbb{R}^2$ part of the $\ISO(2)$ little group. For the S-matrix to be Lorentz-invariant despite this extra term, the coupling of $A_\mu$ to matter must satisfy:
+\begin{equation}
+\partial_\mu J^\mu = 0 \qquad \text{(current conservation)}.
+\end{equation}
+This means the interaction is invariant under \textbf{gauge transformations} $A_\mu \to A_\mu + \partial_\mu\Lambda$.
+\end{theorem}
+
+\begin{remark}
+Gauge invariance is not a postulate but a \emph{consequence} of the representation theory of the little group $\ISO(2)$ for massless spin-1 particles. In the orbital language: gauge transformations are elements of the \emph{kernel} --- transformations that leave the physical observables unchanged. The 2 unphysical polarizations correspond to the 2 gauge degrees of freedom (the $\mathbb{R}^2$ part of $\ISO(2)$).
+\end{remark}
+
+\subsection{The loop closes: massless spin-2 implies general relativity}
+
+\begin{theorem}[Massless spin-2 $\Rightarrow$ general covariance --- Weinberg~\cite{weinberg1964b,weinberg1965}]\label{thm:spin2-gr}
+For a massless spin-2 field $h_{\mu\nu}(x)$:
+\begin{enumerate}[label=(\alph*)]
+    \item The Lorentz transformation includes $h_{\mu\nu} \to h_{\mu\nu} + \partial_\mu\xi_\nu + \partial_\nu\xi_\mu$ (linearized diffeomorphism).
+    \item Consistency of the S-matrix requires coupling to a conserved, symmetric tensor: $\partial_\mu T^{\mu\nu} = 0$.
+    \item Self-coupling (the graviton must couple to its own stress-energy) forces the full nonlinear Einstein equations at the interacting level.
+\end{enumerate}
+Therefore: any consistent theory of massless spin-2 particles IS general relativity.
+\end{theorem}
+
+\begin{proof}[Proof outline]
+(a) follows from the $\ISO(2)$ little group analysis, exactly as for spin-1 (Theorem~\ref{thm:gauge}) but with $\mathbb{R}^2$ acting on two indices. (b) follows from requiring the unwanted $\partial_\mu\xi_\nu$ terms to decouple from the S-matrix: this requires $k^\mu \mathcal{M}_{\mu\nu} = 0$ for on-shell amplitudes, which implies conservation $\partial_\mu T^{\mu\nu} = 0$. (c) is Weinberg's argument~\cite{weinberg1964b}: the graviton couples universally to $T^{\mu\nu}$; since the graviton itself carries energy-momentum, it must couple to its own $T^{\mu\nu}$; iterating this self-coupling to all orders produces the full nonlinear Einstein equations $G_{\mu\nu} + \Lambda g_{\mu\nu} = 8\pi G\,T_{\mu\nu}/c^4$.
+\end{proof}
+
+\begin{corollary}[Self-consistency loop]\label{cor:loop}
+GR is derived by two logically independent paths within the orbital framework:
+\begin{itemize}
+    \item \textbf{Paper~2:} $\Diff$-equivariance + Noether conservation + second-order $\xrightarrow{\text{Curiel}}$ Einstein.
+    \item \textbf{This paper:} Massless spin-2 + unitarity + cluster decomposition $\xrightarrow{\text{Weinberg}}$ Einstein.
+\end{itemize}
+The two derivations use different axioms and different uniqueness theorems, yet produce the same equation. This is a non-trivial \emph{consistency check} of the orbital framework.
+\end{corollary}
+
+
+% ============================================================================
+\section{The Complete Correspondence}
+\label{sec:correspondence}
+% ============================================================================
+
+\begin{theorem}[Four-theory correspondence]\label{thm:grand-table}
+The four instantiations of the orbital pattern are:
+
+\begin{center}\footnotesize
+\begin{tabular}{lcccc}\toprule
+\textbf{Role} & \textbf{SR (P1)} & \textbf{GR (P2)} & \textbf{QM (P3a)} & \textbf{QFT (P3b)} \\\midrule
+Grid cell & $(10, \alpha, 1)$ & $(<\!10, \alpha, \infty)$ & $(10, \beta, 1)$ & $(10, \beta, \infty)$ \\
+Group & Poincar\'e & Diff & Bargmann & Poincar\'e on $\mathcal{F}$ \\
+Conservation & $\dd Q/\dd t = 0$ & $\nabla_\mu T^{\mu\nu} = 0$ & $U^\dagger U = 1$ & $S^\dagger S = 1$ + cluster \\
+Integrability & Mass-shell & Bianchi & Casimir & Cluster decomp. \\
+Uniqueness & Max-sym & Curiel & Schur & Weinberg \\
+Output & Lorentz + $E^2\!=\!\ldots$ & Einstein & Schr\"odinger & Fields + SS + CPT \\
+Lagrangian & Not used & Not used & Not used & Not used \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{theorem}
+
+\begin{remark}[The fifth cell]
+The classification grid has a fifth cell: $(\kappa < 10, \beta, \infty)$ = \textbf{quantum gravity}. The orbital framework predicts that this cell must satisfy: (i)~$\Diff$-equivariance (from GR), (ii)~unitarity on curved backgrounds, (iii)~a gravitational cluster decomposition principle, (iv)~classical limit recovering GR, (v)~flat limit recovering QFT, (vi)~massless spin-2 excitations. The missing ingredient is the \emph{uniqueness theorem} for this cell --- the QG analog of Curiel/Schur/Weinberg. Finding it is the central open problem.
+\end{remark}
+
+
+% ============================================================================
+
+
+% ============================================================================
+% PART II: THE UNIFYING OBSERVATION
+% ============================================================================
+
+\part*{Part II: The Unifying Observation}
+
+% ============================================================================
+\section{The Orbital Framework: Formal Definitions}
+\label{sec:framework}
+% ============================================================================
+
+\begin{definition}[Physical theory as orbital data]\label{def:theory}
+A \textbf{physical theory} in the orbital framework is specified by a quintuple $\mathfrak{T} = (\mathcal{M}, \mathcal{S}, G, \mathcal{C}, \mathcal{U})$: arena $\mathcal{M}$, state space $\mathcal{S}$, symmetry group $G$, conservation principle $\mathcal{C}$, and uniqueness theorem $\mathcal{U}$. The \textbf{equation} $E[\mathfrak{T}]$ is the output of the triple $(G, \mathcal{C}, \mathcal{U})$.
+\end{definition}
+
+\begin{definition}[Classification triple]\label{def:triple}
+Each theory is characterized by $(\kappa, \rho, \sigma)$: $\kappa \in \{0, \ldots, 10\}$ (kernel dimension), $\rho \in \{\alpha, \beta\}$ (classical/quantum), $\sigma \in \{1, \infty\}$ (single-particle/field).
+\end{definition}
+
+\begin{definition}[The classification grid]\label{def:grid}
+\begin{equation}\label{eq:grid}
+\begin{array}{c|cc}
+(\rho, \sigma) \backslash \kappa & \kappa = 10 & \kappa < 10 \\[3pt] \hline
+(\alpha, 1) & \textbf{SR} & \text{Classical particle, curved spacetime} \\[3pt]
+(\alpha, \infty) & \text{Flat classical field theory} & \textbf{GR} \\[3pt]
+(\beta, 1) & \textbf{QM} & \text{QM in curved spacetime} \\[3pt]
+(\beta, \infty) & \textbf{QFT} & \textbf{Quantum Gravity} \\[3pt]
+\end{array}
+\end{equation}
+\end{definition}
+
+
+% ============================================================================
+\section{The Unifying Observation}
+\label{sec:meta}
+% ============================================================================
+
+\begin{observation}[The Equations of Physics from Orbital Structure]\label{thm:meta}
+For each of the four occupied cells $(\kappa, \rho, \sigma)$ of the classification grid, the fundamental equation is the unique output of an orbital derivation $(G, \mathcal{C}, \mathcal{U})$:
+
+\begin{center}\footnotesize
+\begin{tabular}{cccccc}\toprule
+$(\kappa, \rho, \sigma)$ & $G$ & $\mathcal{C}$ & $\mathcal{U}$ & \textbf{Equation} & \textbf{Paper} \\\midrule
+$(10, \alpha, 1)$ & $\Poinc(c)$ & $\dd Q/\dd t = 0$ & Max-sym classif. & Lorentz + $E^2\!=\!p^2c^2\!+\!m^2c^4$ & 1 \\[2pt]
+$(<\!10, \alpha, \infty)$ & $\Diff(\mathcal{M})$ & $\nabla_\mu\mathcal{E}^{\mu\nu}\!=\!0$ & Curiel/N-S & $G_{\mu\nu}\!+\!\Lambda g_{\mu\nu}\!=\!8\pi T_{\mu\nu}$ & 2 \\[2pt]
+$(10, \beta, 1)$ & Bargmann & $U^\dagger U\!=\!1$ & Schur & $i\hbar\partial_t\psi\!=\!H\psi$ & 3 \\[2pt]
+$(10, \beta, \infty)$ & $\Poinc$ on $\mathcal{F}$ & $S^\dagger S\!=\!1$ + cluster & Weinberg & Fields + SS + CPT + gauge & here \\[2pt]
+$(<\!10, \beta, \infty)$ & $\Diff$ on $\mathcal{F}$ & Unitarity + ??? & ??? & \textbf{Quantum Gravity} & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+No Lagrangian is used as input in any of the four derivations.
+\end{observation}
+
+\begin{remark}[Status of the Unifying Observation]
+This is an \emph{observation about four rigorously proved instances}, not a theorem about all possible theories. Each row is a theorem (proved in Papers~1--3 and Part~I of this paper). The observation is that all four theorems follow the same three-step pattern. Whether this pattern can be formalized as a single mathematical theorem --- e.g., ``any physical theory satisfying [abstract axioms] must follow this pattern'' --- is an open question. We present it as an empirical observation, not as a proven metatheorem.
+\end{remark}
+
+
+% ============================================================================
+\section{The Structural Correspondences}
+\label{sec:correspondences}
+% ============================================================================
+
+\begin{theorem}[Bianchi--Casimir--Cluster correspondence]\label{thm:correspondence}
+The integrability conditions of the four theories are structurally parallel:
+
+\begin{center}\small
+\begin{tabular}{lp{2.5cm}p{2.5cm}p{2.5cm}}\toprule
+\textbf{Aspect} & \textbf{Bianchi (GR)} & \textbf{Casimir (QM)} & \textbf{Cluster (QFT)} \\\midrule
+Object & Tensor $G^{\mu\nu}$ & Operator $C_i$ & S-matrix $S$ \\[3pt]
+Condition & $\nabla_\mu G^{\mu\nu} \equiv 0$ & $[C_i, U(g)] = 0$ & $S_{A \cup B} \!\to\! S_A \!\otimes\! S_B$ \\[3pt]
+Source & Jacobi identity & Casimir definition & Locality \\[3pt]
+Consequence & $\nabla_\mu T^{\mu\nu}\!=\!0$ & $H\!=\!P^2/2m\!+\!E_0$ & Fields $\phi(x)$ exist \\[3pt]
+Uniqueness & Curiel: $aG\!+\!bg$ & Schur: $\lambda \!\cdot\! \mathrm{Id}$ & Weinberg: fields forced \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+In each case, the integrability condition is \emph{forced by the group structure}, \emph{reduces the space of possible equations} to finite dimensions, and \emph{guarantees conservation automatically}.
+\end{theorem}
+
+\begin{proof}
+The structural parallel is verified aspect by aspect.
+
+\textbf{Forced by group structure:} Bianchi follows from the Jacobi identity for covariant derivatives (Paper~2, Theorem~3.1). The Casimir property follows from the definition of the center of the enveloping algebra. Cluster decomposition follows from the locality of the Poincar\'e action on Fock space.
+
+\textbf{Reduces to finite dimensions:} Bianchi + naturality + second-order $\Rightarrow$ $\{aG + bg\}$ (2-parameter family). Casimir on irrep $\Rightarrow$ $\{P^2/2m + E_0\}$ (2-parameter). Cluster + Poincar\'e $\Rightarrow$ fields determined by $(m, s)$.
+
+\textbf{Conservation automatic:} In GR: $\nabla_\mu(aG + bg)^{\mu\nu} = 0$ by Bianchi. In QM: $H = H^\dagger$ guarantees unitarity. In QFT: fields satisfy microcausality by construction.
+\end{proof}
+
+
+% ============================================================================
+\section{The Self-Consistency Loop}
+\label{sec:loop}
+% ============================================================================
+
+\begin{theorem}[Two independent paths to Einstein]\label{thm:loop}
+Einstein's equations are derived by two logically independent routes:
+
+\textbf{Path A} (Paper~2): $\Diff$-equivariance + Noether conservation + second-order $\xrightarrow{\text{Bianchi + Curiel}}$ Einstein.
+
+\textbf{Path B} (Part~I, Theorem~\ref{thm:spin2-gr}): Massless spin-2 + unitarity + cluster $\xrightarrow{\text{Weinberg}}$ gauge invariance under linearized diffeomorphisms $\xrightarrow{\text{self-coupling}}$ full nonlinear Einstein.
+
+The two paths use different axioms and different uniqueness theorems, yet produce the same equation.
+\end{theorem}
+
+\begin{proof}
+Path A: Paper~2~\cite{nembe2026p2}, Theorem~6.1. Path B: Part~I of this paper, Theorem~\ref{thm:spin2-gr}, following Weinberg~\cite{weinberg1964b,weinberg1965} and Deser~\cite{deser1970}.
+\end{proof}
+
+
+% ============================================================================
+\section{The Lagrangian as Consequence}
+\label{sec:lagrangian}
+% ============================================================================
+
+\begin{theorem}[The Lagrangian is always a consequence]\label{thm:lagrangian}
+In each theory, a Lagrangian exists \emph{a posteriori}:
+
+\begin{center}\small
+\begin{tabular}{llll}\toprule
+\textbf{Theory} & \textbf{Equation} & \textbf{Lagrangian} & \textbf{Guaranteeing theorem} \\\midrule
+SR & $E^2 = p^2c^2 + m^2c^4$ & $L = -mc^2\sqrt{1 - v^2/c^2}$ & Legendre transform \\
+GR & $G + \Lambda g = 8\pi T$ & $\mathcal{L} = R - 2\Lambda$ & Cartan--Vermeil--Weyl \\
+QM & $i\hbar\partial_t\psi = H\psi$ & $L = \langle\psi|i\hbar\partial_t - H|\psi\rangle$ & Helmholtz conditions \\
+QFT & Fields + interactions & $\mathcal{L}_{\mathrm{QFT}}[\phi]$ & Weinberg reconstruction \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{theorem}
+
+\begin{remark}[The reversal of implication]\label{rmk:reversal-grand}
+In every case, the standard approach is: Lagrangian (premise) $\to$ equation $\to$ conservation. The orbital approach reverses this: symmetry + conservation (premise) $\to$ equation $\to$ Lagrangian (consequence). The equations are the same; the logical roles of ``premise'' and ``consequence'' are reversed.
+\end{remark}
+
+
+% ============================================================================
+\section{Constraints on Quantum Gravity}
+\label{sec:qg}
+% ============================================================================
+
+\begin{theorem}[Seven constraints on quantum gravity]\label{thm:qg}
+Any theory occupying the cell $(\kappa < 10, \beta, \infty)$ must satisfy:
+\begin{enumerate}[label=(QG\arabic*)]
+    \item \textbf{Diff-equivariance} (from GR heritage).
+    \item \textbf{Unitarity} on curved backgrounds (from QFT heritage).
+    \item \textbf{Gravitational cluster decomposition} (multi-particle integrability on curved spacetime).
+    \item \textbf{Classical limit:} $\hbar \to 0$ recovers GR.
+    \item \textbf{Flat limit:} $\kappa \to 10$ recovers QFT.
+    \item \textbf{Graviton content:} massless spin-2 excitations reproducing Newtonian gravity.
+    \item \textbf{Uniqueness:} should be determined by a uniqueness theorem (the QG analog of Curiel/Schur/Weinberg). \emph{This is a prediction of the framework, not a derived constraint.}
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(QG1)--(QG2): required for consistency with the $\alpha$ and $\kappa = 10$ limits. (QG3): the multi-particle integrability condition for $\kappa < 10$. (QG4)--(QG5): limiting requirements from neighboring cells. (QG6): from (QG5) + Weinberg's theorem (massless spin-2 $\Rightarrow$ GR). (QG7): a conjecture based on the pattern observed in the other four cells.
+\end{proof}
+
+\begin{remark}[Evaluation of existing proposals]
+\begin{center}\footnotesize
+\begin{tabular}{lccccccc}\toprule
+& QG1 & QG2 & QG3 & QG4 & QG5 & QG6 & QG7 \\\midrule
+String theory & $\checkmark$ & $\checkmark$ & $?$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\times$ (landscape) \\
+Loop QG & $\checkmark$ & $?$ & $?$ & $?$ & $?$ & $?$ & $?$ \\
+Asymptotic safety & $\checkmark$ & $?$ & $?$ & $\checkmark$ & $?$ & $\checkmark$ & $\checkmark?$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+No existing proposal satisfies all seven constraints with certainty.
+\end{remark}
+
+
+% ============================================================================
+\section{The Orbital Integrability Conjecture}
+\label{sec:oip}
+% ============================================================================
+
+\begin{conjecture}[Orbital Integrability Conjecture --- OIC]
+\textit{The fundamental equations of physics are the unique integrability conditions that make the orbital structure --- symmetry group, orbits, kernel, and conservation --- self-consistent. The equations are not imposed on nature from outside but emerge from the requirement that symmetries, orbits, and conserved quantities cohere.}
+\end{conjecture}
+
+\begin{remark}[Status]
+The OIC is supported by four instances (SR, GR, QM, QFT), each rigorously proved. Whether it can be formalized as a single mathematical theorem is an open question. We present it as a conjecture --- a research program, not a proven principle. A possible formalization: in each case, the conserved quantities form a presheaf on the state space, and the equation is the condition that this presheaf extends to a sheaf. We leave this to future work.
+\end{remark}
+
+\begin{remark}[Comparison with other principles]
+\begin{center}\small
+\begin{tabular}{lllc}\toprule
+\textbf{Principle} & \textbf{Scope} & \textbf{Status} & \textbf{Lagrangian?} \\\midrule
+Least action & Mechanics, field theory & Proven theorem & Yes \\
+Equivalence & GR only & Proven & No \\
+Gauge principle & Gauge theories & Proven & Yes \\
+$\delta Q = TdS$ & GR only & Proven & No \\
+\textbf{OIC (this paper)} & \textbf{SR+GR+QM+QFT} & \textbf{Conjecture (4 instances)} & \textbf{No} \\
+\bottomrule
+\end{tabular}
+\end{center}
+The OIC has the broadest scope but the weakest epistemic status: it is a conjecture supported by examples, not a proven theorem.
+\end{remark}
+
+
+% ============================================================================
+\section{Discussion}
+\label{sec:discussion}
+% ============================================================================
+
+\subsection{Laws as integrability conditions}
+
+The traditional view holds that the laws of physics are imposed on nature. The OIC suggests an alternative: the laws are internal consistency conditions of the orbital structure. This is an interpretive claim, not a mathematical one; its value lies in its unifying power across the four fundamental theories.
+
+\subsection{The Lagrangian: tool, not foundation}
+
+Theorem~\ref{thm:lagrangian} shows that in every case, the Lagrangian exists as a consequence of the equations. This does not diminish its computational importance --- the Lagrangian generates Feynman rules, conservation laws, and renormalization group flows. It clarifies the logical role: the Lagrangian is a powerful tool, not the foundation.
+
+\subsection{The road to quantum gravity}
+
+The framework predicts that quantum gravity satisfies seven constraints (Theorem~\ref{thm:qg}). The missing piece is the uniqueness theorem for the $(\kappa < 10, \beta, \infty)$ cell. Candidates include: the spectral action (Connes~\cite{connes1996}), the holographic principle, or a yet-unknown classification theorem. Finding this theorem would determine or strongly constrain quantum gravity.
+
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+% ============================================================================
+
+We have completed the ``Physics from Orbital Structure'' series by deriving the structure of quantum field theory from the three-step orbital pattern and formalizing the observation that all four fundamental theories follow this pattern.
+
+The key results are: the Bianchi--Casimir--Cluster correspondence (Theorem~\ref{thm:correspondence}); the self-consistency loop via massless spin-2 (Theorem~\ref{thm:loop}); the Lagrangian as consequence (Theorem~\ref{thm:lagrangian}); and seven constraints on quantum gravity (Theorem~\ref{thm:qg}).
+
+We propose the Orbital Integrability Conjecture: the equations of physics are integrability conditions for the self-consistency of orbital structure. This conjecture is supported by four rigorously proved instances but remains open as a general mathematical statement.
+
+\begin{center}
+\fbox{\parbox{0.85\textwidth}{\centering\itshape
+The equations of physics are not laws imposed on nature\\
+but integrability conditions for the self-consistency\\
+of its orbital structure.
+}}
+\end{center}
+
+
+% ============================================================================
+\section*{Acknowledgments}
+The author thanks the Roots Insights Laboratory and the National Institute of Management Sciences for support.
+
+
+% ============================================================================
+\begin{thebibliography}{40}
+
+\bibitem{nembe2026p1} J.~Nemb\'e, ``Special relativity from orbital structure,'' Paper~1 of this series (2026).
+
+\bibitem{nembe2026p2} J.~Nemb\'e, ``General relativity from orbital structure,'' Paper~2 of this series (2026).
+
+\bibitem{nembe2026p3a} J.~Nemb\'e, ``Quantum mechanics from orbital structure,'' Paper~3 of this series (2026).
+
+\bibitem{weinberg1995} S.~Weinberg, \emph{The Quantum Theory of Fields}, Vol.~1 (Cambridge Univ.\ Press, 1995).
+
+\bibitem{weinberg1964b} S.~Weinberg, ``Photons and gravitons in S-matrix theory,'' \emph{Phys.\ Rev.}\ \textbf{135}, B1049--B1056 (1964).
+
+\bibitem{weinberg1965} S.~Weinberg, ``Photons and gravitons in perturbation theory,'' \emph{Phys.\ Rev.}\ \textbf{138}, B988--B1002 (1965).
+
+\bibitem{weinberg1964a} S.~Weinberg, ``Feynman rules for any spin.\ II.\ Massless particles,'' \emph{Phys.\ Rev.}\ \textbf{134}, B882--B896 (1964).
+
+\bibitem{wigner1939} E.P.~Wigner, ``On unitary representations of the inhomogeneous Lorentz group,'' \emph{Ann.\ Math.}\ \textbf{40}, 149--204 (1939).
+
+\bibitem{pauli1940} W.~Pauli, ``The connection between spin and statistics,'' \emph{Phys.\ Rev.}\ \textbf{58}, 716--722 (1940).
+
+\bibitem{luders1954} G.~L\"uders, ``On the equivalence of invariance under time reversal and under particle-antiparticle conjugation for relativistic field theories,'' \emph{Kgl.\ Danske Videnskab.\ Selskab, Mat.-fys.\ Medd.}\ \textbf{28}, no.~5, 1--17 (1954).
+
+\bibitem{pauli1955} W.~Pauli, ``Exclusion principle, Lorentz group and reflection of space-time and charge,'' in \emph{Niels Bohr and the Development of Physics}, ed.\ W.~Pauli (Pergamon, London, 1955), pp.~30--51.
+
+\bibitem{jost1957} R.~Jost, ``A remark on the C.T.P.\ theorem,'' \emph{Helv.\ Phys.\ Acta}\ \textbf{30}, 409--416 (1957).
+
+\bibitem{streater1964} R.F.~Streater and A.S.~Wightman, \emph{PCT, Spin and Statistics, and All That} (Benjamin, 1964).
+
+\bibitem{deser1970} S.~Deser, ``Self-interaction and gauge invariance,'' \emph{Gen.\ Rel.\ Grav.}\ \textbf{1}, 9--18 (1970).
+
+\bibitem{wald1986} R.M.~Wald, ``Spin-two fields and general covariance,'' \emph{Phys.\ Rev.\ D}\ \textbf{33}, 3613--3625 (1986).
+
+\bibitem{butcher2009} L.M.~Butcher, M.~Hobson, and A.~Lasenby, ``Bootstrapping gravity: A consistent approach to energy-momentum self-coupling,'' \emph{Phys.\ Rev.\ D}\ \textbf{80}, 084014 (2009).
+
+\bibitem{vermeil1917} H.~Vermeil, \emph{Nachr.\ Ges.\ Wiss.\ G\"ottingen}, 334--344 (1917).
+
+\bibitem{cartan1922} \'E.~Cartan, \emph{Le\c{c}ons sur les invariants int\'egraux} (Hermann, 1922).
+
+\bibitem{navarro2008} J.~Navarro and J.B.~Sancho, ``On the naturalness of Einstein's equation,'' \emph{J.\ Geom.\ Phys.}\ \textbf{58}, 1007--1014 (2008).
+
+\bibitem{curiel2016} E.~Curiel, ``A simple proof of the uniqueness of the Einstein field equation in all dimensions'' (2016).
+
+\bibitem{helmholtz1887} H.~von Helmholtz, \emph{J.\ Reine Angew.\ Math.}\ \textbf{100}, 137--166 (1887).
+
+\bibitem{connes1996} A.~Connes, ``Gravity coupled with matter and the foundation of non-commutative geometry,'' \emph{Comm.\ Math.\ Phys.}\ \textbf{182}, 155--176 (1996).
+
+\bibitem{nembe2026vol17} J.~Nemb\'e, ``Twin General Relativity,'' \emph{ROOTS-INSIGHTS} Vol.~17 (2026).
+
+\end{thebibliography}
+
+\end{document}

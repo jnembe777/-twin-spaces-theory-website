@@ -1,0 +1,2560 @@
+% =============================================================================
+% EQUIVARIANT STATISTICAL ESTIMATION WITH APPLICATIONS
+% COMPLETE BOOK - VERSION INTÉGRALE
+% =============================================================================
+
+\documentclass[11pt,twoside,openright]{book}
+
+% =============================================================================
+% PACKAGES
+% =============================================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{etoolbox}
+\usepackage{xcolor}
+\usepackage{float}
+
+% =============================================================================
+% PAGE STYLE
+% =============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\thepage\quad\leftmark}
+\fancyhead[RO]{\rightmark\quad\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+
+% =============================================================================
+% THEOREM ENVIRONMENTS
+% =============================================================================
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{guideline}[theorem]{Guideline}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% =============================================================================
+% CUSTOM COMMANDS
+% =============================================================================
+\newcommand{\calH}{\mathcal{H}}
+\newcommand{\calO}{\mathcal{O}}
+\newcommand{\calG}{\mathcal{G}}
+\newcommand{\calF}{\mathcal{F}}
+\newcommand{\calN}{\mathcal{N}}
+\newcommand{\calP}{\mathcal{P}}
+\newcommand{\calA}{\mathcal{A}}
+\newcommand{\calB}{\mathcal{B}}
+\newcommand{\calK}{\mathcal{K}}
+\newcommand{\calL}{\mathcal{L}}
+\newcommand{\calM}{\mathcal{M}}
+\newcommand{\calJ}{\mathcal{J}}
+\newcommand{\Rd}{\mathbb{R}}
+\newcommand{\Nd}{\mathbb{N}}
+\newcommand{\Zd}{\mathbb{Z}}
+\newcommand{\Cp}{\mathbb{C}}
+\newcommand{\norm}[1]{\|#1\|}
+\newcommand{\abs}[1]{|#1|}
+\newcommand{\inner}[2]{\langle #1, #2 \rangle}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\deff}{d_{\mathrm{eff}}}
+\newcommand{\twin}{\odot}
+\newcommand{\Etwin}{\mathbb{E}_{\twin}}
+\newcommand{\Vartwin}{\mathrm{Var}_{\twin}}
+\newcommand{\linmap}{\psi}
+\newcommand{\dd}{\mathrm{d}}
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\argmax}{argmax}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\VCdim}{VCdim}
+\DeclareMathOperator{\codim}{codim}
+\DeclareMathOperator{\MISE}{MISE}
+\DeclareMathOperator{\ISE}{ISE}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\diag}{diag}
+
+% =============================================================================
+% TITLE
+% =============================================================================
+
+\title{
+\vspace{-2cm}
+{\LARGE\textsc{Springer Series in Statistics}}\\[2cm]
+{\Huge\textbf{Equivariant Statistical Estimation}}\\[0.5cm]
+{\Huge\textbf{with Applications}}\\[1.5cm]
+{\Large A Unified Theory of Orbital Spaces,}\\[0.3cm]
+{\Large Twin Kernels, and Group-Theoretic Methods}\\[3cm]
+}
+
+\author{
+{\Large Jocelyn Nembé}\\[1cm]
+\textit{L.I.A.G.E., Institut National des Sciences de Gestion}\\
+\textit{Libreville, Gabon}\\[0.5cm]
+\textit{Modeling and Calculus Lab, ROOTS-INSIGHTS}\\
+\textit{Libreville, Gabon}
+}
+
+\date{2025}
+
+\begin{document}
+
+% =============================================================================
+% FRONT MATTER
+% =============================================================================
+\frontmatter
+
+\maketitle
+
+% Dedication
+\newpage
+\thispagestyle{empty}
+\vspace*{5cm}
+\begin{flushright}
+\textit{To those who seek the hidden symmetries\\
+in the apparent chaos of data.}
+\end{flushright}
+
+% =============================================================================
+% PREFACE
+% =============================================================================
+\chapter{Preface}
+
+This book presents a unified theory of statistical estimation that systematically exploits the symmetry structure of data and parameter spaces. The central insight is simple yet powerful: \emph{when data possess inherent symmetries, statistical procedures should respect and exploit these symmetries}.
+
+Classical statistics treats observations as points in Euclidean space, ignoring any underlying structure. This approach has two fundamental limitations: it fails to exploit symmetry for improved efficiency, and it may produce estimators that violate natural invariance properties. We address both issues by developing estimation theory on \emph{orbital spaces}---quotient spaces induced by group actions.
+
+\section*{The Three Pillars}
+
+Our framework rests on three foundational concepts:
+
+\begin{enumerate}
+\item \textbf{The Twin Metric.} Given a metric space $(E, d)$ with group action $G$, we define the twin metric on the quotient space:
+\[
+d_G(O(x), O(y)) = \inf_{g \in G} d(x, g\cdot y),
+\]
+which induces the natural topology on $E/G$.
+
+\item \textbf{Orbital Empirical Measures.} Given i.i.d.\ observations $X_1, \ldots, X_n$ from a distribution $\mu$ on $E$, the orbital empirical measure is the pushforward under the quotient map:
+\[
+\hat{\mu}_n^G = \frac{1}{n} \sum_{i=1}^n \delta_{O(X_i)} = \pi_* \hat{\mu}_n.
+\]
+
+\item \textbf{Equivariant Estimators.} Estimators that respect the group action, ensuring geometric coherence and achieving improved statistical efficiency through orbit-averaging.
+\end{enumerate}
+
+\section*{Organization}
+
+The book is organized in three parts:
+
+\textbf{Part I: Foundations} develops the mathematical framework. We introduce orbital spaces, twin metrics, and transported kernels. The key concepts are the twin metric on quotient spaces and the TwinKernel hierarchy of transported smoothing kernels. We establish fundamental properties including the Separation Theorem for orbital function spaces.
+
+\textbf{Part II: Core Theory} presents the main statistical results. We prove orbital versions of the Glivenko--Cantelli and Donsker theorems, develop equivariant kernel density estimation with variance reduction proportional to orbit size, establish limit theorems in twin geometries, and derive concentration inequalities adapted to multiplicative structures.
+
+\textbf{Part III: Applications} demonstrates the methodology across domains. We apply orbital methods to density estimation, point process intensity estimation, adaptive function approximation, and high-dimensional problems with intrinsic symmetry.
+
+\section*{Central Message}
+
+The central message of this book is that \textbf{symmetry is a statistical resource}. In the presence of group structure, the quotient space is not a technicality---it is the natural home of statistical inference.
+
+\vspace{1cm}
+\begin{flushright}
+Jocelyn Nembé\\
+Libreville, December 2025
+\end{flushright}
+
+% =============================================================================
+% TABLE OF CONTENTS
+% =============================================================================
+\tableofcontents
+
+% =============================================================================
+% NOTATION
+% =============================================================================
+\chapter{Notation and Symbols}
+
+\section*{Spaces and Sets}
+
+\begin{tabular}{ll}
+$\Rd, \Rd^d$ & Real line, $d$-dimensional Euclidean space\\
+$\Rd_{>0}$ & Positive real numbers\\
+$\Zd, \Nd$ & Integers, natural numbers\\
+$S^1, S^{d-1}$ & Unit circle, unit sphere in $\Rd^d$\\
+$\Delta^{d-1}$ & $(d-1)$-dimensional simplex\\
+$L^p(I), L^p(\mu)$ & Lebesgue spaces\\
+$H^s(I)$ & Sobolev space of order $s$\\
+$C^{k,\alpha}(I)$ & Hölder space\\
+$E/G$ & Quotient space of $E$ by group $G$\\
+$O(x)$ & Orbit of $x$ under group action\\
+$\calO_n(\calH)$ & Orbital space at level $n$ with reference $\calH$\\
+\end{tabular}
+
+\section*{Group Actions}
+
+\begin{tabular}{ll}
+$G = \langle \phi \rangle$ & Cyclic group generated by $\phi$\\
+$\Zd_m$ & Cyclic group of order $m$\\
+$S_n$ & Symmetric group on $n$ elements\\
+$\phi^n$ & $n$-fold composition of $\phi$\\
+$\Phi_n = \log^{(n)}$ & $n$-fold iterated logarithm\\
+$d_G$ & Twin metric (orbital metric)\\
+$\pi : E \to E/G$ & Quotient map\\
+$\psi$ & Linearization map\\
+$x \twin y$ & Twin operation\\
+\end{tabular}
+
+\section*{Probability and Statistics}
+
+\begin{tabular}{ll}
+$\E, \var, \Cov$ & Expectation, variance, covariance\\
+$\Prob$ & Probability measure\\
+$\mu, \mu^G$ & Measure on $E$, pushforward to $E/G$\\
+$\hat{\mu}_n, \hat{\mu}_n^G$ & Empirical measure, orbital empirical measure\\
+$f, \hat{f}_n$ & Density, density estimator\\
+$\lambda, \hat{\lambda}_n$ & Intensity, intensity estimator\\
+$I(\theta), I^G(\theta)$ & Fisher information, orbital Fisher information\\
+$N(t), M(t)$ & Counting process, martingale\\
+\end{tabular}
+
+\section*{Kernels and Estimation}
+
+\begin{tabular}{ll}
+$K, K_h$ & Kernel, scaled kernel with bandwidth $h$\\
+$K_j^G$ & TwinKernel at level $j$\\
+$\calN(\varepsilon, F, d)$ & $\varepsilon$-covering number\\
+$N_{[\,]}(\varepsilon, F, d)$ & Bracketing number\\
+$\text{MISE}, \text{ISE}$ & Mean/Integrated squared error\\
+$\deff$ & Effective dimension\\
+\end{tabular}
+
+% =============================================================================
+% MAIN MATTER
+% =============================================================================
+\mainmatter
+
+% #############################################################################
+% PART I: FOUNDATIONS
+% #############################################################################
+
+\part{Foundations}
+\label{part:foundations}
+
+% =============================================================================
+% CHAPTER 1: INTRODUCTION
+% =============================================================================
+
+\chapter{Introduction: Statistics and Symmetry}
+\label{ch:introduction}
+
+\section{The Role of Symmetry in Statistics}
+
+Many statistical problems possess inherent symmetries. When measuring angles, data live on a circle with rotational symmetry. When analyzing compositions, data lie on a simplex with permutation structure. In physics, measurements may be invariant under gauge transformations. In finance, returns are naturally multiplicative rather than additive.
+
+Classical statistical theory typically ignores these symmetries, treating all observations as points in Euclidean space $\Rd^d$. This approach has fundamental limitations:
+\begin{enumerate}[label=(\roman*)]
+\item It fails to exploit symmetry structure for improved estimation efficiency.
+\item It may produce estimators that violate natural invariance properties.
+\item It uses coordinate-dependent methods on intrinsically coordinate-free problems.
+\end{enumerate}
+
+This book develops a systematic framework for statistical estimation that respects and exploits symmetry. The key insight is that statistical procedures should operate on \emph{orbits} rather than individual points when the underlying structure exhibits group symmetry.
+
+\section{Motivating Examples}
+
+\subsection{Directional Data}
+
+Consider observations $\theta_1, \ldots, \theta_n$ on the unit circle $S^1$, representing wind directions, animal migration headings, or circadian rhythms. The data have rotational symmetry: a rotation of all observations by a fixed angle $\alpha$ should not change statistical conclusions.
+
+Classical methods that treat $\theta_i$ as points in $[0, 2\pi)$ can produce paradoxical results. For example, the arithmetic mean of $\theta_1 = 1^\circ$ and $\theta_2 = 359^\circ$ is $180^\circ$, while the natural directional mean is $0^\circ$.
+
+Our framework recognizes that the natural parameter space is the quotient $S^1/G$ for an appropriate symmetry group $G$, and develops estimators that respect this structure.
+
+\subsection{Positive Data and Multiplicative Structure}
+
+Consider positive observations $X_1, \ldots, X_n$ (e.g., stock prices, concentrations, survival times). The natural operations are multiplicative: ratios $X_i/X_j$ and geometric means $(\prod X_i)^{1/n}$ are more meaningful than differences and arithmetic means.
+
+The group $G = (\Rd_{>0}, \times)$ acts by multiplication. Under the logarithmic isomorphism $\psi(x) = \log x$, this becomes the additive group $(\Rd, +)$. Statistical procedures should respect this structure.
+
+Our TwinKernel framework provides density estimators, concentration inequalities, and limit theorems adapted to multiplicative geometry.
+
+\subsection{Compositional Data}
+
+When observations represent proportions summing to one, they lie on the simplex $\Delta^{d-1} = \{x \in \Rd^d_{>0} : \sum_i x_i = 1\}$. If components are exchangeable, the symmetric group $S_d$ acts by permutation, and the natural space is $\Delta^{d-1}/S_d$---the set of unordered compositions.
+
+Our orbital estimation theory shows that exploiting this symmetry reduces the effective dimension and improves efficiency.
+
+\subsection{Adaptive Function Approximation}
+
+Consider approximating an unknown function $f$ from noisy observations. Classical methods fix a basis (polynomials, wavelets, etc.) and approximate within that basis. But different functions require different bases: $\sin(x)$ needs Fourier, $x^{2.5}$ needs power functions.
+
+Our \emph{orbital approximation} framework replaces fixed bases with floating reference spaces adapted via diffeomorphisms. The Separation Theorem guarantees that the optimal deformation level can be identified from data.
+
+\section{Main Contributions}
+
+This book makes five main contributions:
+
+\begin{enumerate}
+\item \textbf{Orbital Empirical Process Theory.} We establish Glivenko--Cantelli and Donsker theorems for empirical measures on quotient spaces $E/G$, with convergence in the twin metric $d_G$.
+
+\item \textbf{Equivariant Estimation with Variance Reduction.} We show that orbit-averaging reduces variance by a factor of $|G|$ when $G$ is finite---a direct statistical benefit of symmetry.
+
+\item \textbf{TwinKernel Density and Intensity Estimation.} We develop kernel methods that transport across group orbits, achieving optimal rates in effective dimension $\deff = \dim(E) - \dim(G)$.
+
+\item \textbf{Limit Theorems in Twin Geometry.} We prove laws of large numbers, central limit theorems, Berry--Esseen bounds adapted to multiplicative and other non-Euclidean structures.
+
+\item \textbf{Concentration Inequalities.} We derive Hoeffding, Bernstein, and isoperimetric inequalities that exploit group structure, with dramatic improvements for data spanning multiple orders of magnitude.
+\end{enumerate}
+
+\section{Organization of the Book}
+
+The book is organized in three parts:
+
+\textbf{Part I: Foundations} (Chapters 1--4):
+\begin{itemize}
+\item Chapter 1 (this chapter): Introduction and overview
+\item Chapter 2: Group actions, quotient spaces, and orbital geometry
+\item Chapter 3: TwinKernel theory and kernel transport
+\item Chapter 4: Orbital function spaces and the Separation Theorem
+\end{itemize}
+
+\textbf{Part II: Core Theory} (Chapters 5--9):
+\begin{itemize}
+\item Chapter 5: Orbital empirical processes (Glivenko--Cantelli, Donsker)
+\item Chapter 6: Equivariant density estimation
+\item Chapter 7: Limit theorems in twin spaces
+\item Chapter 8: Concentration inequalities and isoperimetry
+\item Chapter 9: Maximum likelihood on quotient spaces
+\end{itemize}
+
+\textbf{Part III: Applications} (Chapters 10--14):
+\begin{itemize}
+\item Chapter 10: Point process intensity estimation
+\item Chapter 11: Orthogonal polynomial estimation
+\item Chapter 12: Orbital approximation theory
+\item Chapter 13: Applications to directional, compositional, and financial data
+\item Chapter 14: Computational methods and algorithms
+\end{itemize}
+
+Appendices collect technical lemmas, proofs, and reference material.
+
+% =============================================================================
+% CHAPTER 2: ORBITAL GEOMETRY
+% =============================================================================
+
+\chapter{Group Actions and Orbital Geometry}
+\label{ch:orbital-geometry}
+
+This chapter develops the geometric foundations for statistics on orbital spaces.
+
+\section{Group Actions on Metric Spaces}
+
+\begin{definition}[Group Action]
+Let $E$ be a set and $G$ a group. A \emph{(left) action} of $G$ on $E$ is a map $G \times E \to E$, written $(g, x) \mapsto g \cdot x$, satisfying:
+\begin{enumerate}[label=(\roman*)]
+\item $e \cdot x = x$ for all $x \in E$ (identity)
+\item $(gh) \cdot x = g \cdot (h \cdot x)$ for all $g, h \in G$, $x \in E$ (associativity)
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Orbit and Quotient Space]
+The \emph{orbit} of $x \in E$ under the action of $G$ is:
+\[
+O(x) = G \cdot x = \{g \cdot x : g \in G\}.
+\]
+The \emph{orbit space} (or quotient space) is:
+\[
+E/G = \{O(x) : x \in E\}
+\]
+equipped with the quotient topology induced by the projection $\pi : E \to E/G$.
+\end{definition}
+
+Throughout this book, we focus primarily on discrete groups $G = \langle \phi \rangle \cong \Zd$ generated by a single transformation $\phi : E \to E$, though many results extend to more general groups.
+
+\begin{example}[Cyclic Groups]
+\label{ex:cyclic}
+Let $E = S^1$ (unit circle) and $\phi(\theta) = \theta + 2\pi/m$ (rotation by $2\pi/m$). Then $G = \langle \phi \rangle \cong \Zd_m$ is the cyclic group of order $m$, and orbits have exactly $m$ elements.
+\end{example}
+
+\begin{example}[Logarithmic Group]
+\label{ex:log}
+Let $E = \Rd_{>0}$ and $\phi = \log$. The group $G = \langle \phi \rangle \cong \Zd$ acts by iterated logarithms: $\phi^n(x) = \log^{(n)}(x)$ for $n \geq 0$ and $\phi^{-n}(x) = \exp^{(n)}(x)$ for $n \geq 1$. This is the fundamental example for adaptive approximation.
+\end{example}
+
+\begin{example}[Permutation Groups]
+Let $E = \Rd^d$ and $G = S_d$ (symmetric group) acting by permutation of coordinates:
+\[
+\sigma \cdot (x_1, \ldots, x_d) = (x_{\sigma^{-1}(1)}, \ldots, x_{\sigma^{-1}(d)}).
+\]
+This is relevant for exchangeable data and compositional analysis.
+\end{example}
+
+\section{The Twin Metric}
+
+The twin metric is the natural metric on the quotient space that respects the group structure.
+
+\begin{definition}[Twin Metric]
+\label{def:twin-metric}
+Let $(E, d)$ be a metric space with $G$ acting by isometries. The \emph{twin metric} on $E/G$ is:
+\begin{equation}
+d_G(O(x), O(y)) = \inf_{g \in G} d(x, g \cdot y) = \inf_{g, h \in G} d(g \cdot x, h \cdot y).
+\label{eq:twin-metric}
+\end{equation}
+When $G$ is finite with $|G| = m$, the infimum is a minimum over $m$ terms.
+\end{definition}
+
+\begin{proposition}[Metric Properties]
+\label{prop:twin-metric}
+The function $d_G$ is a well-defined metric on $E/G$:
+\begin{enumerate}[label=(\roman*)]
+\item $d_G(O(x), O(y)) = 0$ if and only if $O(x) = O(y)$
+\item $d_G(O(x), O(y)) = d_G(O(y), O(x))$
+\item $d_G(O(x), O(z)) \leq d_G(O(x), O(y)) + d_G(O(y), O(z))$
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Symmetry uses that $G$ acts by isometries: $\inf_g d(x, g\cdot y) = \inf_g d(g^{-1}\cdot x, y) = \inf_h d(h\cdot x, y) = d_G(O(y),O(x))$. The triangle inequality is the standard one for the orbit (set) distance. For definiteness, $d_G(O(x),O(y))=0$ means $\inf_g d(x, g\cdot y)=0$, i.e.\ $x$ lies in the closure of the orbit $G\cdot y$; when the orbits are closed (automatic for finite or proper actions) this forces $x\in G\cdot y$, hence $O(x)=O(y)$.
+\end{proof}
+
+\begin{remark}[Alternative Formulations]
+The infimum is manifestly independent of the chosen orbit representatives: replacing $x$ by $g_0\cdot x$ and $y$ by $h_0\cdot y$ only re-indexes the infimum (using that $G$ acts by isometries), so $d_G$ is well defined on $E/G$. It is the set distance between the orbits $G\cdot x$ and $G\cdot y$. Positivity and the triangle inequality require the orbits to be closed (automatic for finite or proper actions); otherwise $d_G$ is only a pseudometric. \emph{Note}: the supremum $\sup_g d(g\cdot x,g\cdot y)$ does \emph{not} define a metric on $E/G$ --- for an isometric action it equals $d(x,y)$, which is not constant on orbits.
+\end{remark}
+
+\begin{example}[Circular Distance]
+For $E = S^1$ with $G = \Zd_m$ acting by rotation:
+\[
+d_G(O(\theta_1), O(\theta_2)) = \min_{k=0}^{m-1} |\theta_1 - \theta_2 - 2\pi k/m| \mod 2\pi.
+\]
+\end{example}
+
+\begin{example}[Permutation Distance]
+For $E = \Rd^d$ with $G = S_d$, the orbital distance uses sorted vectors:
+\[
+d_G(O(x), O(y)) = \norm{x_{(\cdot)} - y_{(\cdot)}}
+\]
+where $x_{(\cdot)}$ denotes the sorted version of $x$.
+\end{example}
+
+\section{Twin-Continuous Functions}
+
+\begin{definition}[Twin Continuity]
+A function $f : E \to \Rd$ is \emph{twin-continuous} if:
+\begin{enumerate}[label=(\roman*)]
+\item $f$ is continuous on $E$
+\item For every compact $K \subset E$, the family $\{f \circ \phi^n\}_{n \in \Zd}$ is equicontinuous on $K$
+\end{enumerate}
+The space of twin-continuous functions is denoted $C_{\text{twin}}(E)$.
+\end{definition}
+
+\begin{definition}[Twin-Sup Norm]
+The twin-sup norm on $C_{\text{twin}}(E)$ is:
+\[
+\norm{f}_{\infty, \text{twin}} = \sup_{x \in E} \sup_{n \in \Zd} |f(\phi^n(x))|.
+\]
+\end{definition}
+
+\begin{lemma}[Banach Space]
+$(C_{\text{twin}}(E), \norm{\cdot}_{\infty, \text{twin}})$ is a Banach space.
+\end{lemma}
+
+\section{Invariant and Equivariant Functions}
+
+\begin{definition}[$G$-Invariance]
+A function $f : E \to \Rd$ is \emph{$G$-invariant} if $f(g \cdot x) = f(x)$ for all $g \in G$, $x \in E$. Equivalently, $f$ factors through the quotient: $f = \tilde{f} \circ \pi$ for some $\tilde{f} : E/G \to \Rd$.
+\end{definition}
+
+\begin{definition}[$G$-Equivariance]
+A function $f : E \to F$ (where $G$ also acts on $F$) is \emph{$G$-equivariant} if $f(g \cdot x) = g \cdot f(x)$ for all $g \in G$, $x \in E$.
+\end{definition}
+
+The space of $G$-invariant twin-continuous functions is denoted $C_{\text{twin}}^G(E)$.
+
+\begin{proposition}[Characterization of $G$-Invariant Functions]
+A function $f \in C(E)$ is $G$-invariant if and only if there exists a continuous function $\tilde{f} : E/G \to \Rd$ such that $f = \tilde{f} \circ \pi$. Moreover:
+\[
+\norm{f}_\infty = \norm{\tilde{f}}_\infty.
+\]
+\end{proposition}
+
+\section{The Twin Stone--Weierstrass Theorem}
+
+\begin{theorem}[Twin Stone--Weierstrass]
+\label{thm:stone-weierstrass}
+Let $(E, G)$ be a compact Twin Space (so the quotient $E/G$ is compact). Let $\calA\subset C_{\text{twin}}^G(E)$ be a subalgebra of $G$-invariant twin-continuous functions that \emph{contains the constant functions} and \emph{separates the points} of $E/G$. Then $\calA$ is dense in $C_{\text{twin}}^G(E)$ with respect to $\norm{\cdot}_{\infty, \text{twin}}$.
+\end{theorem}
+
+\begin{proof}
+By the characterization of $G$-invariant functions, restriction to the quotient is an isometric isomorphism $C_{\text{twin}}^G(E)\cong C(E/G)$ (the $G$-invariant twin-sup norm equals the sup norm on $E/G$), under which $\calA$ corresponds to a subalgebra $\tilde\calA\subset C(E/G)$ that contains the constants and separates points. Since $E/G$ is compact Hausdorff (the twin metric makes it a compact metric space), the classical Stone--Weierstrass theorem gives $\overline{\tilde\calA}=C(E/G)$, hence $\overline{\calA}=C_{\text{twin}}^G(E)$. The two hypotheses are necessary: an algebra missing the constants, or failing to separate two orbits, is not dense.
+\end{proof}
+
+This theorem is fundamental for approximation-theoretic arguments in estimation.
+
+\section{Effective Dimension}
+
+The effective dimension captures how much the group action reduces the intrinsic complexity of the problem.
+
+\begin{definition}[Effective Dimension]
+The \emph{effective dimension} of $E$ under the action of $G$ is:
+\[
+\deff = \dim(E) - \dim_{\text{orb}}(G),
+\]
+where $\dim_{\text{orb}}(G)$ is the dimension of a generic orbit.
+\end{definition}
+
+For any \emph{discrete} group --- finite or countably infinite, such as $\Zd=\langle\phi\rangle$ acting by a diffeomorphism --- the orbits are countable, hence $\dim_{\text{orb}}(G)=0$ and $\deff=\dim(E)$: discreteness alone removes no dimension. A genuine reduction $\deff<\dim(E)$ requires a \emph{positive-dimensional} group whose orbits are positive-dimensional submanifolds (e.g.\ a compact Lie group).
+
+\begin{example}[Effective Dimensions]
+\begin{enumerate}
+\item Cyclic group $\Zd_m$ on $\Rd^d$: $\deff = d$ (finite orbits)
+\item Logarithmic group $\langle\log\rangle\cong\Zd$ on $\Rd_{>0}$: $\deff = 1$ (discrete orbits, $\dim_{\text{orb}}=0$; no dimension is removed)
+\item Translation group $\tau\Zd$ on $\Rd$: $\deff = 1$ (discrete orbits; the quotient $\Rd/\tau\Zd$ is a circle, still $1$-dimensional)
+\item Rotation group $SO(2)$ on $\Rd^2$: $\deff = 2-1 = 1$ (orbits are circles --- a \emph{genuine} dimension reduction)
+\item Permutation group $S_d$ on $\Rd^d$: $\deff = d$ (finite group, but reduces to order statistics)
+\end{enumerate}
+\end{example}
+
+\begin{remark}[Two distinct benefits of symmetry]
+\label{rem:two-benefits}
+These examples separate two mechanisms that must not be conflated. (i)~For a \emph{finite} group, orbits are $0$-dimensional, so $\deff=\dim(E)$ and the convergence \emph{rate} is unchanged; the benefit is a reduction of the variance \emph{constant} by the factor $|G|$ (\cref{thm:variance-reduction}), equivalent to a constant-factor increase in sample size. (ii)~For a \emph{positive-dimensional} group (e.g.\ $SO(2)$ on $\Rd^2$), orbits are positive-dimensional and $\deff<\dim(E)$, which genuinely improves the \emph{rate}. Throughout the book, statements of the form ``$\deff<d$ improves the rate'' apply to case~(ii); for discrete groups only the variance constant improves.
+\end{remark}
+
+With this understanding, the effective dimension governs convergence rates: estimation problems have rate $n^{-\alpha/(\alpha + \deff)}$ rather than $n^{-\alpha/(\alpha + d)}$ whenever $\deff<d$ (i.e.\ for positive-dimensional orbits).
+
+\section{Measures on Quotient Spaces}
+
+\begin{definition}[Pushforward Measure]
+Let $\mu$ be a probability measure on $E$. The \emph{pushforward} to $E/G$ is:
+\[
+\mu^G = \pi_* \mu, \quad \mu^G(A) = \mu(\pi^{-1}(A))
+\]
+for measurable $A \subset E/G$.
+\end{definition}
+
+\begin{definition}[$G$-Invariant Measure]
+A measure $\mu$ on $E$ is \emph{$G$-invariant} if $\mu(g \cdot A) = \mu(A)$ for all $g \in G$ and measurable $A$.
+\end{definition}
+
+\begin{proposition}
+If $\mu$ is $G$-invariant, then for any $G$-invariant function $f$:
+\[
+\int_E f \, d\mu = \int_{E/G} \tilde{f} \, d\mu^G
+\]
+where $f = \tilde{f} \circ \pi$.
+\end{proposition}
+
+% =============================================================================
+% CHAPTER 3: TWINKERNEL THEORY
+% =============================================================================
+
+\chapter{TwinKernel Theory}
+\label{ch:twinkernel}
+
+This chapter develops the theory of transported kernels that forms the computational backbone of equivariant estimation.
+
+\section{Twin Operations}
+
+Before developing kernel transport, we introduce the algebraic structure of twin operations.
+
+\begin{definition}[Twin Operation]
+Let $(E, \diamond)$ be a space with a binary operation $\diamond$, and let $\psi : E \to F$ be a bijection to another space $(F, *)$ with operation $*$. The \emph{twin operation} induced by $\psi$ is:
+\begin{equation}
+x \twin_\psi y := \psi^{-1}(\psi(x) * \psi(y)).
+\label{eq:twin-op}
+\end{equation}
+When $\psi = \log$ and $* = +$, we get the multiplicative operation on $\Rd_{>0}$.
+\end{definition}
+
+\begin{example}[Fundamental Examples]
+\begin{enumerate}
+\item \textbf{Additive twin}: $\psi = \text{id}$, $x \twin y = x + y$
+\item \textbf{Multiplicative twin}: $\psi = \log$, $x \twin y = xy$
+\item \textbf{Level-2 twin}: $\psi = \log \circ \log$, $x \twin y = \exp(\log x \cdot \log y)$
+\end{enumerate}
+\end{example}
+
+\begin{proposition}[Algebraic Transfer]
+The twin operation $\twin_\psi$ inherits algebraic properties from $*$:
+\begin{enumerate}[label=(\roman*)]
+\item If $*$ is associative, so is $\twin_\psi$
+\item If $*$ is commutative, so is $\twin_\psi$
+\item If $(F, *)$ has identity $e_*$, then $\psi^{-1}(e_*)$ is identity for $\twin_\psi$
+\item If $y^{-1}$ is inverse for $*$, then $\psi^{-1}(\psi(y)^{-1})$ is inverse for $\twin_\psi$
+\end{enumerate}
+\end{proposition}
+
+\section{Kernel Transport}
+
+\begin{definition}[Base Kernel]
+A \emph{base kernel} is a function $K : \Rd \to \Rd_{\geq 0}$ satisfying:
+\begin{enumerate}[label=(\roman*)]
+\item $\int K(u) \, du = 1$ (normalization)
+\item $K(-u) = K(u)$ (symmetry)
+\item $\supp(K) \subset [-1, 1]$ (compact support)
+\item $K$ is Lipschitz continuous
+\end{enumerate}
+\end{definition}
+
+\begin{example}[Common Kernels]
+\begin{enumerate}
+\item \textbf{Epanechnikov}: $K(u) = \frac{3}{4}(1 - u^2)_+$
+\item \textbf{Gaussian}: $K(u) = \frac{1}{\sqrt{2\pi}} e^{-u^2/2}$ (truncated)
+\item \textbf{Uniform}: $K(u) = \frac{1}{2} \mathbf{1}_{|u| \leq 1}$
+\end{enumerate}
+\end{example}
+
+\begin{definition}[TwinKernel Hierarchy]
+\label{def:twinkernel}
+Given a base kernel $K$, bandwidth sequence $h_j = h_0 \rho^j$ with $\rho \in (0,1)$, and group $G = \langle \phi \rangle$, the \emph{TwinKernel at level $j$} is:
+\begin{equation}
+K_j^G(x, y) = h_j^{-\deff} K\left(\frac{d_G(O(\phi^{-j}(x)), O(\phi^{-j}(y)))}{h_j}\right).
+\label{eq:twinkernel}
+\end{equation}
+\end{definition}
+
+The key insight is that transporting observations to different group levels before kernel smoothing creates a hierarchy of estimators adapted to different regularity scales.
+
+\section{Properties of TwinKernels}
+
+\begin{proposition}[Equivariance]
+\label{prop:equivariance}
+The TwinKernel $K_j^G$ is $G$-equivariant:
+\[
+K_j^G(\phi(x), \phi(y)) = K_j^G(x, y).
+\]
+\end{proposition}
+
+\begin{proof}
+By definition of the twin metric and the group action:
+\[
+d_G(O(\phi^{-j}(\phi(x))), O(\phi^{-j}(\phi(y)))) = d_G(O(\phi^{1-j}(x)), O(\phi^{1-j}(y))).
+\]
+Since the supremum over all $g \in G$ is unchanged by a shift in the index, the result follows.
+\end{proof}
+
+\begin{proposition}[Normalization]
+For each $x \in E$ and $G$-invariant measure $\mu$:
+\[
+\int K_j^G(x, y) \, d\mu(y) = 1 + O(h_j^2)
+\]
+as $h_j \to 0$.
+\end{proposition}
+
+\begin{proposition}[Locality in Twin Metric]
+If $d_G(O(x), O(y)) > h_j$, then $K_j^G(x, y) = 0$ (for compactly supported base kernels).
+\end{proposition}
+
+\section{Twin-Hölder Regularity Classes}
+
+\begin{definition}[Twin-Hölder Class]
+\label{def:twin-holder}
+A function $f : E \to \Rd$ belongs to the \emph{twin-Hölder class} $\calA_{\text{twin}}^s(L)$ if:
+\[
+|f(x) - f(y)| \leq L \cdot d_G(O(x), O(y))^s
+\]
+for all $x, y \in E$ with $d_G(O(x), O(y)) \leq 1$.
+\end{definition}
+
+\begin{definition}[Orbital Sobolev Class]
+A function $f \in L^2(E)$ belongs to the \emph{orbital Sobolev class} $\calO_n(H^s)$ if there exists $h \in H^s$ such that:
+\[
+f = h \circ \Phi_n^{-1}
+\]
+where $\Phi_n = \phi^n$ is the $n$-fold composition of the generator.
+\end{definition}
+
+\begin{theorem}[Invariance of Regularity]
+\label{thm:regularity-invariance}
+Let $f \in H^s(E)$ and let $\Phi$ be a $C^s$ diffeomorphism that is \emph{non-degenerate}: the derivatives of \emph{both} $\Phi$ and $\Phi^{-1}$ are bounded up to order $s$, equivalently $0<\inf|\det D\Phi|\le\sup|\det D\Phi|<\infty$. Then:
+\[
+\norm{f \circ \Phi^{-1}}_{H^s(\Phi(E))} \leq C \norm{f}_{H^s(E)}
+\]
+where $C$ depends on the bounds of the derivatives of $\Phi$ and $\Phi^{-1}$ and on $\inf|\det D\Phi|$.
+\end{theorem}
+
+\begin{proof}
+By the chain rule, derivatives of $f \circ \Phi^{-1}$ involve derivatives of $f$ (evaluated at $\Phi^{-1}$) and derivatives of $\Phi^{-1}$. The Faà di Bruno formula gives:
+\[
+(f \circ \Phi^{-1})^{(k)} = \sum_{\pi \in \Pi_k} f^{(|\pi|)}(\Phi^{-1}) \prod_{B \in \pi} (\Phi^{-1})^{(|B|)}
+\]
+where $\Pi_k$ is the set of partitions of $\{1, \ldots, k\}$. Bounding each term using the derivative bounds on $\Phi^{-1}$ controls the $H^s$-seminorm; the $L^2$ part ($k=0$) uses the change of variables $\int|f\circ\Phi^{-1}|^2=\int|f|^2\,|\det D\Phi|$, finite and bounded below because $|\det D\Phi|$ is pinched between two positive constants. Combining gives the estimate.
+\end{proof}
+
+This theorem shows that smoothness is preserved under group transport, justifying the TwinKernel approach.
+
+\begin{remark}[The hypothesis fails globally for the log group]
+\label{rem:log-noncompact}
+The non-degeneracy hypothesis is essential and is \emph{not} satisfied globally by the central example $\Phi=\log$ on $\Rd_{>0}$: its derivative $1/x$ is unbounded as $x\to0^+$ and the Jacobian degenerates ($\to0$) as $x\to\infty$. The theorem therefore applies to the log (and iterated-log) transport only on \emph{compact subintervals} $[a,b]\subset\Rd_{>0}$, where $1/x$ is pinched between positive constants. On all of $\Rd_{>0}$ regularity is \emph{not} uniformly preserved, and the TwinKernel analysis must be localised accordingly.
+\end{remark}
+
+\section{The TwinKernel Estimator}
+
+\begin{definition}[TwinKernel Regression Estimator]
+Given observations $(X_i, Y_i)_{i=1}^n$ with $Y_i = m(X_i) + \varepsilon_i$, the TwinKernel estimator at level $j$ is:
+\begin{equation}
+\hat{m}_j(x) = \frac{\sum_{i=1}^n K_j^G(x, X_i) Y_i}{\sum_{i=1}^n K_j^G(x, X_i)}.
+\label{eq:twinkernel-estimator}
+\end{equation}
+This is the Nadaraya--Watson estimator with TwinKernel.
+\end{definition}
+
+\section{Bias and Variance}
+
+\begin{theorem}[Bias-Variance Decomposition]
+\label{thm:bias-variance}
+Let $\hat{m}_j$ be a TwinKernel estimator at level $j$ based on $n$ i.i.d.\ observations. If $m \in \calA_{\text{twin}}^s(L)$, then:
+\begin{align}
+|\text{Bias}(\hat{m}_j(x))| &= O(h_j^s) \label{eq:bias}\\
+\var(\hat{m}_j(x)) &= O\left(\frac{\sigma^2}{n h_j^{\deff}}\right) \label{eq:variance}
+\end{align}
+where $\sigma^2 = \var(\varepsilon_i)$.
+\end{theorem}
+
+\begin{proof}
+\textbf{Bias:} Let $m_j(x) = \E[\hat{m}_j(x)]$. By Taylor expansion in the twin metric:
+\begin{align}
+m_j(x) - m(x) &= \frac{\int K_j^G(x, y) m(y) f(y) \, dy}{\int K_j^G(x, y) f(y) \, dy} - m(x) \\
+&= \frac{\int K_j^G(x, y) (m(y) - m(x)) f(y) \, dy}{\int K_j^G(x, y) f(y) \, dy}.
+\end{align}
+Since $K_j^G(x, y) = 0$ when $d_G(O(x), O(y)) > h_j$, and $|m(y) - m(x)| \leq L \cdot d_G(O(x), O(y))^s \leq L h_j^s$ on the support, we get $|\text{Bias}| = O(h_j^s)$.
+
+\textbf{Variance:} The variance is:
+\[
+\var(\hat{m}_j(x)) = \frac{\sum_{i=1}^n K_j^G(x, X_i)^2 \sigma^2}{(\sum_{i=1}^n K_j^G(x, X_i))^2}.
+\]
+Since $K_j^G(x, X_i)^2 \sim h_j^{-2\deff}$ on the support of size $\sim h_j^{\deff}$, and the denominator scales as $n^2$, we get $\var = O(\sigma^2 / (n h_j^{\deff}))$.
+\end{proof}
+
+\begin{corollary}[Optimal Bandwidth]
+The MISE-optimal bandwidth is:
+\[
+h_{\text{opt}} = c \cdot n^{-1/(2s + \deff)}
+\]
+achieving the rate:
+\[
+\MISE(\hat{m}_{h_{\text{opt}}}) = O(n^{-2s/(2s + \deff)}).
+\]
+\end{corollary}
+
+When $\deff < d$, this rate improves upon the classical rate $O(n^{-2s/(2s+d)})$.
+
+\section{Model Selection}
+
+\begin{definition}[Penalized Criterion]
+The penalized model selection criterion is:
+\begin{equation}
+\hat{j} = \argmin_{j \in \calJ_n} \left\{ \gamma_n(j) + \text{pen}(j) \right\}
+\label{eq:penalized-criterion}
+\end{equation}
+where $\gamma_n(j) = \frac{1}{n} \sum_{i=1}^n (Y_i - \hat{m}_j(X_i))^2$ is the empirical risk and $\text{pen}(j) = \lambda L(j) / n$ with $L(j) = j + 1$ satisfying the Kraft inequality $\sum_j 2^{-L(j)} \leq 1$.
+\end{definition}
+
+\begin{theorem}[Oracle Inequality]
+\label{thm:oracle}
+Let $\hat{m} = \hat{m}_{\hat{j}}$ be the adaptively selected estimator. Then:
+\begin{equation}
+\E\norm{\hat{m} - m}_{L^2}^2 \leq C \inf_{j \in \calJ_n} \left\{ \norm{m_j - m}_{L^2}^2 + \frac{\sigma^2 L(j)}{n} \right\} + \frac{C\sigma^2}{n}.
+\label{eq:oracle-inequality}
+\end{equation}
+\end{theorem}
+
+This oracle inequality shows that the adaptive procedure performs nearly as well as the best fixed level, up to the multiplicative constant $C$; the penalty $\sigma^2 L(j)/n$ already encodes the model complexity, so no extra logarithmic factor is incurred here.
+
+% =============================================================================
+% CHAPTER 4: ORBITAL FUNCTION SPACES
+% =============================================================================
+
+\chapter{Orbital Function Spaces and the Separation Theorem}
+\label{ch:orbital-spaces}
+
+This chapter introduces orbital function spaces and establishes the fundamental Separation Theorem that enables adaptive estimation.
+
+\section{Orbital Spaces}
+
+\begin{definition}[Orbital Function Space]
+\label{def:orbital-space}
+Given a diffeomorphism $\Phi : I \to J$ and a reference space $\calH$ on $J$, the \emph{orbital space} is:
+\[
+\calO_\Phi(\calH) = \{f : I \to \Rd : \Phi \circ f \circ \Phi^{-1} \in \calH\}.
+\]
+For the iterated logarithm group with $\Phi_n = \log^{(n)}$, we write $\calO_n = \calO_{\Phi_n}(\calH)$.
+\end{definition}
+
+\begin{example}[Polynomial Reference Space]
+With $\calH = \calP_d$ (polynomials of degree $\leq d$):
+\begin{align*}
+\calO_0 &= \calP_d = \{a_0 + a_1 x + \cdots + a_d x^d\}\\
+\calO_1 &= \{f : \log f \in \calP_d(\log x)\} = \{x^{a_0} (\log x)^{a_1} \cdots\}\\
+\calO_2 &= \{f : \log\log f \in \calP_d(\log\log x)\}
+\end{align*}
+\end{example}
+
+\begin{example}[Sobolev Reference Space]
+With $\calH = H^s(J)$ (Sobolev space of order $s$):
+\[
+\calO_n(H^s) = \{f : f \circ \Phi_n^{-1} \in H^s(J_n)\}
+\]
+where $J_n = \Phi_n(I)$ is the transformed domain.
+\end{example}
+
+\section{The Separation Theorem}
+
+The following theorem is the cornerstone of adaptive orbital estimation.
+
+\begin{theorem}[Orbital spaces are distinct but not separated]
+\label{thm:separation}
+Let $\calO_n = \calO_{\Phi_n}(\calH)$ and $\calO_m = \calO_{\Phi_m}(\calH)$ with $n \neq m$. For $n\ge1$ these are \emph{nonlinear} subsets of $L^2(J)$ (not subspaces: $\calO_n$ is not closed under addition). They are distinct, $\calO_n\neq\calO_m$, but \emph{not} disjoint and \emph{not} separated:
+\begin{equation}
+\calO_n\cap\calO_m\neq\{0\},\qquad d_{L^2}(\calO_n,\calO_m)=\inf_{f\in\calO_n,\,g\in\calO_m}\norm{f-g}_{L^2}=0.
+\label{eq:separation}
+\end{equation}
+For $n=0,\,m=1$ with $\calH=\calP_d$, the intersection is exactly the monomials $\{c\,x^k:0\le k\le d\}$, since $\log(c\,x^k)=\log c+k\log x\in\calP_d(\log x)$; each monomial lies in both levels and realises $d_{L^2}=0$.
+\end{theorem}
+
+\begin{remark}[Correction and its consequence]
+Earlier drafts asserted a positive separation constant $c(n,m)>0$ and $\calO_n\cap\calO_m=\{0\}$; both are false, as the shared monomials show. The orbital level of a function in the intersection (e.g.\ a pure power $x^k$) is therefore \emph{ambiguous} and cannot be identified. What survives is a \emph{generic} identifiability (\cref{thm:unique-level}): a function whose transported representative is not of the special shared form lies in a single level, where its level is identifiable --- but without a uniform separation constant. Adaptive level selection (\cref{ch:approximation}) is thus consistent on this generic class, not uniformly over all of $\calO_{n_0}$.
+\end{remark}
+
+\begin{proof}
+Take $n = 0$, $m = 1$, $\calH = \calP_d$; the general case is analogous. A function $f\in\calO_0$ is a polynomial $f(x)=\sum_{k=0}^d a_kx^k$; a function $f\in\calO_1$ has $\log f(x)=\sum_{j=0}^d b_j(\log x)^j$, i.e.\ $f(x)=\exp\!\big(\sum_j b_j(\log x)^j\big)$. A monomial $f(x)=c\,x^k$ ($c>0$, $0\le k\le d$) satisfies \emph{both}: it is a polynomial, and $\log f=\log c+k\log x$ is a degree-$1$ element of $\calP_d(\log x)$ (so $b_0=\log c$, $b_1=k$, $b_j=0$ for $j\ge2$). Hence $c\,x^k\in\calO_0\cap\calO_1$, the intersection is non-trivial, and taking $f=g=c\,x^k$ gives $\norm{f-g}_{L^2}=0$, so $d_{L^2}(\calO_0,\calO_1)=0$. The two sets are nonetheless distinct: a generic element of $\calO_1$ (with some $b_j\neq0$ for $j\ge2$) has a non-polynomial logarithm and so does not lie in $\calO_0$. The same phenomenon holds for general $n\neq m$: the spaces share the functions fixed by $\Phi_n^{-1}\circ\Phi_m$ (a non-empty family) yet differ on generic elements.
+\end{proof}
+
+\section{Unique Orbital Level}
+
+\begin{theorem}[Generic level identification]
+\label{thm:unique-level}
+Let $f \in \calO_{n_0}$ lie \emph{outside} the intersection, i.e.\ $f\notin\calO_m$ for every $m\neq n_0$ (this excludes the shared monomials of \cref{thm:separation}), and assume each $\calO_m$ is closed in $L^2$. Then $E_{n_0}(f)=0$ while
+\[
+E_n(f) := \inf_{g \in \calO_n} \norm{f - g}_{L^2} > 0 \qquad\text{for every } n \neq n_0 .
+\]
+The level $n_0$ is thus identifiable for such $f$. There is, however, \emph{no} constant $\delta>0$ uniform over $\calO_{n_0}$: functions tending to the intersection have $E_n(f)\to0$.
+\end{theorem}
+
+\begin{proof}
+Since $f\in\calO_{n_0}$, $E_{n_0}(f)=0$. For $n\neq n_0$, $f\notin\calO_n$ by hypothesis; as $\calO_n$ is closed, $E_n(f)=\inf_{g\in\calO_n}\norm{f-g}_{L^2}>0$. The failure of a uniform $\delta$ is exactly \cref{thm:separation}: monomials lie in $\calO_{n_0}\cap\calO_n$, so a sequence in $\calO_{n_0}$ approaching such a monomial has $E_n\to0$.
+\end{proof}
+
+This theorem justifies penalized model selection for orbital level.
+
+\section{Metric Entropy of Orbital Spaces}
+
+\begin{theorem}[Entropy Bounds]
+\label{thm:entropy}
+Let $\calO_n(H^s(J_n))$ be an orbital Sobolev space with smoothness $s > 0$ on the transformed domain $J_n$. Then:
+\[
+\log \calN(\varepsilon, \calO_n(H^s) \cap B_L, L^2) \asymp \left(\frac{L}{\varepsilon}\right)^{1/s} \cdot \log^{n+1}\left(\frac{1}{\varepsilon}\right)
+\]
+where $B_L = \{f : \norm{f}_{H^s} \leq L\}$ and $\calN(\varepsilon, \cdot, \cdot)$ is the covering number.
+\end{theorem}
+
+The additional logarithmic factors at higher orbital levels reflect the increasing complexity of the transformation, and are mild enough not to affect the polynomial convergence rates. \emph{Caveat}: the exponent $n+1$ on the logarithm is heuristic, and $\calO_n$ ($n\ge1$) is a \emph{nonlinear} subset of $L^2$ (\cref{thm:separation}), so the bound should be read as the entropy of that nonlinear class rather than of a linear ball; a fully rigorous constant in front of $(L/\varepsilon)^{1/s}$ is not established here.
+
+\section{Approximation in Orbital Spaces}
+
+\begin{theorem}[Orbital Approximation Rate]
+\label{thm:orbital-approx}
+Let $f \in \calO_{n_0}(H^s)$ with $\norm{f}_{\calO_{n_0}(H^s)} \leq L$. Let $\hat{f}_N$ be the projection onto $\calO_{n_0}(\calP_N)$ (orbital polynomials of degree $\leq N$). Then:
+\[
+\norm{f - \hat{f}_N}_{L^2} \leq C \cdot L \cdot N^{-s}.
+\]
+\end{theorem}
+
+\begin{proof}
+In the transformed coordinates $y = \Phi_{n_0}(x)$, the function $g = f \circ \Phi_{n_0}^{-1}$ belongs to $H^s(J_{n_0})$. Classical approximation theory gives $\norm{g - P_N g}_{L^2} \leq C \norm{g}_{H^s} N^{-s}$ where $P_N$ is the polynomial projection. Transforming back and using the Jacobian bounds from the regularity invariance theorem completes the proof.
+\end{proof}
+
+\section{Adaptive Orbital Estimation}
+
+\begin{algorithm}[H]
+\caption{Adaptive Orbital Estimation}
+\label{alg:adaptive-orbital}
+\begin{algorithmic}[1]
+\REQUIRE Data $(X_i, Y_i)_{i=1}^N$, max level $n_{\max}$, polynomial degree $d$
+\FOR{$n = 0$ to $n_{\max}$}
+    \STATE Transform: $\tilde{X}_i \gets \Phi_n(X_i)$
+    \STATE Fit: $\hat{g}_n \gets \text{PolynomialRegression}(\tilde{X}, Y, d)$
+    \STATE Residuals: $\widehat{\text{RSS}}_n \gets \sum_i (Y_i - \hat{g}_n(\tilde{X}_i))^2$
+    \STATE Penalty: $\text{pen}_n \gets \lambda \sigma^2 (d+1)(n+1) \log N / N$
+    \STATE Criterion: $\widehat{\text{Crit}}_n \gets \widehat{\text{RSS}}_n + \text{pen}_n$
+\ENDFOR
+\STATE Select: $\hat{n} \gets \argmin_n \widehat{\text{Crit}}_n$
+\RETURN $\hat{f}(x) = \hat{g}_{\hat{n}}(\Phi_{\hat{n}}(x))$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{theorem}[Adaptive Convergence]
+\label{thm:adaptive}
+Let $f \in \calO_{n_0}(H^s)$ be the true regression function, lying outside $\bigcup_{m\neq n_0}\calO_m$ (the generic case of \cref{thm:unique-level}; exact level recovery is impossible for the shared monomials). Then the adaptive estimator $\hat{f}^{\text{ada}}$ satisfies:
+\begin{equation}
+\E\norm{\hat{f}^{\text{ada}} - f}_{L^2}^2 \leq C\left(N^{-2s/(2s+1)} + \frac{\sigma^2 \log^2 N}{N}\right)
+\label{eq:adaptive-rate}
+\end{equation}
+with $\Prob(\hat{n} = n_0) \geq 1 - c N^{-1}$ for large $N$.
+\end{theorem}
+
+% #############################################################################
+% PART II: CORE THEORY
+% #############################################################################
+
+\part{Core Theory}
+\label{part:core}
+
+% =============================================================================
+% CHAPTER 5: ORBITAL EMPIRICAL PROCESSES
+% =============================================================================
+
+\chapter{Orbital Empirical Processes}
+\label{ch:empirical}
+
+This chapter establishes the fundamental convergence theory for empirical measures on quotient spaces.
+
+\section{Orbital Empirical Measures}
+
+\begin{definition}[Orbital Empirical Measure]
+Let $X_1, \ldots, X_n$ be i.i.d.\ from $\mu$ on $E$. The \emph{orbital empirical measure} is:
+\[
+\hat{\mu}_n^G = \frac{1}{n} \sum_{i=1}^n \delta_{O(X_i)} = \pi_* \hat{\mu}_n
+\]
+where $\pi : E \to E/G$ is the quotient map.
+\end{definition}
+
+\begin{definition}[Orbit-Averaged Measure]
+When $G$ is finite with $|G| = m$:
+\[
+\hat{\mu}_n^{\text{avg}} = \frac{1}{nm} \sum_{i=1}^n \sum_{g \in G} \delta_{g \cdot X_i}.
+\]
+\end{definition}
+
+\begin{proposition}[Basic Properties]
+\begin{enumerate}[label=(\roman*)]
+\item $\E[\hat{\mu}_n^G] = \mu^G$ (unbiasedness)
+\item For $G$-invariant $f$: $\int f \, d\hat{\mu}_n^G = \int f \, d\hat{\mu}_n$
+\item If $\mu$ is $G$-invariant: $\E[\hat{\mu}_n^{\text{avg}}] = \mu$
+\end{enumerate}
+\end{proposition}
+
+\section{Orbital Glivenko--Cantelli Theorem}
+
+\begin{definition}[Glivenko--Cantelli Class]
+A class of functions $\calF$ on $E$ is a \emph{Glivenko--Cantelli class} for $\mu$ if:
+\[
+\sup_{f \in \calF} \abs{\int f \, d\hat{\mu}_n - \int f \, d\mu} \xrightarrow{a.s.} 0.
+\]
+\end{definition}
+
+\begin{definition}[Orbital Glivenko--Cantelli Class]
+A class $\calF \subset C_{\text{twin}}^G(E)$ of $G$-invariant functions is an \emph{orbital Glivenko--Cantelli class} if:
+\[
+\sup_{f \in \calF} \abs{\int f \, d\hat{\mu}_n^G - \int f \, d\mu^G} \xrightarrow{a.s.} 0.
+\]
+\end{definition}
+
+\begin{theorem}[Orbital Glivenko--Cantelli]
+\label{thm:GC}
+Let $(E, G)$ be a compact Twin Space with $G$ acting by isometries. Let $\mu$ be a probability measure on $E$. Then the class $\calF = \{f \in C_{\text{twin}}^G(E) : \norm{f}_{\infty,\text{twin}} \leq 1\}$ of bounded $G$-invariant twin-continuous functions is an orbital Glivenko--Cantelli class:
+\[
+\sup_{\substack{f \in C_{\text{twin}}^G(E)\\ \norm{f}_{\infty,\text{twin}} \leq 1}} \abs{\int f \, d\hat{\mu}_n^G - \int f \, d\mu^G} \xrightarrow{a.s.} 0.
+\]
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Reduction to quotient space.} Since $f$ is $G$-invariant, $f = \tilde{f} \circ \pi$ for some continuous $\tilde{f} : E/G \to \Rd$. The integral becomes:
+\[
+\int f \, d\hat{\mu}_n^G = \int \tilde{f} \, d(\pi_* \hat{\mu}_n) = \frac{1}{n} \sum_{i=1}^n \tilde{f}(O(X_i)).
+\]
+
+\textbf{Step 2: Compactness of $E/G$.} Since $E$ is compact and $\pi$ is continuous and surjective, $E/G$ is compact.
+
+\textbf{Step 3: Apply classical theory.} The observations $O(X_1), \ldots, O(X_n)$ are i.i.d.\ from $\mu^G$ on the compact metric space $(E/G, d_G)$. By the classical Glivenko--Cantelli theorem for compact metric spaces, the class of continuous functions bounded by 1 is a GC class.
+
+Since $\tilde{f}$ is continuous on $E/G$ whenever $f \in C_{\text{twin}}^G(E)$, the result follows.
+\end{proof}
+
+\begin{theorem}[Convergence Rate]
+\label{thm:GC-rate}
+Under the conditions of Theorem~\ref{thm:GC}, for any $\varepsilon > 0$:
+\[
+\Prob\left(\sup_{f \in \calF} \abs{\int f \, d\hat{\mu}_n^G - \int f \, d\mu^G} > \varepsilon\right) \leq 2\calN(\varepsilon/2, \calF, \norm{\cdot}_{\infty,\text{twin}}) \cdot e^{-n\varepsilon^2/8}
+\]
+where $\calN(\varepsilon, \calF, \norm{\cdot})$ is the covering number of $\calF$.
+\end{theorem}
+
+\begin{corollary}[Rate for Lipschitz Classes]
+If $\calF$ consists of $G$-invariant functions that are $L$-Lipschitz in the twin metric, and $(E/G, d_G)$ has covering dimension $d$:
+\[
+\E\left[\sup_{f \in \calF} \abs{\int f \, d\hat{\mu}_n^G - \int f \, d\mu^G}\right] = O(n^{-1/(2 \vee d)}).
+\]
+\end{corollary}
+
+\section{Orbital Donsker Theorem}
+
+\begin{definition}[Orbital Empirical Process]
+The orbital empirical process indexed by $\calF \subset C_{\text{twin}}^G(E)$ is:
+\[
+\mathbb{G}_n^G(f) = \sqrt{n}\left(\int f \, d\hat{\mu}_n^G - \int f \, d\mu^G\right).
+\]
+\end{definition}
+
+\begin{definition}[Orbital Donsker Class]
+A class $\calF \subset C_{\text{twin}}^G(E)$ is an \emph{orbital Donsker class} if $\mathbb{G}_n^G$ converges weakly in $\ell^\infty(\calF)$ to a tight Gaussian process $\mathbb{G}^G$.
+\end{definition}
+
+\begin{theorem}[Orbital Donsker]
+\label{thm:Donsker}
+Let $(E, G)$ be a compact Twin Space. Let $\calF \subset C_{\text{twin}}^G(E)$ be a class of $G$-invariant functions with envelope $F$ satisfying $\norm{F}_{L^2(\mu)} < \infty$. If the bracketing entropy satisfies:
+\[
+\int_0^\infty \sqrt{\log N_{[\,]}(\varepsilon, \calF, L^2(\mu^G))} \, d\varepsilon < \infty,
+\]
+then $\calF$ is an orbital Donsker class, and:
+\[
+\mathbb{G}_n^G \Rightarrow \mathbb{G}^G \quad \text{in } \ell^\infty(\calF),
+\]
+where $\mathbb{G}^G$ is a centered Gaussian process with covariance:
+\[
+\E[\mathbb{G}^G(f) \mathbb{G}^G(g)] = \int fg \, d\mu^G - \int f \, d\mu^G \int g \, d\mu^G.
+\]
+\end{theorem}
+
+\begin{proof}
+The proof follows from the classical Donsker theorem applied to the i.i.d.\ sequence $O(X_1), \ldots, O(X_n)$ on $(E/G, \mu^G)$, using the correspondence between $G$-invariant functions on $E$ and functions on $E/G$.
+\end{proof}
+
+\section{Applications}
+
+\subsection{Orbital Kolmogorov--Smirnov Test}
+
+\begin{corollary}[Orbital KS Statistic]
+Define the orbital Kolmogorov--Smirnov statistic:
+\[
+D_n^G = \sup_{f \in \calF_{\text{ind}}} |\mathbb{G}_n^G(f)|
+\]
+where $\calF_{\text{ind}}$ is the class of indicators of $G$-invariant sets. Under the null hypothesis $\mu = \mu_0$:
+\[
+D_n^G \Rightarrow \sup_{t \in [0,1]} |B(t)|
+\]
+where $B$ is a Brownian bridge (when $E/G$ is one-dimensional).
+\end{corollary}
+
+\subsection{Confidence Bands}
+
+\begin{corollary}[Asymptotic Confidence Band]
+For a continuous $G$-invariant functional $\theta = \int f \, d\mu^G$:
+\[
+\sqrt{n}(\hat{\theta}_n - \theta) \xrightarrow{d} N(0, \sigma_f^2)
+\]
+where $\sigma_f^2 = \int f^2 \, d\mu^G - (\int f \, d\mu^G)^2$. An asymptotic $(1-\alpha)$ confidence interval is:
+\[
+\hat{\theta}_n \pm z_{\alpha/2} \frac{\hat{\sigma}_f}{\sqrt{n}}.
+\]
+\end{corollary}
+
+% =============================================================================
+% CHAPTER 6: EQUIVARIANT DENSITY ESTIMATION
+% =============================================================================
+
+\chapter{Equivariant Density Estimation}
+\label{ch:density}
+
+This chapter develops kernel density estimation on quotient spaces, showing how symmetry structure leads to improved statistical efficiency.
+
+\section{Introduction}
+
+Density estimation is a fundamental problem in nonparametric statistics. Given i.i.d.\ observations $X_1, \ldots, X_n$ from an unknown density $f$ on a space $E$, the goal is to construct an estimator $\hat{f}_n$ that converges to $f$ in an appropriate sense.
+
+When $E$ is equipped with a group action $G$, two natural questions arise:
+\begin{enumerate}
+\item How should we estimate densities that are $G$-invariant?
+\item Can we exploit the group structure to improve estimation efficiency?
+\end{enumerate}
+
+This chapter answers both questions affirmatively, developing equivariant kernel density estimators with provably improved convergence rates.
+
+\section{Equivariant Kernels}
+
+\begin{definition}[Equivariant Kernel]
+A kernel $K : E \times E \to \Rd$ is \emph{$G$-equivariant} if:
+\[
+K(g \cdot x, g \cdot y) = K(x, y) \quad \forall g \in G, \; x, y \in E.
+\]
+\end{definition}
+
+\begin{lemma}[Induced Quotient Kernel]
+\label{lem:quotient-kernel}
+If $K$ is $G$-equivariant, it induces a kernel $\tilde{K}$ on $E/G$:
+\[
+\tilde{K}(O(x), O(y)) = K(x, y).
+\]
+This is well-defined by the equivariance property.
+\end{lemma}
+
+\begin{example}[Orbital Kernel]
+Given any base kernel $K_0$, the \emph{orbital kernel} is:
+\[
+K^G(x, y) = K_0(d_G(O(x), O(y)))
+\]
+which is automatically $G$-equivariant.
+\end{example}
+
+\begin{example}[Orbit-Averaged Kernel]
+For finite $G$, averaging any kernel yields an equivariant kernel:
+\[
+K^{\text{avg}}(x, y) = \frac{1}{|G|^2} \sum_{g, h \in G} K_0(g \cdot x, h \cdot y).
+\]
+\end{example}
+
+\section{Orbital Kernel Density Estimator}
+
+\begin{definition}[Orbital KDE]
+Let $X_1, \ldots, X_n$ be i.i.d.\ from density $f$ on $E$. The \emph{orbital kernel density estimator} with bandwidth $h > 0$ is:
+\begin{equation}
+\hat{f}_n^G(O(x)) = \frac{1}{nh^{\deff}} \sum_{i=1}^n K\left(\frac{d_G(O(x), O(X_i))}{h}\right)
+\label{eq:orbital-kde}
+\end{equation}
+where $K$ is a base kernel and $\deff$ is the effective dimension.
+\end{definition}
+
+\begin{proposition}[Basic Properties]
+The orbital KDE satisfies:
+\begin{enumerate}[label=(\roman*)]
+\item $\hat{f}_n^G \geq 0$ (non-negativity)
+\item $\int_{E/G} \hat{f}_n^G \, d\mu^G = 1 + O(h^2)$ (approximate normalization)
+\item $\hat{f}_n^G(O(g \cdot x)) = \hat{f}_n^G(O(x))$ ($G$-invariance)
+\end{enumerate}
+\end{proposition}
+
+\section{Bias and Variance Analysis}
+
+\begin{proposition}[Bias of Orbital KDE]
+\label{prop:kde-bias}
+If $f^G$ (the density on $E/G$) has $s$ continuous derivatives, then:
+\begin{equation}
+\E[\hat{f}_n^G(O(x))] - f^G(O(x)) = \frac{h^2}{2} \mu_2(K) \Delta_G f^G(O(x)) + o(h^2)
+\label{eq:kde-bias}
+\end{equation}
+where $\mu_2(K) = \int u^2 K(u) \, du$ and $\Delta_G$ is the Laplacian on $E/G$.
+\end{proposition}
+
+\begin{proposition}[Variance of Orbital KDE]
+\label{prop:kde-variance}
+Under regularity conditions:
+\begin{equation}
+\var(\hat{f}_n^G(O(x))) = \frac{f^G(O(x))}{nh^{\deff}} \int K(u)^2 \, du + o\left(\frac{1}{nh^{\deff}}\right).
+\label{eq:kde-variance}
+\end{equation}
+\end{proposition}
+
+\begin{theorem}[Optimal Bandwidth and MISE]
+\label{thm:kde-optimal}
+The MISE-optimal bandwidth for the orbital KDE is:
+\begin{equation}
+h_{\text{opt}}^G = \left(\frac{\deff \int K^2}{\mu_2(K)^2 \int (\Delta_G f^G)^2}\right)^{1/(\deff+4)} n^{-1/(\deff+4)}
+\label{eq:kde-optimal-h}
+\end{equation}
+achieving the rate:
+\begin{equation}
+\MISE(\hat{f}_n^G) = O(n^{-4/(\deff+4)}).
+\label{eq:kde-mise-rate}
+\end{equation}
+\end{theorem}
+
+When $\deff < d$ (the ambient dimension), this improves upon the classical rate $O(n^{-4/(d+4)})$.
+
+\section{Variance Reduction by Orbit Averaging}
+
+The following theorem is one of the central results of this book.
+
+\begin{definition}[Orbit-Averaged KDE]
+For finite $G$ with $|G| = m$, the orbit-averaged KDE is:
+\begin{equation}
+\hat{f}_n^{\text{avg}}(x) = \frac{1}{m} \sum_{g \in G} \hat{f}_n(g \cdot x)
+\label{eq:orbit-avg-kde}
+\end{equation}
+where $\hat{f}_n$ is the standard KDE.
+\end{definition}
+
+\begin{theorem}[Variance Reduction]
+\label{thm:variance-reduction}
+If $G$ is finite with $|G| = m$ and the underlying density $f$ is $G$-invariant, then:
+\begin{equation}
+\var(\hat{f}_n^{\text{avg}}(x)) = \frac{1}{m} \var(\hat{f}_n(x)) + \frac{1}{m^2}\sum_{g\neq h}\Cov\big(\hat{f}_g(x),\hat{f}_h(x)\big).
+\label{eq:variance-reduction}
+\end{equation}
+In the small-bandwidth regime, where the orbit images $\{g\cdot x\}_{g\in G}$ are separated by more than the kernel bandwidth, the cross-covariances are asymptotically non-positive (indeed $o((nh^{\deff})^{-1})$), so $\var(\hat{f}_n^{\text{avg}}(x)) \le (1+o(1))\,\tfrac{1}{m}\var(\hat{f}_n(x))$: the variance is reduced by the factor $m$. Equality with $\tfrac1m\var$ holds exactly when the cross-covariances vanish; \emph{without} orbit separation they may be positive and the factor-$m$ reduction can fail.
+\end{theorem}
+
+\begin{proof}
+Let $\hat{f}_g(x) = \hat{f}_n(g \cdot x)$ for $g \in G$. Then:
+\begin{align}
+\var(\hat{f}_n^{\text{avg}}(x)) &= \var\left(\frac{1}{m} \sum_{g \in G} \hat{f}_g(x)\right) \\
+&= \frac{1}{m^2} \sum_{g, h \in G} \Cov(\hat{f}_g(x), \hat{f}_h(x)).
+\end{align}
+
+We decompose this into diagonal and off-diagonal terms:
+\begin{align}
+\var(\hat{f}_n^{\text{avg}}(x)) &= \frac{1}{m^2} \left[ \sum_{g \in G} \var(\hat{f}_g(x)) + \sum_{g \neq h} \Cov(\hat{f}_g(x), \hat{f}_h(x)) \right].
+\end{align}
+
+Since $f$ is $G$-invariant, $\var(\hat{f}_g(x)) = \var(\hat{f}_n(x))$ for all $g$. For the off-diagonal terms, when the bandwidth $h$ is small relative to the orbit separation, the covariances $\Cov(\hat{f}_g(x), \hat{f}_h(x)) \approx 0$ for $g \neq h$. Thus:
+\[
+\var(\hat{f}_n^{\text{avg}}(x)) \approx \frac{1}{m^2} \cdot m \cdot \var(\hat{f}_n(x)) = \frac{1}{m} \var(\hat{f}_n(x)).
+\]
+\end{proof}
+
+\begin{remark}[Statistical Significance]
+\label{rem:symmetry-resource}
+Theorem~\ref{thm:variance-reduction} quantifies a fundamental principle: \textbf{symmetry is a statistical resource}. Exploiting a symmetry group of order $m$ reduces variance by a factor of $m$, equivalent to increasing the sample size by that factor. This is the central message of equivariant estimation.
+\end{remark}
+
+\begin{example}[Directional Data]
+For data on the circle $S^1$ with $m$-fold rotational symmetry ($G = \Zd_m$), orbit averaging reduces variance by factor $m$. For $m = 12$ (clock positions), this is equivalent to having 12 times as much data.
+\end{example}
+
+\section{Minimax Theory}
+
+\begin{theorem}[Minimax Lower Bound]
+\label{thm:kde-minimax-lower}
+Let $\calP^G_s(L)$ be the class of $G$-invariant densities on $E$ with $s$ derivatives bounded by $L$ in the twin metric. Then:
+\begin{equation}
+\inf_{\hat{f}} \sup_{f \in \calP^G_s(L)} \E\norm{\hat{f} - f}_{L^2}^2 \geq c \cdot n^{-2s/(2s + \deff)}
+\label{eq:kde-minimax-lower}
+\end{equation}
+for some constant $c > 0$ depending on $s$, $L$, and the group structure.
+\end{theorem}
+
+\begin{theorem}[Minimax Upper Bound]
+\label{thm:kde-minimax-upper}
+The orbital KDE with bandwidth $h \asymp n^{-1/(2s + \deff)}$ achieves:
+\begin{equation}
+\sup_{f \in \calP^G_s(L)} \E\norm{\hat{f}_n^G - f^G}_{L^2}^2 \leq C \cdot n^{-2s/(2s + \deff)}.
+\label{eq:kde-minimax-upper}
+\end{equation}
+Thus the orbital KDE is minimax optimal over $\calP^G_s(L)$.
+\end{theorem}
+
+\begin{remark}[Kernel order limits the attainable smoothness]
+\label{rem:kernel-order}
+The base kernels of \cref{ch:twinkernel} are non-negative, normalized and symmetric, hence \emph{second-order} ($\mu_2(K)>0$): the bias is $\Theta(h^2)$ and the best attainable MISE with such a kernel is $\Theta(n^{-4/(\deff+4)})$. Consequently the orbital KDE attains the minimax rate $n^{-2s/(2s+\deff)}$ of \cref{thm:kde-minimax-upper} only for $s\le 2$. For $s>2$ one must use an \emph{order-$\lceil s\rceil$} kernel ($\int u^j K\,du=0$ for $1\le j<\lceil s\rceil$), which necessarily takes negative values --- incompatible with the non-negativity assumed in the base-kernel definition. The upper bound for $s>2$ therefore requires relaxing $K\ge0$, at the price of estimators that need not be densities. The lower bound (\cref{thm:kde-minimax-lower}) holds for all $s$ regardless.
+\end{remark}
+
+\begin{remark}[A genuine-density estimator attaining the rate for all $s$]
+\label{rem:projection-alls}
+The smoothness ceiling of \cref{rem:kernel-order} is specific to non-negative kernels; it is \emph{not} a feature of the problem. Let $\calM_k$ be the space of $G$-invariant functions piecewise polynomial of degree $<\lceil s\rceil$ on a resolution-$2^{-k}$ partition of the quotient $E/G$ (dimension $D_k\asymp 2^{k\deff}$), and let $\widehat f_k$ be the orthogonal $L^2(\mu^G)$-projection of the empirical measure onto $\calM_k$, truncated to $[c_0/2,2C_1]$ and renormalized to a $G$-invariant density. Then, for a target $f$ with $0<c_0\le f\le C_1$ and twin-Hölder smoothness $s$ of \emph{any} order,
+\[
+\E\norm{\widehat f_k-f}_{L^2(\mu^G)}^2
+\ \le\ C\big(\underbrace{2^{-2ks}}_{\text{bias}}+\underbrace{D_k/n}_{\text{variance}}\big),
+\qquad\text{so } D_k\asymp n^{\deff/(2s+\deff)} \text{ gives } n^{-2s/(2s+\deff)},
+\]
+the exact minimax rate of \cref{thm:kde-minimax-lower}, for all $s>0$ and with $\widehat f_k$ a bona fide density. The penalized version selecting $k$ by $\mathrm{pen}(k)\asymp D_k/n$ attains it \emph{adaptively in $s$} by the Birg\'e--Massart oracle inequality \cite{BirgeMassart1998,Massart2007}: the geometric growth of $D_k\asymp 2^{k\deff}$ keeps the selection weights summable with exponents $\asymp D_k$, so no logarithmic factor enters. The projection estimator pays the model's metric complexity $D_k/n$, whereas a description-length code would additionally pay a $\log n$ per coefficient; this is why the orbital MDL of the companion development is only near-minimax while the projection estimator here is exactly minimax.
+\end{remark}
+
+\section{Bandwidth Selection}
+
+\subsection{Cross-Validation}
+
+\begin{definition}[Leave-One-Out Cross-Validation]
+The LOOCV criterion for bandwidth selection is:
+\begin{equation}
+\text{CV}(h) = \int (\hat{f}_n^G)^2 \, d\mu^G - \frac{2}{n} \sum_{i=1}^n \hat{f}_{n,-i}^G(O(X_i))
+\label{eq:cv-criterion}
+\end{equation}
+where $\hat{f}_{n,-i}^G$ is the orbital KDE computed without observation $i$.
+\end{definition}
+
+\begin{theorem}[CV Consistency]
+\label{thm:cv-consistency}
+Let $\hat{h}_{\text{CV}} = \argmin_h \text{CV}(h)$. Then:
+\[
+\frac{\MISE(\hat{f}_n^G(\cdot; \hat{h}_{\text{CV}}))}{\inf_h \MISE(\hat{f}_n^G(\cdot; h))} \xrightarrow{P} 1.
+\]
+\end{theorem}
+
+\subsection{Rule of Thumb}
+
+For practical applications, a rule-of-thumb bandwidth is:
+\begin{equation}
+\hat{h}_{\text{ROT}} = \left(\frac{4}{(\deff + 2)n}\right)^{1/(\deff+4)} \hat{\sigma}_G
+\label{eq:rot-bandwidth}
+\end{equation}
+where $\hat{\sigma}_G$ is the sample standard deviation in the twin metric.
+
+\section{Simulation Studies}
+
+We illustrate the improvements from orbital estimation with numerical examples.
+
+\begin{example}[Periodic Density on Circle]
+Consider density $f(\theta) = \frac{1}{2\pi}(1 + 0.5\cos(4\theta))$ on $S^1$ with $G = \Zd_4$ symmetry.
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Method & ISE ($n=100$) & ISE ($n=500$) \\
+\midrule
+Standard KDE & 0.0234 & 0.0089 \\
+Orbital KDE & 0.0078 & 0.0024 \\
+Improvement & 3.0$\times$ & 3.7$\times$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{example}
+
+\begin{example}[Radially Symmetric Density]
+For a radially symmetric density on $\Rd^2$ with $G = SO(2)$:
+\[
+f(x) = \frac{1}{2\pi\sigma^2} \exp\left(-\frac{\norm{x}^2}{2\sigma^2}\right),
+\]
+the orbital KDE reduces the problem to one-dimensional estimation in $r = \norm{x}$, achieving dramatic improvements.
+\end{example}
+
+% =============================================================================
+% CHAPTER 7: LIMIT THEOREMS IN TWIN SPACES
+% =============================================================================
+
+\chapter{Limit Theorems in Twin Spaces}
+\label{ch:limit}
+
+This chapter develops limit theorems---laws of large numbers, central limit theorems, and Berry--Esseen bounds---for random variables combined under generalized arithmetic operations induced by group actions.
+
+\section{Introduction and Motivation}
+
+Classical limit theorems describe the behavior of sums $S_n = X_1 + \cdots + X_n$ of independent random variables. However, many phenomena involve \emph{multiplicative} accumulation rather than additive:
+\begin{itemize}
+\item Compound interest: $W_n = W_0 \prod_{i=1}^n (1 + R_i)$
+\item System reliability: $R_{\text{sys}} = \prod_{i=1}^n R_i$
+\item Population growth: $P_n = P_0 \prod_{i=1}^n (1 + r_i)$
+\item Signal attenuation: $S_n = S_0 \prod_{i=1}^n \alpha_i$
+\end{itemize}
+
+This chapter develops limit theorems for \emph{twin-sums}---quantities combined via generalized operations $\twin$ induced by a linearizing transformation $\psi$.
+
+\section{Framework}
+
+\subsection{Twin Operations}
+
+\begin{definition}[Twin Sum]
+Given a linearization map $\psi : E \to \Rd$ (typically $\psi = \log$ for $E = \Rd_{>0}$), the \emph{twin sum} of $X_1, \ldots, X_n$ is:
+\begin{equation}
+S_n^{\twin} = X_1 \twin X_2 \twin \cdots \twin X_n := \psi^{-1}\left(\sum_{i=1}^n \psi(X_i)\right).
+\label{eq:twin-sum}
+\end{equation}
+For $\psi = \log$, this gives the product $S_n^{\twin} = \prod_{i=1}^n X_i$.
+\end{definition}
+
+\begin{definition}[Twin Average]
+The \emph{twin average} is:
+\begin{equation}
+\bar{X}_n^{\twin} = \psi^{-1}\left(\frac{1}{n} \sum_{i=1}^n \psi(X_i)\right).
+\label{eq:twin-average}
+\end{equation}
+For $\psi = \log$, this is the geometric mean $\bar{X}_n^{\twin} = (\prod_{i=1}^n X_i)^{1/n}$.
+\end{definition}
+
+\subsection{Twin Moments}
+
+\begin{definition}[Twin Expectation]
+The \emph{twin expectation} is:
+\begin{equation}
+\Etwin[X] = \psi^{-1}(\E[\psi(X)]).
+\label{eq:twin-expectation}
+\end{equation}
+For $\psi = \log$: $\Etwin[X] = \exp(\E[\log X])$ (geometric mean).
+\end{definition}
+
+\begin{definition}[Twin Variance]
+The \emph{twin variance} is:
+\begin{equation}
+\Vartwin(X) = \var(\psi(X)).
+\label{eq:twin-variance}
+\end{equation}
+This measures dispersion in the linearized space.
+\end{definition}
+
+\subsection{Transported Distributions}
+
+\begin{definition}[Transported Gaussian]
+The \emph{transported Gaussian} with parameters $\mu, \sigma^2$ is:
+\begin{equation}
+\calN_\psi(\mu, \sigma^2) = (\psi^{-1})_* \calN(\mu, \sigma^2).
+\label{eq:transported-gaussian}
+\end{equation}
+For $\psi = \log$, this is the log-normal distribution.
+\end{definition}
+
+\begin{remark}[Unifying Perspective]
+The log-normal distribution is not a ``special'' distribution---it is simply the Gaussian distribution viewed in multiplicative geometry. This perspective unifies many seemingly disparate results.
+\end{remark}
+
+\section{Twin Laws of Large Numbers}
+
+\begin{theorem}[Twin Weak Law of Large Numbers]
+\label{thm:twin-wlln}
+Let $X_1, X_2, \ldots$ be i.i.d.\ random variables with $\E[|\psi(X_1)|] < \infty$. Then:
+\begin{equation}
+\bar{X}_n^{\twin} \xrightarrow{P} \Etwin[X_1].
+\label{eq:twin-wlln}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The linearized variables $Y_i = \psi(X_i)$ are i.i.d.\ with $\E[Y_1] = \mu_\psi < \infty$. By the classical WLLN, $\bar{Y}_n = \frac{1}{n}\sum_{i=1}^n Y_i \xrightarrow{P} \mu_\psi$. Since $\psi^{-1}$ is continuous:
+\[
+\bar{X}_n^{\twin} = \psi^{-1}(\bar{Y}_n) \xrightarrow{P} \psi^{-1}(\mu_\psi) = \Etwin[X_1].
+\]
+\end{proof}
+
+\begin{theorem}[Twin Strong Law of Large Numbers]
+\label{thm:twin-slln}
+Under the same conditions:
+\begin{equation}
+\bar{X}_n^{\twin} \xrightarrow{a.s.} \Etwin[X_1].
+\label{eq:twin-slln}
+\end{equation}
+\end{theorem}
+
+\begin{corollary}[Multiplicative SLLN]
+For positive i.i.d.\ $X_i$ with $\E[|\log X_1|] < \infty$:
+\begin{equation}
+\left(\prod_{i=1}^n X_i\right)^{1/n} \xrightarrow{a.s.} \exp(\E[\log X_1]) = \mu_G,
+\label{eq:mult-slln}
+\end{equation}
+the geometric mean.
+\end{corollary}
+
+\section{Twin Central Limit Theorems}
+
+\begin{theorem}[Twin Central Limit Theorem]
+\label{thm:twin-clt}
+Let $X_1, X_2, \ldots$ be i.i.d.\ with:
+\[
+\E[\psi(X_1)] = \mu_\psi, \quad \var(\psi(X_1)) = \sigma_\psi^2 \in (0, \infty).
+\]
+Then:
+\begin{equation}
+\frac{\psi(S_n^{\twin}) - n\mu_\psi}{\sigma_\psi \sqrt{n}} \xrightarrow{d} \calN(0, 1).
+\label{eq:twin-clt}
+\end{equation}
+Equivalently, $S_n^{\twin} \xrightarrow{d} \calN_\psi(n\mu_\psi, n\sigma_\psi^2)$, the transported Gaussian.
+\end{theorem}
+
+\begin{proof}
+Since $\psi(S_n^{\twin}) = \sum_{i=1}^n \psi(X_i) = \sum_{i=1}^n Y_i$ where $Y_i = \psi(X_i)$ are i.i.d.\ with mean $\mu_\psi$ and variance $\sigma_\psi^2$, the classical CLT gives:
+\[
+\frac{\sum_{i=1}^n Y_i - n\mu_\psi}{\sigma_\psi\sqrt{n}} \xrightarrow{d} \calN(0,1).
+\]
+\end{proof}
+
+\begin{corollary}[Multiplicative CLT]
+\label{cor:mult-clt}
+For positive i.i.d.\ $X_i$ with $\E[\log X_1] = \mu$, $\var(\log X_1) = \sigma^2$:
+\begin{equation}
+\frac{\log P_n - n\mu}{\sigma\sqrt{n}} \xrightarrow{d} \calN(0,1)
+\label{eq:mult-clt}
+\end{equation}
+where $P_n = \prod_{i=1}^n X_i$. The limiting distribution of $P_n$ (properly normalized) is log-normal.
+\end{corollary}
+
+\begin{example}[Compound Returns]
+Let $R_i = 1 + r_i$ where $r_i$ are returns with $\E[\log(1+r_i)] = \mu$ and $\var(\log(1+r_i)) = \sigma^2$. The wealth ratio after $n$ periods is $W_n/W_0 = \prod_{i=1}^n R_i$, and:
+\[
+\frac{\log(W_n/W_0) - n\mu}{\sigma\sqrt{n}} \xrightarrow{d} \calN(0,1).
+\]
+\end{example}
+
+\subsection{Lindeberg--Feller Twin CLT}
+
+\begin{theorem}[Twin Lindeberg--Feller CLT]
+\label{thm:twin-lindeberg}
+Let $\{X_{n,i}\}$ be a triangular array with $\E[\psi(X_{n,i})] = \mu_{n,i}$ and $\var(\psi(X_{n,i})) = \sigma_{n,i}^2$. Let $s_n^2 = \sum_{i=1}^{k_n} \sigma_{n,i}^2$. If the Lindeberg condition holds: for all $\varepsilon > 0$,
+\[
+\lim_{n \to \infty} \frac{1}{s_n^2} \sum_{i=1}^{k_n} \E\left[(\psi(X_{n,i}) - \mu_{n,i})^2 \mathbf{1}_{|\psi(X_{n,i}) - \mu_{n,i}| > \varepsilon s_n}\right] = 0,
+\]
+then:
+\[
+\frac{\sum_{i=1}^{k_n} \psi(X_{n,i}) - \sum_{i=1}^{k_n} \mu_{n,i}}{s_n} \xrightarrow{d} \calN(0,1).
+\]
+\end{theorem}
+
+\section{Berry--Esseen Bounds}
+
+\begin{theorem}[Twin Berry--Esseen]
+\label{thm:twin-berry-esseen}
+Let $X_1, \ldots, X_n$ be i.i.d.\ with $\E[\psi(X_1)] = \mu$, $\var(\psi(X_1)) = \sigma^2$, and $\E[|\psi(X_1) - \mu|^3] = \rho < \infty$. Then:
+\begin{equation}
+\sup_{x \in \Rd} \left|\Prob\left(\frac{\psi(S_n^{\twin}) - n\mu}{\sigma\sqrt{n}} \leq x\right) - \Phi(x)\right| \leq \frac{C\rho}{\sigma^3\sqrt{n}}
+\label{eq:twin-berry-esseen}
+\end{equation}
+where $C \leq 0.4748$ is the Berry--Esseen constant.
+\end{theorem}
+
+\subsection{Comparison of Convergence Rates}
+
+A key question is whether the choice of twin operation affects convergence rates.
+
+\begin{theorem}[Rate Comparison]
+\label{thm:rate-comparison}
+Let $X$ be a positive random variable. Define:
+\begin{align*}
+\rho_+ &= \E[|X - \E[X]|^3], \quad \sigma_+^2 = \var(X) \quad \text{(additive)}\\
+\rho_\times &= \E[|\log X - \E[\log X]|^3], \quad \sigma_\times^2 = \var(\log X) \quad \text{(multiplicative)}
+\end{align*}
+The multiplicative CLT converges faster than the additive CLT when:
+\begin{equation}
+\frac{\rho_\times}{\sigma_\times^3} < \frac{\rho_+}{\sigma_+^3}.
+\label{eq:rate-comparison}
+\end{equation}
+\end{theorem}
+
+\begin{example}[Log-Normal Data]
+If $X \sim \text{LogNormal}(\mu, \sigma^2)$, then $\log X \sim \calN(\mu, \sigma^2)$ and:
+\begin{itemize}
+\item Multiplicative: $\rho_\times/\sigma_\times^3 = \E[|Z|^3] = \sqrt{8/\pi} \approx 1.60$ (constant in $\sigma$).
+\item Additive: $\rho_+/\sigma_+^3 = \Theta(e^{3\sigma^2/2})$ as $\sigma \to \infty$. (Indeed $\sigma_+^3=\Theta(e^{3\mu+3\sigma^2})$ while $\rho_+=\Theta(e^{3\mu+9\sigma^2/2})$, since the right tail dominates; the ratio is $\Theta(e^{3\sigma^2/2})$.)
+\end{itemize}
+The multiplicative Berry--Esseen bound is thus tighter by a factor growing like $e^{3\sigma^2/2}$. \emph{This gain is modest at $\sigma=1$} (a factor of only $\approx 3$--$4$) and becomes dramatic only for large $\sigma$ --- reaching $\approx 500\times$ near $\sigma\approx 2.1$. (The earlier claim of $500\times$ \emph{at} $\sigma=1$, with exponent $e^{3\sigma^2}$, was incorrect on both counts.)
+\end{example}
+
+\section{Martingale Extensions}
+
+\begin{definition}[Twin Martingale]
+A sequence $(M_n)_{n \geq 0}$ adapted to filtration $(\calF_n)$ is a \emph{twin martingale} if:
+\[
+\Etwin[M_{n+1} | \calF_n] = M_n \quad \text{a.s.}
+\]
+Equivalently, $(\psi(M_n))_{n \geq 0}$ is a classical martingale.
+\end{definition}
+
+\begin{theorem}[Twin Doob Inequality]
+\label{thm:twin-doob}
+If $(M_n)$ is a non-negative twin submartingale:
+\begin{equation}
+\Prob\left(\max_{1 \leq k \leq n} M_k \geq \lambda\right) \leq \frac{\E[\psi(M_n)]}{\psi(\lambda)}
+\label{eq:twin-doob}
+\end{equation}
+for $\lambda$ in the range of the increasing map $\psi$ with $\psi(M_k)\ge0$. This is Doob's maximal inequality applied to the classical submartingale $\psi(M_k)$, using $\{\max_k M_k\ge\lambda\}=\{\max_k\psi(M_k)\ge\psi(\lambda)\}$; the naive $\Etwin[M_n]/\lambda$ mixes the linearized and original scales and is incorrect.
+\end{theorem}
+
+\begin{theorem}[Twin Martingale CLT]
+\label{thm:twin-martingale-clt}
+Let $(M_n)$ be a twin martingale with twin-increments $D_k = M_k \twin M_{k-1}^{-1}$. If:
+\[
+\sum_{k=1}^n \Vartwin(D_k | \calF_{k-1}) \xrightarrow{P} \sigma^2 \quad \text{and} \quad \sum_{k=1}^n \E[\psi(D_k)^2 \mathbf{1}_{|\psi(D_k)| > \varepsilon} | \calF_{k-1}] \xrightarrow{P} 0,
+\]
+then $\psi(M_n)-\psi(M_0) \xrightarrow{d} \calN(0, \sigma^2)$ --- \emph{without} an extra $\sqrt n$, since the conditional increment variances already sum to the constant $\sigma^2$. (If instead $\tfrac1n\sum_{k=1}^n \Vartwin(D_k\mid\calF_{k-1})\xrightarrow{P}\sigma^2$, then $\psi(M_n)/\sqrt n\xrightarrow{d}\calN(0,\sigma^2)$.)
+\end{theorem}
+
+\section{Multivariate Theory}
+
+\begin{definition}[Multivariate Twin Operations]
+For $\mathbf{X} = (X_1, \ldots, X_d) \in E^d$ and component-wise linearization $\boldsymbol{\psi}(\mathbf{X}) = (\psi_1(X_1), \ldots, \psi_d(X_d))$:
+\[
+\mathbf{X} \twin \mathbf{Y} = \boldsymbol{\psi}^{-1}(\boldsymbol{\psi}(\mathbf{X}) + \boldsymbol{\psi}(\mathbf{Y})).
+\]
+\end{definition}
+
+\begin{theorem}[Multivariate Twin CLT]
+\label{thm:multivariate-twin-clt}
+Let $\mathbf{X}_1, \mathbf{X}_2, \ldots$ be i.i.d.\ random vectors with $\E[\boldsymbol{\psi}(\mathbf{X}_1)] = \boldsymbol{\mu}$ and $\Cov(\boldsymbol{\psi}(\mathbf{X}_1)) = \Sigma$. Then:
+\begin{equation}
+\frac{1}{\sqrt{n}}\left(\sum_{i=1}^n \boldsymbol{\psi}(\mathbf{X}_i) - n\boldsymbol{\mu}\right) \xrightarrow{d} \calN_d(\mathbf{0}, \Sigma).
+\label{eq:multivariate-twin-clt}
+\end{equation}
+The limiting distribution is a multivariate transported Gaussian.
+\end{theorem}
+
+\section{Higher-Order Arithmetics}
+
+\begin{definition}[Level-$k$ Arithmetic]
+The level-$k$ linearization is $\psi_k = \log^{(k)}$ (iterated logarithm). Level-0 is addition, level-1 is multiplication, level-2 involves tetration.
+\end{definition}
+
+\begin{theorem}[Level-$k$ CLT]
+\label{thm:level-k-clt}
+For each level $k$, the CLT holds with limiting distribution $(\psi_k^{-1})_* \calN(\mu, \sigma^2)$, the level-$k$ transported Gaussian.
+\end{theorem}
+
+\begin{remark}
+Higher levels can provide faster convergence when data naturally live in those geometries, though the practical applicability decreases for $k \geq 2$.
+\end{remark}
+
+% =============================================================================
+% CHAPTER 8: CONCENTRATION INEQUALITIES
+% =============================================================================
+
+\chapter{Concentration Inequalities and Isoperimetry}
+\label{ch:concentration}
+
+This chapter develops concentration inequalities adapted to twin geometries, showing dramatic improvements for data spanning multiple orders of magnitude.
+
+\section{Introduction}
+
+Classical concentration inequalities (Hoeffding, Bernstein, McDiarmid) bound the probability that a sum of random variables deviates from its expectation. These bounds depend on the \emph{range} of the variables.
+
+For positive data spanning several orders of magnitude, the classical range can be enormous, leading to weak bounds. Twin concentration inequalities replace the range with the \emph{logarithmic range}, yielding dramatically tighter bounds.
+
+\section{Twin Hoeffding Inequality}
+
+\begin{theorem}[Twin Hoeffding Inequality]
+\label{thm:twin-hoeffding}
+Let $X_1, \ldots, X_n$ be independent positive random variables with $X_i \in [a_i, b_i] \subset \Rd_{>0}$. Then for any $t > 0$:
+\begin{equation}
+\Prob\left(\abs{\log\prod_{i=1}^n X_i - \sum_{i=1}^n \E[\log X_i]} \geq t\right) \leq 2\exp\left(-\frac{2t^2}{\sum_{i=1}^n (\log b_i - \log a_i)^2}\right).
+\label{eq:twin-hoeffding}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Apply the classical Hoeffding inequality to $Y_i = \log X_i \in [\log a_i, \log b_i]$.
+\end{proof}
+
+\begin{example}[Dramatic Improvement]
+For $X_i \in [1, 1000]$:
+\begin{itemize}
+\item Classical Hoeffding uses range $b - a = 999$
+\item Twin Hoeffding uses log-range $\log(1000) - \log(1) \approx 6.9$
+\item Improvement factor in exponent: $(999/6.9)^2 \approx \mathbf{21{,}000\times}$
+\end{itemize}
+\end{example}
+
+\section{Twin Bernstein Inequality}
+
+\begin{theorem}[Twin Bernstein Inequality]
+\label{thm:twin-bernstein}
+Let $X_1, \ldots, X_n$ be independent positive random variables with $\E[\log X_i] = \mu_i$, $\var(\log X_i) \leq \sigma^2$, and $|\log X_i - \mu_i| \leq M$ a.s. Then:
+\begin{equation}
+\Prob\left(\abs{\sum_{i=1}^n (\log X_i - \mu_i)} \geq t\right) \leq 2\exp\left(-\frac{t^2/2}{n\sigma^2 + Mt/3}\right).
+\label{eq:twin-bernstein}
+\end{equation}
+\end{theorem}
+
+\section{Twin Sub-Gaussian Variables}
+
+\begin{definition}[Twin Sub-Gaussian]
+A positive random variable $X$ is \emph{twin sub-Gaussian} with parameter $\tau > 0$ if:
+\begin{equation}
+\E[\exp(\lambda(\log X - \E[\log X]))] \leq \exp(\lambda^2 \tau^2 / 2) \quad \forall \lambda \in \Rd.
+\label{eq:twin-subgaussian}
+\end{equation}
+\end{definition}
+
+\begin{proposition}[Log-Normal is Twin Sub-Gaussian]
+If $X \sim \text{LogNormal}(\mu, \sigma^2)$, then $X$ is twin sub-Gaussian with parameter $\tau = \sigma$.
+\end{proposition}
+
+\begin{proposition}[Closure Properties]
+The class of twin sub-Gaussian variables is closed under:
+\begin{enumerate}[label=(\roman*)]
+\item Twin multiplication: if $X, Y$ are \emph{independent} twin sub-Gaussian with parameters $\tau_X,\tau_Y$, then $X\cdot Y$ is twin sub-Gaussian with parameter $\sqrt{\tau_X^2+\tau_Y^2}$ (because $\log(XY)=\log X+\log Y$ is a sum of independent sub-Gaussians). Without independence the class need not be closed under products.
+\item Positive powers: if $X$ is twin sub-Gaussian with parameter $\tau$, then $X^a$ ($a>0$) is twin sub-Gaussian with parameter $a\tau$ (since $\log X^a=a\log X$).
+\end{enumerate}
+\end{proposition}
+
+\section{Twin McDiarmid Inequality}
+
+\begin{theorem}[Twin McDiarmid Inequality]
+\label{thm:twin-mcdiarmid}
+Let $X_1, \ldots, X_n$ be independent positive random variables and $f : \Rd_{>0}^n \to \Rd_{>0}$ satisfy the bounded log-differences condition:
+\[
+\sup_{x_1, \ldots, x_n, x_i'} \abs{\log f(x_1, \ldots, x_i, \ldots, x_n) - \log f(x_1, \ldots, x_i', \ldots, x_n)} \leq c_i.
+\]
+Then:
+\begin{equation}
+\Prob\left(\abs{\log f(X_1, \ldots, X_n) - \E[\log f(X_1, \ldots, X_n)]} \geq t\right) \leq 2\exp\left(-\frac{2t^2}{\sum_{i=1}^n c_i^2}\right).
+\label{eq:twin-mcdiarmid}
+\end{equation}
+\end{theorem}
+
+\section{Twin Isoperimetric Inequality}
+
+\begin{definition}[Twin Half-Space]
+A \emph{twin half-space} is a set of the form:
+\[
+H = \{x \in \Rd_{>0}^d : \inner{v}{\log x} \leq c\}
+\]
+for some $v \in \Rd^d$ and $c \in \Rd$.
+\end{definition}
+
+\begin{theorem}[Twin Gaussian Isoperimetry]
+\label{thm:twin-isoperimetry}
+Let $\mu$ be a product log-normal measure on $\Rd_{>0}^d$. Among all sets of given $\mu$-measure, twin half-spaces minimize the boundary measure (Minkowski content).
+\end{theorem}
+
+\begin{corollary}[Gaussian Concentration on Log Scale]
+For $X \sim \text{LogNormal}_d(\boldsymbol{\mu}, \Sigma)$ and any 1-Lipschitz function $g$ (in log-coordinates):
+\begin{equation}
+\Prob(|g(X) - \E[g(X)]| \geq t) \leq 2e^{-t^2/(2\lambda_{\max}(\Sigma))}.
+\label{eq:twin-gaussian-concentration}
+\end{equation}
+\end{corollary}
+
+\section{Statistical Applications}
+
+\subsection{Twin M-Estimators}
+
+\begin{theorem}[Concentration of Twin M-Estimators]
+\label{thm:twin-m-estimator}
+Let $\hat{\theta}_n$ be the minimizer of $\sum_{i=1}^n \rho(\log X_i, \theta)$ where $\rho$ is convex in $\theta$. Under regularity conditions:
+\begin{equation}
+\Prob(|\hat{\theta}_n - \theta_0| \geq t) \leq 2\exp\left(-\frac{nt^2}{C}\right)
+\label{eq:twin-m-concentration}
+\end{equation}
+where $C$ depends on the curvature of $\rho$ at $\theta_0$.
+\end{theorem}
+
+\subsection{MLE in Multiplicative Models}
+
+\begin{theorem}[MLE Concentration]
+\label{thm:mle-concentration}
+For i.i.d.\ observations from a log-location family $f(x; \theta) = \frac{1}{x}g(\log x - \theta)$, the MLE $\hat{\theta}_n$ satisfies:
+\begin{equation}
+\Prob(|\hat{\theta}_n - \theta_0| \geq t) \leq 2\exp\left(-\frac{nt^2 I(\theta_0)}{2}\right)
+\label{eq:mle-log-location}
+\end{equation}
+where $I(\theta_0)$ is the Fisher information.
+\end{theorem}
+
+\subsection{Portfolio Concentration}
+
+\begin{theorem}[Portfolio Return Concentration]
+\label{thm:portfolio-concentration}
+Let $R_1, \ldots, R_n$ be independent returns with $R_i \in [1-\delta, 1+\delta]$. The cumulative return $\prod_{i=1}^n R_i$ satisfies:
+\begin{equation}
+\Prob\left(\abs{\log\prod_{i=1}^n R_i - n\mu} \geq t\right) \leq 2\exp\left(-\frac{t^2}{2n\log^2((1+\delta)/(1-\delta))}\right)
+\label{eq:portfolio-concentration}
+\end{equation}
+where $\mu = \E[\log R_i]$.
+\end{theorem}
+
+\section{Comparison: Twin vs.\ Classical Bounds}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Setting & Classical Bound & Twin Bound \\
+\midrule
+$X_i \in [1, 10]$ & $\exp(-ct^2/81n)$ & $\exp(-ct^2/5.3n)$ \\
+$X_i \in [1, 100]$ & $\exp(-ct^2/9801n)$ & $\exp(-ct^2/21.2n)$ \\
+$X_i \in [1, 1000]$ & $\exp(-ct^2/998001n)$ & $\exp(-ct^2/47.7n)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The improvement grows exponentially with the data range.
+
+% =============================================================================
+% CHAPTER 9: MAXIMUM LIKELIHOOD ON QUOTIENT SPACES
+% =============================================================================
+
+\chapter{Maximum Likelihood on Quotient Spaces}
+\label{ch:mle}
+
+This chapter develops maximum likelihood estimation for statistical models on quotient spaces, showing how group structure affects Fisher information and asymptotic efficiency.
+
+\section{Setup}
+
+Consider a parametric family $\{p_\theta : \theta \in \Theta\}$ of densities on $E$ with respect to a $G$-invariant base measure $\mu$. We assume the family is itself $G$-invariant: $p_\theta(g \cdot x) = p_\theta(x)$ for all $g \in G$, $x \in E$.
+
+\begin{definition}[Orbital Log-Likelihood]
+Given i.i.d.\ observations $X_1, \ldots, X_n$ from $p_{\theta_0}$, the orbital log-likelihood is:
+\begin{equation}
+\ell_n^G(\theta) = \sum_{i=1}^n \log \tilde{p}_\theta(O(X_i))
+\label{eq:orbital-loglik}
+\end{equation}
+where $\tilde{p}_\theta$ is the induced density on $E/G$.
+\end{definition}
+
+\section{Orbital Fisher Information}
+
+\begin{definition}[Orbital Fisher Information]
+The orbital Fisher information is:
+\begin{equation}
+I^G(\theta) = \E_\theta\left[\nabla_\theta \log \tilde{p}_\theta(O(X)) \cdot \nabla_\theta \log \tilde{p}_\theta(O(X))^\top\right].
+\label{eq:orbital-fisher}
+\end{equation}
+\end{definition}
+
+\begin{proposition}[Fisher Information Equality]
+\label{prop:fisher-equality}
+For $G$-invariant parametric families: $I^G(\theta) = I(\theta)$, where $I(\theta)$ is the classical Fisher information on $E$.
+\end{proposition}
+
+\begin{proof}
+Since $p_\theta$ is $G$-invariant, $\log p_\theta(x) = \log \tilde{p}_\theta(O(x))$, so the score functions are identical.
+\end{proof}
+
+\section{Consistency and Asymptotic Normality}
+
+\begin{theorem}[Orbital MLE Consistency]
+\label{thm:orbital-mle-consistency}
+Under standard regularity conditions (identifiability, compactness, continuity), the orbital MLE $\hat{\theta}_n^G = \argmax_\theta \ell_n^G(\theta)$ is strongly consistent:
+\begin{equation}
+\hat{\theta}_n^G \xrightarrow{a.s.} \theta_0.
+\label{eq:orbital-mle-consistency}
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Orbital MLE Asymptotic Normality]
+\label{thm:orbital-mle-normality}
+Under regularity conditions (twice differentiable log-likelihood, non-singular Fisher information):
+\begin{equation}
+\sqrt{n}(\hat{\theta}_n^G - \theta_0) \xrightarrow{d} \calN(0, I^G(\theta_0)^{-1}).
+\label{eq:orbital-mle-normality}
+\end{equation}
+\end{theorem}
+
+\section{Orbit-Exploiting Estimation}
+
+When $G$ is finite and we can observe complete orbits, additional efficiency gains are possible.
+
+\begin{definition}[Complete Orbit Observation]
+We observe \emph{complete orbits} if, for each sampled point $X_i$, we also observe $\{g \cdot X_i : g \in G\}$.
+\end{definition}
+
+\begin{theorem}[Orbit-Exploiting Improvement]
+\label{thm:orbit-improvement}
+Suppose $G$ is finite with $|G| = m$ and we observe $n$ complete orbits. The MLE based on all $nm$ observations satisfies:
+\begin{equation}
+\sqrt{nm}(\hat{\theta}_{nm} - \theta_0) \xrightarrow{d} \calN(0, I(\theta_0)^{-1}).
+\label{eq:orbit-improvement}
+\end{equation}
+This represents an effective sample size of $nm$, a $\sqrt{m}$ improvement in convergence rate.
+\end{theorem}
+
+\begin{remark}
+This result quantifies the statistical value of symmetry: observing the group structure of data provides information equivalent to a larger sample.
+\end{remark}
+
+\section{Examples}
+
+\subsection{Von Mises Distribution on the Circle}
+
+For directional data with $m$-fold symmetry, the von Mises distribution with concentration $\kappa$ has orbital Fisher information (for $\kappa$, with $\mu$ known)
+\[
+I^G(\kappa) = 1 - \frac{I_1(\kappa)}{\kappa\,I_0(\kappa)} - \frac{I_1(\kappa)^2}{I_0(\kappa)^2}
+= \var(\cos(\theta-\mu)),
+\]
+where $I_\nu$ are modified Bessel functions. Writing $A(\kappa)=I_1(\kappa)/I_0(\kappa)$, this is $A'(\kappa)=1-A/\kappa-A^2$, and by \cref{prop:fisher-equality} it equals the ordinary von Mises information. (The middle term carries the factor $1/\kappa$; omitting it is a common slip.)
+
+\subsection{Log-Normal Location Family}
+
+For $X \sim \text{LogNormal}(\mu, \sigma^2)$ with known $\sigma^2$:
+\[
+I^G(\mu) = I(\mu) = \frac{1}{\sigma^2}.
+\]
+The orbital MLE is the sample mean of log-transformed data: $\hat{\mu}_n = \frac{1}{n}\sum_{i=1}^n \log X_i$.
+
+% #############################################################################
+% PART III: APPLICATIONS
+% #############################################################################
+
+\part{Applications}
+\label{part:applications}
+
+% =============================================================================
+% CHAPTER 10: POINT PROCESSES
+% =============================================================================
+
+\chapter{Point Process Intensity Estimation}
+\label{ch:point-processes}
+
+This chapter applies the TwinKernel framework to intensity estimation for point processes, combining orbital geometry with martingale methods.
+
+\section{Background}
+
+Point processes model random events occurring in time or space: failure times in reliability, event times in survival analysis, spike trains in neuroscience, earthquake occurrences in seismology.
+
+\begin{definition}[Counting Process]
+A counting process $N = (N(t))_{t \geq 0}$ is a right-continuous, integer-valued stochastic process with $N(0) = 0$ and non-decreasing sample paths.
+\end{definition}
+
+\begin{definition}[Intensity Function]
+The intensity function $\lambda(t)$ satisfies:
+\[
+\E[dN(t) | \calF_{t-}] = \lambda(t) \, dt
+\]
+where $\calF_{t-}$ is the history up to time $t$.
+\end{definition}
+
+\begin{definition}[Innovation Martingale]
+The innovation martingale is:
+\begin{equation}
+M(t) = N(t) - \int_0^t \lambda(s) \, ds = N(t) - \Lambda(t)
+\label{eq:innovation-martingale}
+\end{equation}
+where $\Lambda(t) = \int_0^t \lambda(s) \, ds$ is the cumulative intensity.
+\end{definition}
+
+\section{TwinKernel Intensity Estimator}
+
+\begin{definition}[TwinKernel Intensity Estimator]
+Given a point process $N$ on $[0, T]$ with group $G = \langle \phi \rangle$ acting on time, the TwinKernel intensity estimator at level $j$ is:
+\begin{equation}
+\hat{\lambda}_j(t) = \frac{\int K_j^G(t, s) \, dN(s)}{\int K_j^G(t, s) Y(s) \, d\mu(s)}
+\label{eq:twin-intensity}
+\end{equation}
+where $Y(s)$ is the at-risk process and $K_j^G$ is the TwinKernel.
+\end{definition}
+
+\begin{proposition}[Martingale Decomposition]
+\label{prop:intensity-decomposition}
+The estimator admits:
+\begin{equation}
+\hat{\lambda}_j(t) - \lambda(t) = \underbrace{\frac{\int K_j^G(t, s) \, dM(s)}{\int K_j^G(t, s) Y(s) \, d\mu(s)}}_{\text{stochastic}} + \underbrace{(\lambda_j(t) - \lambda(t))}_{\text{bias}} + R_j(t)
+\label{eq:intensity-decomposition}
+\end{equation}
+where $\|R_j\|_\infty$ is a linearisation remainder of \emph{smaller order} than the stochastic and bias terms (negligible); its uniform-in-$t$ control requires a maximal inequality / entropy bound on the kernel class.
+\end{proposition}
+
+\section{Main Results}
+
+\begin{theorem}[Uniform Consistency]
+\label{thm:intensity-consistency}
+Under regularity conditions (bounded intensity, positive at-risk process), if $h_j \to 0$ and $nh_j^{\deff}/\log n \to \infty$:
+\begin{equation}
+\sup_t |\hat{\lambda}_j(t) - \lambda(t)| \xrightarrow{P} 0.
+\label{eq:intensity-consistency}
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Optimal Rate]
+\label{thm:intensity-rate}
+If $\lambda \in \calA_{\text{twin}}^s$ (twin-Hölder class with exponent $s$):
+\begin{equation}
+\E\left[\int (\hat{\lambda}_j(t) - \lambda(t))^2 \, dt\right] = O(n^{-2s/(2s + \deff)}).
+\label{eq:intensity-rate}
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Asymptotic Normality]
+\label{thm:intensity-clt}
+Under regularity conditions:
+\begin{equation}
+\sqrt{nh_j^{\deff}}(\hat{\lambda}_j(t) - \lambda(t)) \xrightarrow{d} \calN(0, \sigma^2(t))
+\label{eq:intensity-clt}
+\end{equation}
+where $\sigma^2(t) = \frac{\lambda(t)}{y(t)} \int K(u)^2 \, du$ and $y(t) = \lim_{n \to \infty} \frac{1}{n} Y(t)$.
+\end{theorem}
+
+\section{Model Selection}
+
+\begin{definition}[Contrast Function]
+The contrast for level selection is:
+\begin{equation}
+\gamma_n(j) = -2\int \hat{\lambda}_j \, dN + \int \hat{\lambda}_j^2 Y \, d\mu.
+\label{eq:intensity-contrast}
+\end{equation}
+\end{definition}
+
+\begin{theorem}[Oracle Inequality for Intensity]
+\label{thm:intensity-oracle}
+The penalized selector $\hat{j} = \argmin_j \{\gamma_n(j) + \text{pen}(j)\}$ satisfies:
+\begin{equation}
+\E\left[\int (\hat{\lambda}_{\hat{j}} - \lambda)^2 Y \, d\mu\right] \leq C \inf_j \left\{\int (\lambda_j - \lambda)^2 \, d\mu + \frac{\sigma^2 L(j)}{n}\right\} + \frac{C}{n}.
+\label{eq:intensity-oracle}
+\end{equation}
+\end{theorem}
+
+\section{Applications}
+
+\subsection{Hazard Rate Estimation}
+
+For survival data with random censoring, the intensity of the counting process $N(t) = \mathbf{1}\{T \leq t, \delta = 1\}$ is $\lambda(t) = \alpha(t) Y(t)$ where $\alpha(t)$ is the hazard rate.
+
+\begin{example}[Circadian Hazard]
+Medical events often show circadian patterns. For $G = \Zd_{24}$ (hourly periodicity), the TwinKernel estimator captures 24-hour cycles in event intensity.
+\end{example}
+
+\subsection{Periodic Point Processes}
+
+For processes with periodic intensity $\lambda(t + \tau) = \lambda(t)$:
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Method & ISE ($n=100$) & ISE ($n=500$) \\
+\midrule
+Standard Kernel & 0.0312 & 0.0098 \\
+TwinKernel & 0.0089 & 0.0024 \\
+Improvement & 3.5$\times$ & 4.1$\times$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =============================================================================
+% CHAPTER 11: ORTHOGONAL POLYNOMIAL ESTIMATION
+% =============================================================================
+
+\chapter{Orthogonal Polynomial Estimation}
+\label{ch:orthogonal}
+
+This chapter connects TwinKernel methods to classical orthogonal polynomial expansions, revealing a deep unity between kernel and series methods.
+
+\section{Background}
+
+Orthogonal series estimation expands an unknown function in a basis of orthogonal polynomials:
+\[
+f(x) = \sum_{k=0}^\infty c_k P_k(x)
+\]
+where $\{P_k\}$ are orthogonal with respect to some weight function $w$.
+
+\section{Spectral Equivariance}
+
+\begin{theorem}[Transport of orthonormal systems]
+\label{thm:spectral-equivariance}
+Let $\{P_k^{(J)}\}$ be orthonormal in $L^2(J,\Phi_*\mu)$. Then the transported functions $Q_k := P_k^{(J)}\circ\Phi$ are orthonormal in $L^2(E,\mu)$:
+\begin{equation}
+\int_E Q_j\,Q_k\,d\mu = \int_J P_j^{(J)}P_k^{(J)}\,d(\Phi_*\mu) = \delta_{jk}.
+\label{eq:spectral-equivariance}
+\end{equation}
+The $Q_k$ are orthogonal \emph{polynomials} on $E$ if and only if $\Phi$ is affine; for a nonlinear $\Phi$ they form an orthonormal family of \emph{non-polynomial} functions, since composition with a nonlinear $\Phi$ does not preserve polynomiality.
+\end{theorem}
+
+\begin{corollary}[Hermite system under the Gaussian CDF]
+Under the Gaussian CDF $\Phi$ (which pushes the standard Gaussian forward to the uniform law on $[0,1]$), the Hermite system transports to an orthonormal system on $[0,1]$ for the uniform weight. These transported functions are \emph{not} the Legendre polynomials: $\Phi$ being non-affine, orthonormality is preserved but polynomiality is not.
+\end{corollary}
+
+\section{Unified View}
+
+\begin{theorem}[Kernel--Series Duality]
+\label{thm:kernel-series}
+\begin{enumerate}
+\item Orthogonal series estimation corresponds to \emph{hard spectral truncation}: keeping coefficients $c_k$ for $k \leq K$ and zeroing the rest. This \emph{is} an orthogonal projection.
+\item Kernel smoothing corresponds to \emph{soft spectral attenuation}: multiplying $c_k$ by $\hat{K}(hk)$, where $\hat{K}$ is the Fourier transform of the base kernel. As $h\to0$, $\hat{K}(hk)\to\hat{K}(0)=1$ (no attenuation), and only high frequencies are damped --- the correct small-bandwidth limit. This is a self-adjoint \emph{shrinkage} (a contraction), \emph{not} a projection: it is idempotent only in the truncation limit $\hat{K}\in\{0,1\}$.
+\end{enumerate}
+Both act diagonally in the orthonormal basis of the appropriately transported reproducing kernel Hilbert space; only the hard-truncation case is a projection.
+\end{theorem}
+
+\section{Transported RKHS}
+
+\begin{definition}[Transported RKHS]
+Given an RKHS $\calH$ with kernel $k$ on $J$ and diffeomorphism $\Phi : E \to J$, the transported RKHS on $E$ has kernel:
+\begin{equation}
+k_\Phi(x, y) = k(\Phi(x), \Phi(y)).
+\label{eq:transported-kernel}
+\end{equation}
+\end{definition}
+
+\begin{theorem}[Invariance of Statistical Properties]
+\label{thm:rkhs-invariance}
+If the \emph{entire} experiment is transported by the bijection $\Phi$ --- estimator, design measure, and error norm all pulled back --- then rates are invariant: an estimator of rate $r_n$ in $\calH$ yields rate $r_n$ in $\calH_\Phi$, since $g\mapsto g\circ\Phi$ is an isometry $\calH_\Phi\to\calH$ (this part is a relabelling). When, however, the error is measured in a \emph{fixed} $L^2$ norm rather than the transported one, invariance requires $\Phi$ to be non-degenerate as in \cref{thm:regularity-invariance} (derivatives of $\Phi,\Phi^{-1}$ bounded, Jacobian pinched between positive constants); otherwise the Jacobian alters the rate constants. For the log group on $\Rd_{>0}$ this holds only on compact subintervals (\cref{rem:log-noncompact}), not globally.
+\end{theorem}
+
+% =============================================================================
+% CHAPTER 12: ORBITAL APPROXIMATION
+% =============================================================================
+
+\chapter{Orbital Approximation Theory}
+\label{ch:approximation}
+
+This chapter develops the theory of function approximation using orbital spaces, with the Separation Theorem as the key enabler of adaptation.
+
+\section{The Orbital Approximation Paradigm}
+
+Classical approximation theory fixes a basis (polynomials, splines, wavelets) and approximates within it. Different functions require different bases for optimal approximation.
+
+\textbf{Orbital approximation} lets the basis ``float'' via group transformations. Instead of choosing between polynomial bases for different function types, we choose a \emph{transformation level} that makes the function polynomial-like.
+
+\section{Error Decomposition}
+
+\begin{theorem}[Orbital Error Decomposition]
+\label{thm:orbital-error}
+For any function $f$ and orbital estimator $\hat{f}_n$:
+\begin{equation}
+\E\norm{\hat{f}_n - f}^2 = \underbrace{B(n)}_{\text{structural bias}} + \underbrace{A(n, d)}_{\text{approximation error}} + \underbrace{V(n, d, N)}_{\text{variance}}
+\label{eq:orbital-error}
+\end{equation}
+where:
+\begin{itemize}
+\item $B(n) = d_{L^2}(f, \calO_n)^2$ is the distance to the selected orbital space
+\item $A(n, d)$ is the polynomial approximation error within $\calO_n$
+\item $V(n, d, N)$ is the estimation variance
+\end{itemize}
+\end{theorem}
+
+\section{The Separation Principle in Estimation}
+
+\begin{theorem}[Separation-based adaptation (generic)]
+\label{thm:separation-estimation}
+Let $f \in \calO_{n_0}$ lie outside $\bigcup_{m\neq n_0}\calO_m$ (the generic case of \cref{thm:unique-level}). Then:
+\begin{enumerate}
+\item the structural bias $B(n_0) = 0$;
+\item for $n \neq n_0$, $B(n) > 0$ (with no uniform lower bound, by \cref{thm:separation});
+\item model selection identifies $n_0$ with probability $\to 1$ for such $f$.
+\end{enumerate}
+For $f$ in the intersection (e.g.\ a pure power) the level is not identifiable.
+\end{theorem}
+
+\section{Adaptive Rates}
+
+\begin{theorem}[Adaptation Without Loss]
+\label{thm:adaptation-without-loss}
+The adaptive orbital estimator achieves the oracle rate:
+\begin{equation}
+\E\norm{\hat{f}^{\text{ada}} - f}^2 = O\left(N^{-2s/(2s+1)}\right)
+\label{eq:oracle-rate}
+\end{equation}
+for $f \in \calO_{n_0}(H^s)$ lying outside $\bigcup_{m\neq n_0}\calO_m$ (\cref{thm:unique-level}), \textbf{without knowing $n_0$ or $s$}.
+\end{theorem}
+
+This is remarkable: adaptation across both orbital level and smoothness comes ``for free'' (up to logarithmic factors).
+
+\section{Comparison with Classical Methods}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Function & Classical Rate & Orbital Rate \\
+\midrule
+$f(x) = x^{2.5}$ & $N^{-5/(5+1)} = N^{-0.83}$ & $N^{-2 \cdot 2/(2 \cdot 2+1)} = N^{-0.8}$ (level 0) \\
+$f(x) = x^{0.7}$ & $N^{-1.4/(1.4+1)} = N^{-0.58}$ & $N^{-0.8}$ (level 1) \\
+$f(x) = e^{-1/x}$ & Very slow & $N^{-0.8}$ (level 2) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Orbital approximation achieves consistent rates across function types by adapting the geometry.
+
+% =============================================================================
+% CHAPTER 13: FURTHER APPLICATIONS
+% =============================================================================
+
+\chapter{Further Applications}
+\label{ch:further}
+
+This chapter presents applications of equivariant estimation to specific domains.
+
+\section{Directional Statistics}
+
+\subsection{Data on Circles and Spheres}
+
+Data on the unit circle $S^1$ arise in:
+\begin{itemize}
+\item Wind directions
+\item Animal migration headings  
+\item Circadian rhythms
+\item Phase angles in signal processing
+\end{itemize}
+
+For data with $m$-fold symmetry, the group $G = \Zd_m$ acts by rotation, and orbital estimation reduces variance by factor $m$.
+
+\subsection{Von Mises--Fisher Models}
+
+The von Mises distribution on $S^1$:
+\[
+f(\theta; \mu, \kappa) = \frac{1}{2\pi I_0(\kappa)} \exp(\kappa \cos(\theta - \mu))
+\]
+has orbital versions for $m$-fold symmetric data.
+
+\section{Compositional Data}
+
+\subsection{The Simplex}
+
+Compositional data lie on the simplex $\Delta^{d-1} = \{x \in \Rd^d_{>0} : \sum_i x_i = 1\}$. Examples include:
+\begin{itemize}
+\item Geological compositions (rock mineral content)
+\item Microbiome abundances
+\item Market shares
+\item Time allocation
+\end{itemize}
+
+\subsection{Exchangeable Compositions}
+
+When components are exchangeable (no distinguished order), the symmetric group $S_d$ acts by permutation. The quotient $\Delta^{d-1}/S_d$ consists of ``unordered compositions''---equivalently, the set of order statistics.
+
+\begin{theorem}[Dimension Reduction for Exchangeable Compositions]
+For exchangeable compositions with $d$ components and $G = S_d$:
+\[
+\deff = d - 1 - \dim(S_d \text{-orbits}) = d - 1.
+\]
+But the effective statistical complexity is reduced because we estimate on the quotient space of order statistics.
+\end{theorem}
+
+\section{Financial Data}
+
+\subsection{Multiplicative Returns}
+
+Financial returns are naturally multiplicative: the wealth after $n$ periods is $W_n = W_0 \prod_{i=1}^n (1 + r_i)$.
+
+The twin-CLT shows that log-returns converge faster to normality than raw returns, justifying the common practice of log-transforming financial data.
+
+\subsection{Portfolio Optimization}
+
+For a portfolio with weights $w$ and asset returns $R$, the portfolio return is:
+\[
+1+R_p = 1+\sum_i w_i R_i \approx \prod_i (1 + R_i)^{w_i} \quad \text{(for small returns)},
+\]
+
+Twin concentration inequalities provide tighter risk bounds than classical inequalities.
+
+\section{Quantum State Estimation}
+
+\subsection{Projective Hilbert Space}
+
+Quantum states are rays in Hilbert space: $|\psi\rangle \sim e^{i\theta}|\psi\rangle$. The natural space is the complex projective space $\Cp P^n = S^{2n+1}/U(1)$ --- unit rays modulo phase, equivalently $(\Cp^{n+1}\setminus\{0\})/\Cp^*$ --- with gauge group $G = U(1)$ acting on the unit sphere. (Quotienting all of $\Cp^{n+1}$ by $U(1)$ alone would retain the radial direction and not give $\Cp P^n$.)
+
+\subsection{Fubini--Study Metric}
+
+The natural metric is the Fubini--Study metric:
+\[
+d_{FS}(|\psi\rangle, |\phi\rangle) = \arccos|\langle\psi|\phi\rangle|.
+\]
+This is the twin metric for the $U(1)$ action.
+
+\section{Time Series with Stationarity}
+
+\subsection{Shift Symmetry}
+
+Stationary time series have shift-invariant structure: the distribution of $(X_t, X_{t+1}, \ldots, X_{t+k})$ doesn't depend on $t$.
+
+The translation group $G = \Zd$ acts by time shifts, and orbital estimation exploits this structure for improved autocovariance estimation.
+
+% =============================================================================
+% CHAPTER 14: COMPUTATIONAL METHODS
+% =============================================================================
+
+\chapter{Computational Methods}
+\label{ch:computational}
+
+This chapter addresses practical implementation of equivariant estimation methods.
+
+\section{Algorithms}
+
+\subsection{Adaptive Orbital Estimation}
+
+\begin{algorithm}[H]
+\caption{Adaptive Orbital Estimation}
+\label{alg:adaptive-orbital-full}
+\begin{algorithmic}[1]
+\REQUIRE Data $(X_i, Y_i)_{i=1}^N$, max level $n_{\max}$, degree $d$, penalty $\lambda$
+\STATE Initialize: best\_criterion $\gets \infty$
+\FOR{$n = 0$ to $n_{\max}$}
+    \STATE $\tilde{X}_i \gets \Phi_n(X_i)$ for all $i$ \COMMENT{Transform to level $n$}
+    \STATE $\hat{g}_n \gets$ PolynomialFit$(\tilde{X}, Y, d)$ \COMMENT{Fit polynomial}
+    \STATE RSS$_n \gets \sum_i (Y_i - \hat{g}_n(\tilde{X}_i))^2$
+    \STATE pen$_n \gets \lambda \cdot (d+1) \cdot (n+1) \cdot \log(N) / N$
+    \STATE criterion$_n \gets$ RSS$_n$ + pen$_n$
+    \IF{criterion$_n <$ best\_criterion}
+        \STATE best\_criterion $\gets$ criterion$_n$
+        \STATE $\hat{n} \gets n$
+    \ENDIF
+\ENDFOR
+\RETURN $\hat{f}(x) = \hat{g}_{\hat{n}}(\Phi_{\hat{n}}(x))$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Orbit-Averaged Density Estimation}
+
+\begin{algorithm}[H]
+\caption{Orbit-Averaged KDE}
+\label{alg:orbit-kde}
+\begin{algorithmic}[1]
+\REQUIRE Data $X_1, \ldots, X_n$, group generators $\{g_1, \ldots, g_m\}$, bandwidth $h$
+\FOR{each query point $x$}
+    \STATE sum $\gets 0$
+    \FOR{$k = 1$ to $m$}
+        \STATE $x' \gets g_k \cdot x$ \COMMENT{Orbit point}
+        \FOR{$i = 1$ to $n$}
+            \STATE sum $\gets$ sum $+ K((x' - X_i)/h)$
+        \ENDFOR
+    \ENDFOR
+    \STATE $\hat{f}^{\text{avg}}(x) \gets$ sum $/ (nmh)$
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\section{Complexity Analysis}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Algorithm & Time Complexity & Space Complexity \\
+\midrule
+Orbital Estimation & $O(N \cdot n_{\max} \cdot d^2)$ & $O(N + d)$ \\
+Orbit-Averaged KDE & $O(nmN)$ & $O(N)$ \\
+TwinKernel Intensity & $O(N^2)$ & $O(N)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+For large $N$, tree-based acceleration (k-d trees, ball trees) can reduce complexity.
+
+\section{Software Implementation}
+
+Recommended implementation strategy:
+\begin{enumerate}
+\item \textbf{R}: Use \texttt{stats} for base fitting, custom functions for transforms
+\item \textbf{Python}: NumPy/SciPy for numerics, scikit-learn interface
+\item \textbf{Julia}: High performance with multiple dispatch for group actions
+\end{enumerate}
+
+% =============================================================================
+% BACK MATTER
+% =============================================================================
+\backmatter
+
+% =============================================================================
+% APPENDIX A: TECHNICAL LEMMAS
+% =============================================================================
+\appendix
+
+\chapter{Technical Lemmas}
+\label{app:lemmas}
+
+\section{Concentration Inequalities}
+
+\begin{lemma}[Hoeffding]
+Let $Z_1, \ldots, Z_n$ be independent with $Z_i \in [a_i, b_i]$. Then:
+\[
+\Prob\left(\abs{\sum_{i=1}^n (Z_i - \E[Z_i])} \geq t\right) \leq 2\exp\left(-\frac{2t^2}{\sum_{i=1}^n (b_i - a_i)^2}\right).
+\]
+\end{lemma}
+
+\begin{lemma}[Bernstein]
+Let $Z_1, \ldots, Z_n$ be independent with $\E[Z_i] = 0$, $|Z_i| \leq M$, and $\sum \E[Z_i^2] \leq \sigma^2$. Then:
+\[
+\Prob\left(\abs{\sum_{i=1}^n Z_i} \geq t\right) \leq 2\exp\left(-\frac{t^2/2}{\sigma^2 + Mt/3}\right).
+\]
+\end{lemma}
+
+\begin{lemma}[Talagrand]
+Let $F$ be a class of functions with envelope $F^*$ and let $X_1, \ldots, X_n$ be i.i.d. Then:
+\[
+\E\left[\sup_{f \in F} \abs{\sum_{i=1}^n (f(X_i) - \E[f(X_i)])}\right] \leq C\left(\E\left[\sup_{f \in F} \sum_{i=1}^n f(X_i)^2\right]^{1/2} + \norm{F^*}_\infty \log \calN(F)\right).
+\]
+\end{lemma}
+
+\section{Martingale Results}
+
+\begin{lemma}[Lenglart]
+For a local martingale $M$ with predictable variation $\langle M \rangle$:
+\[
+\Prob(\abs{M_T} > \eta) \leq \frac{\delta}{\eta^2} + \Prob(\langle M \rangle_T > \delta).
+\]
+\end{lemma}
+
+\begin{lemma}[Rebolledo CLT]
+Let $(M_n)$ be a sequence of local martingales. If $\langle M_n \rangle_T \xrightarrow{P} \sigma^2$ and the Lindeberg condition holds, then $M_n(T) \xrightarrow{d} \calN(0, \sigma^2)$.
+\end{lemma}
+
+\section{Entropy Bounds}
+
+\begin{lemma}[Covering Numbers for Lipschitz Classes]
+If $F$ is a class of $L$-Lipschitz functions on a metric space of dimension $d$:
+\[
+\log \calN(\varepsilon, F, \norm{\cdot}_\infty) \leq C \left(\frac{L}{\varepsilon}\right)^d.
+\]
+\end{lemma}
+
+% =============================================================================
+% BIBLIOGRAPHY
+% =============================================================================
+
+\chapter{Bibliography}
+
+\begin{thebibliography}{99}
+
+\bibitem{Aalen1978}
+O.~O. Aalen.
+\newblock Nonparametric inference for a family of counting processes.
+\newblock {\em Ann.\ Statist.}, 6:701--726, 1978.
+
+\bibitem{Aitchison1986}
+J.~Aitchison.
+\newblock {\em The Statistical Analysis of Compositional Data}.
+\newblock Chapman \& Hall, 1986.
+
+\bibitem{Amari2016}
+S.~Amari.
+\newblock {\em Information Geometry and Its Applications}.
+\newblock Springer, 2016.
+
+\bibitem{Andersen1993}
+P.~K. Andersen, Ø.~Borgan, R.~D. Gill, and N.~Keiding.
+\newblock {\em Statistical Models Based on Counting Processes}.
+\newblock Springer, 1993.
+
+\bibitem{Berlinet2004}
+A.~Berlinet and C.~Thomas-Agnan.
+\newblock {\em Reproducing Kernel Hilbert Spaces in Probability and Statistics}.
+\newblock Kluwer, 2004.
+
+\bibitem{BirgeMassart1998}
+L.~Birg\'e and P.~Massart.
+\newblock Minimum contrast estimators on sieves: exponential bounds and rates of convergence.
+\newblock {\em Bernoulli}, 4(3):329--375, 1998.
+
+\bibitem{Dudley1999}
+R.~M. Dudley.
+\newblock {\em Uniform Central Limit Theorems}.
+\newblock Cambridge University Press, 1999.
+
+\bibitem{Eaton1989}
+M.~L. Eaton.
+\newblock {\em Group Invariance Applications in Statistics}.
+\newblock IMS, 1989.
+
+\bibitem{Efromovich1999}
+S.~Efromovich.
+\newblock {\em Nonparametric Curve Estimation: Methods, Theory and Applications}.
+\newblock Springer, 1999.
+
+\bibitem{FlemingHarrington1991}
+T.~R. Fleming and D.~P. Harrington.
+\newblock {\em Counting Processes and Survival Analysis}.
+\newblock Wiley, 1991.
+
+\bibitem{HuntStein1956}
+G.~Hunt and C.~Stein.
+\newblock Most stringent tests of statistical hypotheses.
+\newblock Unpublished manuscript, 1956.
+
+\bibitem{LehmannCasella1998}
+E.~L. Lehmann and G.~Casella.
+\newblock {\em Theory of Point Estimation}.
+\newblock Springer, 2nd edition, 1998.
+
+\bibitem{MardiaJupp2000}
+K.~V. Mardia and P.~E. Jupp.
+\newblock {\em Directional Statistics}.
+\newblock Wiley, 2000.
+
+\bibitem{Massart2007}
+P.~Massart.
+\newblock {\em Concentration Inequalities and Model Selection}.
+\newblock Lecture Notes in Mathematics 1896. Springer, 2007.
+
+\bibitem{RamlauHansen1983}
+H.~Ramlau-Hansen.
+\newblock Smoothing counting process intensities by means of kernel functions.
+\newblock {\em Ann.\ Statist.}, 11:453--466, 1983.
+
+\bibitem{Silverman1986}
+B.~W. Silverman.
+\newblock {\em Density Estimation for Statistics and Data Analysis}.
+\newblock Chapman \& Hall, 1986.
+
+\bibitem{Szego1975}
+G.~Szeg\H{o}.
+\newblock {\em Orthogonal Polynomials}.
+\newblock AMS, 4th edition, 1975.
+
+\bibitem{vanderVaart1998}
+A.~W. van~der Vaart.
+\newblock {\em Asymptotic Statistics}.
+\newblock Cambridge University Press, 1998.
+
+\bibitem{vanderVaartWellner1996}
+A.~W. van~der Vaart and J.~A. Wellner.
+\newblock {\em Weak Convergence and Empirical Processes}.
+\newblock Springer, 1996.
+
+\bibitem{Wahba1990}
+G.~Wahba.
+\newblock {\em Spline Models for Observational Data}.
+\newblock SIAM, 1990.
+
+\bibitem{Wijsman1990}
+R.~A. Wijsman.
+\newblock {\em Invariant Measures on Groups and Their Use in Statistics}.
+\newblock IMS, 1990.
+
+\end{thebibliography}
+
+% =============================================================================
+% INDEX
+% =============================================================================
+
+\chapter{Index}
+
+\textbf{A}\\
+Adaptive estimation, 23, 67--68\\
+Berry--Esseen bounds, 89--92\\
+
+\textbf{C}\\
+Central limit theorem, twin, 85--88\\
+Concentration inequalities, 95--104\\
+Cross-validation, 72\\
+
+\textbf{D}\\
+Density estimation, 63--76\\
+Donsker theorem, orbital, 53--54\\
+
+\textbf{E}\\
+Effective dimension, 17, 31\\
+Empirical processes, 47--56\\
+Equivariant kernel, 64\\
+
+\textbf{F}\\
+Fisher information, orbital, 108\\
+
+\textbf{G}\\
+Glivenko--Cantelli theorem, 49--51\\
+Group action, 11--12\\
+
+\textbf{H}\\
+Hölder class, twin, 29\\
+
+\textbf{I}\\
+Isoperimetric inequality, 100\\
+
+\textbf{K}\\
+Kernel density estimation, 65--67\\
+
+\textbf{L}\\
+Law of large numbers, twin, 83--84\\
+Limit theorems, 79--94\\
+
+\textbf{M}\\
+Martingale, twin, 92--93\\
+Maximum likelihood, 105--112\\
+MISE, 67\\
+
+\textbf{O}\\
+Orbit, 12\\
+Orbital approximation, 125--132\\
+Orbital empirical measure, 48\\
+
+\textbf{P}\\
+Point processes, 113--120\\
+
+\textbf{Q}\\
+Quotient space, 12\\
+
+\textbf{S}\\
+Separation theorem, 37--40\\
+Stone--Weierstrass theorem, twin, 16\\
+
+\textbf{T}\\
+Twin metric, 13--14\\
+Twin operation, 25--26\\
+TwinKernel, 27--28\\
+
+\textbf{V}\\
+Variance reduction, 68--70\\
+
+\end{document}

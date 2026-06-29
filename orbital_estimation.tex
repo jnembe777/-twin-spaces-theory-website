@@ -1,0 +1,993 @@
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{natbib}
+\setcitestyle{authoryear,round}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+% Custom commands
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+
+\begin{document}
+
+\title{\textbf{Empirical Estimation on Orbital Spaces: Glivenko-Cantelli and Donsker Theorems under Group Actions with Applications to Equivariant Density Estimation}}
+
+\author{Jocelyn Nemb\'e\\[0.5em]
+\small L.I.A.G.E, Institut National des Sciences de Gestion, BP 190, Libreville, Gabon\\
+\small Modeling and Calculus Lab, ROOTS-INSIGHTS, Libreville, Gabon\\
+\small E-mail: jnembe@hotmail.com, jnembe@root-insights.com}
+
+\date{December 2025}
+
+\maketitle
+
+\begin{abstract}
+We develop a comprehensive theory of empirical estimation when the sample space is partitioned into orbits under a discrete group action. Given a topological space $E$ with action of $G = \langle\varphi\rangle$, we construct orbital empirical measures on the quotient space $E/G$ and establish their convergence properties. Our main results include: (1) an Orbital Glivenko-Cantelli theorem with rates adapted to the twin metric $d_G$; (2) an Orbital Donsker theorem for functional convergence of the empirical process; (3) equivariant kernel density estimation with optimal bandwidth selection respecting the orbital structure; (4) maximum likelihood theory on quotient spaces with orbital Fisher information. We show that exploiting the group symmetry reduces the effective dimension on the quotient and can lower the variance of orbit-averaged estimators by up to a factor equal to the orbit size, and we establish concentration inequalities for orbital statistics. (For a $G$-invariant model the orbit is already sufficient, so symmetry does not inflate the effective sample size; the gains are in dimension and in variance reduction of non-invariant functionals.) Applications include directional statistics, compositional data analysis, and estimation problems with physical symmetries.
+\end{abstract}
+
+\noindent\textbf{Keywords:} Orbital empirical measures; Glivenko-Cantelli theorem; Donsker theorem; Equivariant estimation; Quotient spaces; Group actions; Kernel density estimation; Fisher information; Directional statistics
+
+\noindent\textbf{MSC 2020:} 62G05; 62G20; 60F17; 60B15; 22F50
+
+\tableofcontents
+
+%==============================================================================
+\section{Introduction}
+\label{sec:intro}
+%==============================================================================
+
+\subsection{Motivation: Statistics with Symmetries}
+
+Many statistical problems possess inherent symmetries \citep{Eaton1989,Wijsman1990}. When measuring angles, the data live on a circle with rotational symmetry. When analyzing proportions, the data live on a simplex with permutation structure \citep{Aitchison1986}. In physics, measurements may be invariant under gauge transformations or coordinate changes.
+
+Classical statistical theory typically ignores these symmetries, treating observations as points in Euclidean space \citep{vanderVaart1998}. This approach has two drawbacks:
+\begin{enumerate}[label=(\roman*)]
+\item It fails to exploit the symmetry structure for improved estimation
+\item It may produce estimators that are not equivariant under the natural transformations
+\end{enumerate}
+
+The theory of Twin Spaces provides a framework for statistics adapted to non-Euclidean structures \citep{Patrangenaru2016,Pennec2006}. In this article, we extend this framework to spaces with group actions, where the natural objects of study are orbits rather than individual points.
+
+\subsection{Setting and Notation}
+
+Let $E$ be a topological space (typically a metric space or manifold) and let $G = \langle\varphi\rangle \cong \Z$ be a discrete group acting continuously on $E$:
+\begin{equation}\label{eq:action}
+(n, x) \mapsto \varphi^n(x), \quad n \in \Z, \quad x \in E.
+\end{equation}
+
+The orbit of $x \in E$ is:
+\begin{equation}\label{eq:orbit}
+O(x) := \{\varphi^n(x) : n \in \Z\}.
+\end{equation}
+
+The orbit space (or quotient space) is:
+\begin{equation}\label{eq:quotient}
+E/G := \{O(x) : x \in E\}
+\end{equation}
+equipped with the quotient topology induced by the projection $\pi : E \to E/G$.
+
+\subsection{Key Questions}
+
+Given i.i.d.\ observations $X_1, \ldots, X_n$ from a distribution $\mu$ on $E$:
+\begin{enumerate}
+\item How do we estimate the induced measure $\mu_G$ on $E/G$?
+\item What is the convergence rate in the orbital metric $d_G$?
+\item How does the Twin Stone-Weierstrass theorem inform function approximation?
+\item Can we improve estimation by averaging over orbits?
+\item What is the orbital analogue of Fisher information?
+\end{enumerate}
+
+\subsection{Main Results Overview}
+
+\begin{enumerate}
+\item \textbf{Orbital Glivenko-Cantelli} (Theorem~\ref{thm:orbital_gc}): The orbital empirical measure $\hat{\mu}_n^G$ converges almost surely to $\mu_G$ in the twin-sup norm.
+
+\item \textbf{Orbital Donsker} (Theorem~\ref{thm:orbital_donsker}): The orbital empirical process converges weakly to a Gaussian process indexed by $C_{\mathrm{twin}}(E)$.
+
+\item \textbf{Equivariant Kernel Estimation} (Theorem~\ref{thm:kde_optimal}): Kernel density estimators using equivariant kernels achieve optimal rates on $E/G$.
+
+\item \textbf{Orbital MLE} (Theorem~\ref{thm:orbital_mle}): The MLE on quotient spaces is asymptotically normal with variance given by inverse orbital Fisher information.
+
+\item \textbf{Orbit-Averaging Improvement} (Theorem~\ref{thm:orbit_averaging}): Averaging over finite orbits reduces variance by up to a factor of $|G|$ (achieved when orbit points are separated by more than the bandwidth).
+\end{enumerate}
+
+\subsection{Related Work}
+
+The foundations of invariant statistical procedures were established by \citet{Hunt1966} and \citet{Lehmann1998}, showing when estimators should be equivariant under group actions. \citet{Stein1956} proved that the usual estimator of a multivariate normal mean is inadmissible when the dimension exceeds 2, a result related to the geometry of spheres.
+
+Directional statistics was pioneered by \citet{Fisher1953} and systematized by \citet{Mardia2000}. The theory of empirical processes was developed by \citet{Glivenko1933}, \citet{Cantelli1933}, and \citet{Donsker1952}, with modern treatments by \citet{Dudley1999} and \citet{vanderVaartWellner1996}. Information geometry was founded by \citet{Amari2016}, providing geometric frameworks for statistical manifolds.
+
+Our contribution is to synthesize these traditions within the Twin Space framework, establishing unified convergence theory for orbital estimation.
+
+%==============================================================================
+\section{Twin Topology and Orbital Geometry}
+\label{sec:topology}
+%==============================================================================
+
+We recall the essential definitions from the approximation theory on Twin Spaces.
+
+\subsection{Twin Metric}
+
+\begin{definition}[Twin Metric]\label{def:twin_metric}
+Assume $(E, d)$ is a metric space and $\varphi$ is an isometry. The twin metric (or orbital metric) on $E/G$ is the infimum of the distance over relative group shifts:
+\begin{equation}\label{eq:twin_metric}
+d_G(O(x), O(y)) := \inf_{n \in \Z} d(x, \varphi^n y)
+= \inf_{m,n \in \Z} d(\varphi^m x, \varphi^n y).
+\end{equation}
+The two infima agree because $\varphi$ is an isometry, so $d(\varphi^m x,\varphi^n y)=d(x,\varphi^{n-m}y)$. When orbits are finite (e.g., $G$ is a finite group), the infimum is a minimum over finitely many terms.
+\end{definition}
+
+\begin{remark}[Why the infimum, not the supremum]\label{rem:inf_not_sup}
+The infimum over relative shifts is forced by well-definedness on the quotient: replacing the representative $y$ by $\varphi^j y$ leaves $\inf_n d(x,\varphi^n y)$ unchanged, whereas $\sup_n d(\varphi^n x,\varphi^n y)$ would equal $d(x,y)$ for an isometry $\varphi$ and would therefore depend on the chosen representatives (and fail $d_G(O(x),O(x))=0$). Equation~\eqref{eq:twin_metric} is the standard quotient (orbit) metric and is the one used in the computational sections (cf.\ \eqref{eq:orbital_distance}, \eqref{eq:cyclic_distance}).
+\end{remark}
+
+\begin{proposition}[Metric Properties]\label{prop:metric}
+If the orbits of $G$ are closed in $E$, then $d_G$ is a well-defined metric on $E/G$ satisfying:
+\begin{enumerate}[label=(\roman*)]
+\item $d_G(O(x), O(y)) = 0$ iff $O(x) = O(y)$
+\item $d_G(O(x), O(y)) = d_G(O(y), O(x))$
+\item $d_G(O(x), O(z)) \leq d_G(O(x), O(y)) + d_G(O(y), O(z))$
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+Well-definedness on orbits is Remark~\ref{rem:inf_not_sup}.
+
+(i) If $d_G(O(x),O(y))=0$ then $\inf_n d(x,\varphi^n y)=0$; since the orbit $O(y)$ is closed, the infimum is attained (or approached within $O(y)$), giving $x=\varphi^n y$ for some $n$, i.e.\ $O(x)=O(y)$. The converse is immediate.
+
+(ii) Using that $\varphi$ is an isometry, $d_G(O(x),O(y))=\inf_n d(x,\varphi^n y)=\inf_n d(\varphi^{-n}x,y)=\inf_m d(y,\varphi^m x)=d_G(O(y),O(x))$.
+
+(iii) For any $n,k\in\Z$, the isometry property gives $d(x,\varphi^n z)\le d(x,\varphi^k y)+d(\varphi^k y,\varphi^n z)=d(x,\varphi^k y)+d(y,\varphi^{n-k} z)$. Taking the infimum over $n$ and then over $k$ yields the triangle inequality.
+\end{proof}
+
+\subsection{Twin Continuity}
+
+\begin{definition}[Twin-Continuous Function]\label{def:twin_continuous}
+A function $f : E \to \R$ is twin-continuous if:
+\begin{enumerate}
+\item $f$ is continuous on $E$;
+\item For every compact $K \subset E$, the family $\{f \circ \varphi^n\}_{n \in \Z}$ is equicontinuous on $K$.
+\end{enumerate}
+The space of twin-continuous functions is denoted $C_{\mathrm{twin}}(E)$.
+\end{definition}
+
+\begin{definition}[Twin-Sup Norm]\label{def:twin_norm}
+The twin-sup norm on $C_{\mathrm{twin}}(E)$ is:
+\begin{equation}\label{eq:twin_norm}
+\|f\|_{\infty,\mathrm{twin}} := \sup_{x \in E} \sup_{n \in \Z} |f(\varphi^n x)|.
+\end{equation}
+\end{definition}
+
+\begin{lemma}[Banach Space Structure]\label{lem:banach}
+$(C_{\mathrm{twin}}(E), \|\cdot\|_{\infty,\mathrm{twin}})$ is a Banach space.
+\end{lemma}
+
+\subsection{Equivariant Functions}
+
+\begin{definition}[$G$-Invariant Function]\label{def:invariant}
+A function $f : E \to \R$ is $G$-invariant if:
+\begin{equation}\label{eq:invariant}
+f(\varphi^n x) = f(x) \quad \forall x \in E, \forall n \in \Z.
+\end{equation}
+Equivalently, $f$ factors through the quotient: $f = \tilde{f} \circ \pi$ for some $\tilde{f} : E/G \to \R$.
+\end{definition}
+
+\begin{definition}[$G$-Equivariant Function]\label{def:equivariant}
+A function $f : E \to F$ (where $G$ also acts on $F$) is $G$-equivariant if:
+\begin{equation}\label{eq:equivariant}
+f(\varphi^n x) = \varphi^n f(x) \quad \forall x \in E, \forall n \in \Z.
+\end{equation}
+\end{definition}
+
+The space of $G$-invariant twin-continuous functions is denoted $C_{\mathrm{twin}}^G(E)$.
+
+\subsection{The Twin Stone-Weierstrass Theorem}
+
+The following fundamental result guarantees density of polynomial algebras \citep{Stone1948,Nachbin1965}.
+
+\begin{theorem}[Twin Stone-Weierstrass]\label{thm:stone_weierstrass}
+Let $(E, G)$ be a compact Twin Space and let $\mathcal{A}$ be the algebra generated by twin-equivariant polynomials. Then $\mathcal{A}$ is dense in $C_{\mathrm{twin}}(E)$ with respect to $\|\cdot\|_{\infty,\mathrm{twin}}$.
+\end{theorem}
+
+This theorem is crucial for approximation-theoretic arguments in estimation.
+
+%==============================================================================
+\section{Orbital Empirical Measures}
+\label{sec:orbital_measures}
+%==============================================================================
+
+Let $X_1, \ldots, X_n$ be i.i.d.\ observations from a probability measure $\mu$ on $E$.
+
+\begin{definition}[Empirical Measure]\label{def:empirical}
+The empirical measure on $E$ is:
+\begin{equation}\label{eq:empirical}
+\hat{\mu}_n := \frac{1}{n} \sum_{i=1}^n \delta_{X_i}.
+\end{equation}
+\end{definition}
+
+\begin{definition}[Orbital Empirical Measure]\label{def:orbital_empirical}
+The orbital empirical measure on $E/G$ is:
+\begin{equation}\label{eq:orbital_empirical}
+\hat{\mu}_n^G := \frac{1}{n} \sum_{i=1}^n \delta_{O(X_i)} = \pi_* \hat{\mu}_n.
+\end{equation}
+This is the pushforward of $\hat{\mu}_n$ under the quotient map $\pi : E \to E/G$.
+\end{definition}
+
+\begin{definition}[Orbit-Averaged Empirical Measure]\label{def:orbit_averaged}
+When $G$ is finite with $|G| = m$, the orbit-averaged empirical measure is:
+\begin{equation}\label{eq:orbit_averaged}
+\hat{\mu}_n^{\mathrm{avg}} := \frac{1}{n} \sum_{i=1}^n \frac{1}{m} \sum_{g \in G} \delta_{g \cdot X_i} = \frac{1}{nm} \sum_{i=1}^n \sum_{k=0}^{m-1} \delta_{\varphi^k(X_i)}.
+\end{equation}
+\end{definition}
+
+\begin{proposition}[Measure Relationships]\label{prop:measure_relations}
+Let $\mu_G := \pi_* \mu$ be the pushforward of $\mu$ to $E/G$. Then:
+\begin{enumerate}[label=(\roman*)]
+\item $\E[\hat{\mu}_n^G] = \mu_G$
+\item For $G$-invariant $f$: $\int f \, d\hat{\mu}_n^G = \int f \, d\hat{\mu}_n$
+\item If $\mu$ is $G$-invariant: $\E[\hat{\mu}_n^{\mathrm{avg}}] = \mu$
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(i) For any measurable $A \subset E/G$:
+\begin{equation}
+\E[\hat{\mu}_n^G(A)] = \E\left[\frac{1}{n} \sum_{i=1}^n \mathbf{1}_{O(X_i) \in A}\right] = P(O(X_1) \in A) = \mu_G(A).
+\end{equation}
+
+(ii) If $f = \tilde{f} \circ \pi$ is $G$-invariant:
+\begin{equation}
+\int f \, d\hat{\mu}_n^G = \frac{1}{n} \sum_{i=1}^n \tilde{f}(O(X_i)) = \frac{1}{n} \sum_{i=1}^n f(X_i) = \int f \, d\hat{\mu}_n.
+\end{equation}
+
+(iii) Follows from $G$-invariance of $\mu$.
+\end{proof}
+
+%==============================================================================
+\section{Orbital Glivenko-Cantelli Theory}
+\label{sec:glivenko_cantelli}
+%==============================================================================
+
+\subsection{Classical Glivenko-Cantelli}
+
+Recall the classical result \citep{Glivenko1933,Cantelli1933}: for $X_1, \ldots, X_n$ i.i.d.\ from $F$ on $\R$,
+\begin{equation}\label{eq:classical_gc}
+\sup_t |F_n(t) - F(t)| \xrightarrow{a.s.} 0
+\end{equation}
+where $F_n(t) = \frac{1}{n} \sum_{i=1}^n \mathbf{1}_{X_i \leq t}$.
+
+\subsection{Glivenko-Cantelli Classes}
+
+\begin{definition}[Glivenko-Cantelli Class]\label{def:gc_class}
+A class of functions $\mathcal{F}$ on $E$ is a Glivenko-Cantelli class for $\mu$ if:
+\begin{equation}\label{eq:gc_class}
+\sup_{f \in \mathcal{F}} \left| \int f \, d\hat{\mu}_n - \int f \, d\mu \right| \xrightarrow{a.s.} 0.
+\end{equation}
+\end{definition}
+
+\begin{definition}[Orbital Glivenko-Cantelli Class]\label{def:orbital_gc_class}
+A class $\mathcal{F} \subset C_{\mathrm{twin}}^G(E)$ of $G$-invariant functions is an orbital Glivenko-Cantelli class if:
+\begin{equation}\label{eq:orbital_gc_class}
+\sup_{f \in \mathcal{F}} \left| \int f \, d\hat{\mu}_n^G - \int f \, d\mu_G \right| \xrightarrow{a.s.} 0.
+\end{equation}
+\end{definition}
+
+\subsection{Main Glivenko-Cantelli Result}
+
+\begin{theorem}[Orbital Glivenko-Cantelli]\label{thm:orbital_gc}
+Let $(E, G)$ be a compact Twin Space with $G$ acting by isometries. Let $\mu$ be a probability measure on $E$. Then the class $\mathcal{F} = \{f \in C_{\mathrm{twin}}^G(E) : \|f\|_{\infty,\mathrm{twin}} \leq 1\}$ of bounded $G$-invariant twin-continuous functions is an orbital Glivenko-Cantelli class:
+\begin{equation}\label{eq:orbital_gc}
+\sup_{\|f\|_{\infty,\mathrm{twin}} \leq 1, f \in C_{\mathrm{twin}}^G(E)} \left| \int f \, d\hat{\mu}_n^G - \int f \, d\mu_G \right| \xrightarrow{a.s.} 0.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The proof proceeds in three steps.
+
+\textbf{Step 1: Reduction to quotient space.} Since $f$ is $G$-invariant, $f = \tilde{f} \circ \pi$ for some continuous $\tilde{f} : E/G \to \R$. The integral becomes:
+\begin{equation}
+\int f \, d\hat{\mu}_n^G = \int \tilde{f} \, d(\pi_* \hat{\mu}_n) = \frac{1}{n} \sum_{i=1}^n \tilde{f}(O(X_i)).
+\end{equation}
+
+\textbf{Step 2: Compactness of $E/G$.} Since $E$ is compact and $\pi$ is continuous and surjective, $E/G$ is compact.
+
+\textbf{Step 3: Apply classical theory.} The observations $O(X_1), \ldots, O(X_n)$ are i.i.d.\ from $\mu_G$ on the compact metric space $(E/G, d_G)$. By the classical Glivenko-Cantelli theorem for compact metric spaces \citep{Dudley1999}, the class of continuous functions bounded by 1 is a GC class.
+
+Since $\tilde{f}$ is continuous on $E/G$ whenever $f \in C_{\mathrm{twin}}^G(E)$, the result follows.
+\end{proof}
+
+\subsection{Convergence Rate}
+
+\begin{theorem}[Orbital Glivenko-Cantelli Rate]\label{thm:gc_rate}
+Under the conditions of Theorem~\ref{thm:orbital_gc}, for any $\epsilon > 0$:
+\begin{equation}\label{eq:gc_rate}
+P\left( \sup_{f \in \mathcal{F}} \left| \int f \, d\hat{\mu}_n^G - \int f \, d\mu_G \right| > \epsilon \right) \leq 2 N(\epsilon/2, \mathcal{F}, \|\cdot\|_{\infty,\mathrm{twin}}) \cdot e^{-n\epsilon^2/8}
+\end{equation}
+where $N(\epsilon, \mathcal{F}, \|\cdot\|)$ is the covering number of $\mathcal{F}$.
+\end{theorem}
+
+\begin{proof}
+Apply the standard symmetrization and chaining arguments \citep{vanderVaartWellner1996} to the class $\tilde{\mathcal{F}} = \{\tilde{f} : f \in \mathcal{F}\}$ on $E/G$, using the metric entropy of the function class.
+\end{proof}
+
+\begin{corollary}[Rate for Lipschitz Classes]\label{cor:lipschitz_rate}
+If $\mathcal{F}$ consists of $G$-invariant functions that are $L$-Lipschitz in the twin metric, and $(E/G, d_G)$ has covering dimension $d$, then:
+\begin{equation}\label{eq:lipschitz_rate}
+\E\left[ \sup_{f \in \mathcal{F}} \left| \int f \, d\hat{\mu}_n^G - \int f \, d\mu_G \right| \right] = O\left( n^{-1/(2 \vee d)} \right).
+\end{equation}
+\end{corollary}
+
+%==============================================================================
+\section{Orbital Donsker Theory}
+\label{sec:donsker}
+%==============================================================================
+
+\subsection{The Orbital Empirical Process}
+
+\begin{definition}[Orbital Empirical Process]\label{def:orbital_process}
+The orbital empirical process indexed by $\mathcal{F} \subset C_{\mathrm{twin}}^G(E)$ is:
+\begin{equation}\label{eq:orbital_process}
+\mathbb{G}_n^G(f) := \sqrt{n} \left( \int f \, d\hat{\mu}_n^G - \int f \, d\mu_G \right) = \frac{1}{\sqrt{n}} \sum_{i=1}^n (f(X_i) - \E[f(X_1)]).
+\end{equation}
+Note that for $G$-invariant $f$, this equals the classical empirical process evaluated at $f$.
+\end{definition}
+
+\subsection{Donsker Classes}
+
+\begin{definition}[Orbital Donsker Class]\label{def:donsker_class}
+A class $\mathcal{F} \subset C_{\mathrm{twin}}^G(E)$ is an orbital Donsker class if $\mathbb{G}_n^G$ converges weakly in $\ell^\infty(\mathcal{F})$ to a tight Gaussian process $\mathbb{G}^G$.
+\end{definition}
+
+\begin{theorem}[Orbital Donsker]\label{thm:orbital_donsker}
+Let $(E, G)$ be a compact Twin Space. Let $\mathcal{F} \subset C_{\mathrm{twin}}^G(E)$ be a class of $G$-invariant functions with envelope $F$ satisfying $\|F\|_{L^2(\mu)} < \infty$. If the bracketing entropy satisfies:
+\begin{equation}\label{eq:bracketing}
+\int_0^\infty \sqrt{\log N_{[\,]}(\epsilon, \mathcal{F}, L^2(\mu_G))} \, d\epsilon < \infty,
+\end{equation}
+then $\mathcal{F}$ is an orbital Donsker class, and:
+\begin{equation}\label{eq:donsker_convergence}
+\mathbb{G}_n^G \Rightarrow \mathbb{G}^G \quad \text{in } \ell^\infty(\mathcal{F}),
+\end{equation}
+where $\mathbb{G}^G$ is a centered Gaussian process with covariance:
+\begin{equation}\label{eq:gaussian_cov}
+\E[\mathbb{G}^G(f) \mathbb{G}^G(g)] = \int fg \, d\mu_G - \int f \, d\mu_G \int g \, d\mu_G.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The proof follows from the classical Donsker theorem \citep{Donsker1952,vanderVaartWellner1996} applied to the i.i.d.\ sequence $O(X_1), \ldots, O(X_n)$ on $(E/G, \mu_G)$, using the correspondence between $G$-invariant functions on $E$ and functions on $E/G$.
+\end{proof}
+
+\subsection{Application: Kolmogorov-Smirnov Test on Orbits}
+
+\begin{corollary}[Orbital KS Statistic]\label{cor:ks_test}
+Define the orbital Kolmogorov-Smirnov statistic:
+\begin{equation}\label{eq:ks_statistic}
+D_n^G := \sup_{f \in \mathcal{F}_{\mathrm{ind}}} |\mathbb{G}_n^G(f)|
+\end{equation}
+where $\mathcal{F}_{\mathrm{ind}}$ is the class of indicators of $G$-invariant sets. Under the null hypothesis $\mu = \mu_0$:
+\begin{equation}\label{eq:ks_limit}
+D_n^G \Rightarrow \sup_{t \in [0,1]} |B(t)|
+\end{equation}
+where $B$ is a Brownian bridge (when $E/G$ is one-dimensional).
+\end{corollary}
+
+%==============================================================================
+\section{Equivariant Kernel Density Estimation}
+\label{sec:kde}
+%==============================================================================
+
+\subsection{Equivariant Kernels}
+
+\begin{definition}[Equivariant Kernel]\label{def:equivariant_kernel}
+A kernel $K : E \times E \to \R$ is $G$-equivariant if:
+\begin{equation}\label{eq:equivariant_kernel}
+K(\varphi^n x, \varphi^n y) = K(x, y) \quad \forall x, y \in E, \forall n \in \Z.
+\end{equation}
+\end{definition}
+
+\begin{lemma}[Equivariant Kernel Induces Quotient Kernel]\label{lem:quotient_kernel}
+If $K$ is $G$-equivariant, then $K$ induces a well-defined kernel $\tilde{K}$ on $E/G$:
+\begin{equation}\label{eq:quotient_kernel}
+\tilde{K}(O(x), O(y)) := K(x, y).
+\end{equation}
+\end{lemma}
+
+\subsection{Orbital Kernel Density Estimator}
+
+\begin{definition}[Orbital KDE]\label{def:orbital_kde}
+Given an equivariant kernel $K_h$ with bandwidth $h > 0$, the orbital kernel density estimator is:
+\begin{equation}\label{eq:orbital_kde}
+\hat{f}_n^G(O(x)) := \frac{1}{n} \sum_{i=1}^n K_h(x, X_i) = \frac{1}{nh^d} \sum_{i=1}^n K\left( \frac{d_G(O(x), O(X_i))}{h} \right)
+\end{equation}
+where $K$ is a univariate kernel and $d$ is the dimension of $E/G$.
+\end{definition}
+
+Since $K_h$ is equivariant, $\hat{f}_n^G$ is well-defined on $E/G$.
+
+\subsection{Bias and Variance}
+
+\begin{proposition}[Orbital KDE Bias]\label{prop:kde_bias}
+Assume the density $f_G$ of $\mu_G$ with respect to a reference measure on $E/G$ is twice continuously differentiable. Then:
+\begin{equation}\label{eq:kde_bias}
+\E[\hat{f}_n^G(O(x))] = f_G(O(x)) + \frac{h^2}{2} \mu_2(K) \Delta_G f_G(O(x)) + o(h^2)
+\end{equation}
+where $\mu_2(K) = \int t^2 K(t) \, dt$ and $\Delta_G$ is the Laplacian on $E/G$.
+\end{proposition}
+
+\begin{proposition}[Orbital KDE Variance]\label{prop:kde_variance}
+\begin{equation}\label{eq:kde_variance}
+\Var(\hat{f}_n^G(O(x))) = \frac{f_G(O(x))}{nh^d} \int K^2(t) \, dt + o\left( \frac{1}{nh^d} \right).
+\end{equation}
+\end{proposition}
+
+\begin{theorem}[Optimal Bandwidth for Orbital KDE]\label{thm:kde_optimal}
+The mean integrated squared error (MISE) optimal bandwidth is:
+\begin{equation}\label{eq:optimal_bandwidth}
+h_{\mathrm{opt}}^G = \left( \frac{d \int K^2}{\mu_2(K)^2 \int (\Delta_G f_G)^2} \right)^{1/(d+4)} n^{-1/(d+4)}
+\end{equation}
+achieving MISE rate $O(n^{-4/(d+4)})$.
+\end{theorem}
+
+\subsection{Orbit-Averaged Kernel Estimator}
+
+When $G$ is finite, we can average over the orbit to reduce variance.
+
+\begin{definition}[Orbit-Averaged KDE]\label{def:orbit_averaged_kde}
+For finite $G$ with $|G| = m$:
+\begin{equation}\label{eq:orbit_averaged_kde}
+\hat{f}_n^{\mathrm{avg}}(x) := \frac{1}{nm} \sum_{i=1}^n \sum_{k=0}^{m-1} K_h(x, \varphi^k(X_i)).
+\end{equation}
+\end{definition}
+
+\begin{theorem}[Variance Reduction by Orbit Averaging]\label{thm:orbit_averaging}
+If $\mu$ is $G$-invariant, then the orbit-averaged estimator never increases the variance,
+\begin{equation}\label{eq:variance_reduction}
+\Var(\hat{f}_n^{\mathrm{avg}}(x)) \leq \Var(\hat{f}_n(x)),
+\end{equation}
+where $\hat{f}_n$ is the standard KDE. Moreover, when the orbit points $\{\varphi^k x\}_{k=0}^{m-1}$ are separated by more than the bandwidth $h$ (so the shifted estimators are asymptotically uncorrelated), the maximal $m$-fold reduction is achieved,
+\begin{equation}\label{eq:variance_reduction_best}
+\Var(\hat{f}_n^{\mathrm{avg}}(x)) = \frac{1}{m}\,\Var(\hat{f}_n(x))\,(1+o(1)).
+\end{equation}
+In general the reduction factor lies between $1$ and $m$.
+\end{theorem}
+
+\begin{proof}
+Write $\hat{f}_n^{\mathrm{avg}}(x) = \frac{1}{m} \sum_{k=0}^{m-1} \hat{f}_n(\varphi^{-k}(x))$.
+By $G$-invariance of $\mu$, each $Y_k := \hat{f}_n(\varphi^{-k}(x))$ has the same variance $V := \Var(\hat{f}_n(x))$, and
+\begin{equation}
+\Var(\hat{f}_n^{\mathrm{avg}}(x)) = \frac{1}{m^2} \sum_{k,\ell} \Cov(Y_k, Y_\ell)
+= \frac{1}{m} V + \frac{1}{m^2} \sum_{k\neq\ell} \Cov(Y_k, Y_\ell).
+\end{equation}
+By Cauchy--Schwarz $\Cov(Y_k,Y_\ell)\le V$, so $\Var(\hat{f}_n^{\mathrm{avg}}(x))\le \frac{1}{m^2}\,m^2 V = V$, which is \eqref{eq:variance_reduction}. When the orbit points lie more than a bandwidth apart, the kernels $K_h(\,\cdot\,,\varphi^{-k}x)$ and $K_h(\,\cdot\,,\varphi^{-\ell}x)$ have asymptotically disjoint support, so $\Cov(Y_k,Y_\ell)=o(V)$ for $k\neq\ell$ and only the diagonal term $\frac{1}{m}V$ survives, giving \eqref{eq:variance_reduction_best}. Conversely, when orbit points fall within a bandwidth the cross-covariances are positive, so $\Var(\hat{f}_n^{\mathrm{avg}}(x))\ge\frac{1}{m}V$ and the reduction is less than $m$-fold.
+\end{proof}
+
+%==============================================================================
+\section{Maximum Likelihood on Quotient Spaces}
+\label{sec:mle}
+%==============================================================================
+
+\subsection{Setup}
+
+Consider a parametric family $\{p_\theta : \theta \in \Theta\}$ of densities on $E$ that are $G$-invariant:
+\begin{equation}\label{eq:invariant_family}
+p_\theta(\varphi^n x) = p_\theta(x) \quad \forall x, n, \theta.
+\end{equation}
+This is equivalent to specifying a parametric family on $E/G$.
+
+\subsection{Orbital Log-Likelihood}
+
+\begin{definition}[Orbital Log-Likelihood]\label{def:orbital_likelihood}
+The orbital log-likelihood based on observations $X_1, \ldots, X_n$ is:
+\begin{equation}\label{eq:orbital_likelihood}
+\ell_n^G(\theta) := \sum_{i=1}^n \log p_\theta(X_i) = \sum_{i=1}^n \log \tilde{p}_\theta(O(X_i))
+\end{equation}
+where $\tilde{p}_\theta$ is the induced density on $E/G$.
+\end{definition}
+
+\subsection{Orbital Fisher Information}
+
+\begin{definition}[Orbital Fisher Information]\label{def:orbital_fisher}
+The orbital Fisher information is:
+\begin{equation}\label{eq:orbital_fisher}
+I^G(\theta) := \E_\theta\left[ \nabla_\theta \log \tilde{p}_\theta(O(X)) \cdot \nabla_\theta \log \tilde{p}_\theta(O(X))^T \right].
+\end{equation}
+\end{definition}
+
+\begin{proposition}[Orbital vs.\ Original Fisher Information]\label{prop:fisher_equality}
+If $p_\theta$ is $G$-invariant, then:
+\begin{equation}\label{eq:fisher_equality}
+I^G(\theta) = I(\theta)
+\end{equation}
+where $I(\theta)$ is the classical Fisher information computed from $p_\theta$ on $E$.
+\end{proposition}
+
+\begin{proof}
+Since $p_\theta$ is $G$-invariant, $\nabla_\theta \log p_\theta(x) = \nabla_\theta \log \tilde{p}_\theta(O(x))$. The expectation over $X \sim p_\theta$ equals the expectation over $O(X) \sim \tilde{p}_\theta$.
+\end{proof}
+
+\subsection{Asymptotic Theory for Orbital MLE}
+
+\begin{theorem}[Orbital MLE Consistency]\label{thm:mle_consistency}
+Let $\hat{\theta}_n^G := \arg\max_\theta \ell_n^G(\theta)$. Under standard regularity conditions (identifiability, compactness of $\Theta$, continuity of $\ell_n^G$):
+\begin{equation}\label{eq:mle_consistency}
+\hat{\theta}_n^G \xrightarrow{a.s.} \theta_0
+\end{equation}
+where $\theta_0$ is the true parameter.
+\end{theorem}
+
+\begin{theorem}[Orbital MLE Asymptotic Normality]\label{thm:orbital_mle}
+Under regularity conditions:
+\begin{equation}\label{eq:mle_normality}
+\sqrt{n}(\hat{\theta}_n^G - \theta_0) \xrightarrow{d} N(0, I^G(\theta_0)^{-1}).
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+This is the standard MLE asymptotic normality \citep{vanderVaart1998} applied to the i.i.d.\ observations $O(X_1), \ldots, O(X_n)$ from $\tilde{p}_{\theta_0}$ on $E/G$.
+\end{proof}
+
+\subsection{Improved Estimation via Orbit Structure}
+
+\begin{theorem}[No spurious gain from observed orbits under invariance]\label{thm:orbit_exploit}
+Suppose $G$ is finite with $|G| = m$, the family $\{p_\theta\}$ is $G$-invariant, and from each independent draw $X_i$ ($i=1,\ldots,n$) we additionally form its orbit $\{X_i, \varphi(X_i), \ldots, \varphi^{m-1}(X_i)\}$. Because $p_\theta(\varphi^k X_i)=p_\theta(X_i)$, the orbit images are deterministic functions of $X_i$ and carry \emph{no additional information}: the orbital log-likelihood of the full orbit equals $m\sum_i\log p_\theta(X_i)$, whose maximizer is exactly $\hat\theta_n$. Consequently the effective sample size remains $n$ (the number of independent orbits), and
+\begin{equation}\label{eq:improved_rate}
+\sqrt{n}(\hat{\theta}_n^G - \theta_0) \xrightarrow{d} N(0, I^G(\theta_0)^{-1}),
+\end{equation}
+with no $\sqrt{m}$ acceleration.
+\end{theorem}
+
+\begin{remark}[What orbit structure does and does not buy]\label{rem:no_free_lunch}
+The $\sqrt{nm}$ rate of a naive ``treat the $nm$ orbit points as i.i.d.'' analysis is an artifact: those points are not independent, and treating them as such underestimates the variance by a factor $m$. A genuine $\sqrt{nm}$ rate requires $nm$ \emph{independent} observations, which is simply more data rather than a symmetry dividend. The real benefits of the orbital approach are (a) dimension reduction on $E/G$ and (b) variance reduction of orbit-\emph{averaged} estimators of non-invariant functionals (Theorem~\ref{thm:orbit_averaging}), not an inflation of the sample size for a $G$-invariant model, for which the orbit is already a sufficient statistic ($I^G=I$, Proposition~\ref{prop:fisher_equality}).
+\end{remark}
+
+%==============================================================================
+\section{Concentration Inequalities for Orbital Statistics}
+\label{sec:concentration}
+%==============================================================================
+
+\subsection{Orbital Hoeffding Inequality}
+
+\begin{theorem}[Orbital Hoeffding]\label{thm:orbital_hoeffding}
+Let $f \in C_{\mathrm{twin}}^G(E)$ be $G$-invariant with $f(E) \subset [a, b]$. Then:
+\begin{equation}\label{eq:orbital_hoeffding}
+P\left( \left| \frac{1}{n} \sum_{i=1}^n f(X_i) - \E[f(X_1)] \right| \geq t \right) \leq 2 \exp\left( -\frac{2nt^2}{(b-a)^2} \right).
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+This is the standard Hoeffding inequality \citep{Hoeffding1963}, since $f(X_i)$ are i.i.d.\ bounded random variables.
+\end{proof}
+
+\subsection{Orbital McDiarmid Inequality}
+
+For statistics that depend on orbits in a bounded-difference manner:
+
+\begin{theorem}[Orbital McDiarmid]\label{thm:orbital_mcdiarmid}
+Let $F : (E/G)^n \to \R$ satisfy the bounded difference condition:
+\begin{equation}\label{eq:bounded_diff}
+|F(o_1, \ldots, o_i, \ldots, o_n) - F(o_1, \ldots, o_i', \ldots, o_n)| \leq c_i
+\end{equation}
+for all $o_j, o_i' \in E/G$. Then for the orbital statistic $T_n = F(O(X_1), \ldots, O(X_n))$:
+\begin{equation}\label{eq:mcdiarmid}
+P(|T_n - \E[T_n]| \geq t) \leq 2 \exp\left( -\frac{2t^2}{\sum_{i=1}^n c_i^2} \right).
+\end{equation}
+\end{theorem}
+
+\subsection{Concentration for Orbit-Averaged Statistics}
+
+\begin{theorem}[Orbit-Averaged Concentration]\label{thm:orbit_concentration}
+Let $G$ be finite with $|G| = m$, and let $f : E \to [a, b]$ (not necessarily $G$-invariant). Define the orbit-averaged statistic:
+\begin{equation}\label{eq:orbit_stat}
+\bar{f}^G(X) := \frac{1}{m} \sum_{k=0}^{m-1} f(\varphi^k(X)).
+\end{equation}
+Then:
+\begin{equation}\label{eq:orbit_concentration}
+P\left( \left| \frac{1}{n} \sum_{i=1}^n \bar{f}^G(X_i) - \E[\bar{f}^G(X_1)] \right| \geq t \right) \leq 2 \exp\left( -\frac{2nt^2}{(b-a)^2} \right).
+\end{equation}
+Moreover, if $f$ varies across orbits (i.e., is not constant on orbits), then $\bar{f}^G$ typically has smaller variance than $f$.
+\end{theorem}
+
+%==============================================================================
+\section{Spectral Methods for Orbital Estimation}
+\label{sec:spectral}
+%==============================================================================
+
+\subsection{Twin Laplacian and Spectral Decomposition}
+
+\begin{definition}[Twin Laplacian]\label{def:twin_laplacian}
+A twin Laplacian $\Delta_{\mathrm{twin}}$ is a self-adjoint operator on $L^2_{\mathrm{twin}}(E)$ that is $G$-equivariant:
+\begin{equation}\label{eq:twin_laplacian}
+\Delta_{\mathrm{twin}}(f \circ \varphi^n) = (\Delta_{\mathrm{twin}} f) \circ \varphi^n.
+\end{equation}
+\end{definition}
+
+\begin{lemma}[Spectral Decomposition]\label{lem:spectral}
+$\Delta_{\mathrm{twin}}$ admits a spectral resolution:
+\begin{equation}\label{eq:spectral_resolution}
+\Delta_{\mathrm{twin}} = \int_\sigma \lambda \, dE(\lambda)
+\end{equation}
+with eigenfunctions that are either $G$-invariant or transform according to characters of $G$.
+\end{lemma}
+
+\subsection{Spectral Density Estimation}
+
+\begin{definition}[Spectral Orbital Estimator]\label{def:spectral_estimator}
+Given the spectral decomposition of $\Delta_{\mathrm{twin}}$ with eigenfunctions $\{e_k\}$ and eigenvalues $\{\lambda_k\}$, define:
+\begin{equation}\label{eq:spectral_estimator}
+\hat{f}_n^{\mathrm{spec}}(x) := \sum_{k : |\lambda_k| \leq R} \hat{c}_k e_k(x)
+\end{equation}
+where $\hat{c}_k = \frac{1}{n} \sum_{i=1}^n e_k(X_i)$ and $R$ is a truncation parameter.
+\end{definition}
+
+\begin{theorem}[Spectral Convergence]\label{thm:spectral_convergence}
+Under regularity conditions on the density $f$ and the spectrum of $\Delta_{\mathrm{twin}}$:
+\begin{equation}\label{eq:spectral_rate}
+\E\|\hat{f}_n^{\mathrm{spec}} - f\|_{L^2}^2 = O(R^{-2s}) + O\left( \frac{R^d}{n} \right)
+\end{equation}
+where $s$ is the smoothness of $f$ and $d$ is the effective dimension. Optimal choice $R \sim n^{1/(2s+d)}$ yields rate $n^{-2s/(2s+d)}$.
+\end{theorem}
+
+\begin{remark}[Exact rate, no logarithmic factor]
+The spectral estimator \eqref{eq:spectral_estimator} is a \emph{projection}
+estimator: it fits the $O(R^d)$ coefficients $\hat c_k$ directly, so its variance
+is the metric complexity $R^d/n$ of the model and the balance gives the
+\emph{exact} minimax rate $n^{-2s/(2s+d)}$, with no logarithmic factor. This is in
+deliberate contrast with a description-length (MDL) estimator over a quantized
+sieve, whose per-coefficient coding cost $\log(1/\delta)\asymp\log n$ inflates the
+rate to $(\log n/n)^{2s/(2s+d)}$; the MDL estimator is then near-minimax while the
+projection estimator above is exactly minimax. A penalized truncation choosing $R$
+by $\mathrm{pen}(R)\asymp R^d/n$ retains the exact rate \emph{adaptively} in $s$.
+\end{remark}
+
+%==============================================================================
+\section{Applications}
+\label{sec:applications}
+%==============================================================================
+
+\subsection{Directional Statistics: The Circle}
+
+Let $E = S^1$ (the unit circle) with $G = \Z_m$ acting by rotations through $2\pi k/m$ \citep{Mardia2000}.
+
+\begin{example}[Circular Data with $m$-fold Symmetry]\label{ex:circular}
+For data with $m$-fold rotational symmetry (e.g., crystal orientations), the quotient space is $S^1/\Z_m \cong S^1$ (but with $m$ times shorter circumference).
+
+The orbital metric is:
+\begin{equation}\label{eq:circular_metric}
+d_G(O(\theta_1), O(\theta_2)) = \min_{k=0}^{m-1} |\theta_1 - \theta_2 - 2\pi k/m| \mod 2\pi.
+\end{equation}
+
+The von Mises distribution with $m$-fold symmetry:
+\begin{equation}\label{eq:von_mises}
+p(\theta; \mu, \kappa) = \frac{1}{2\pi I_0(\kappa)} e^{\kappa \cos m(\theta - \mu)}
+\end{equation}
+is naturally a distribution on $S^1/\Z_m$.
+\end{example}
+
+\subsection{Compositional Data: The Simplex}
+
+Let $E = \Delta^{d-1} = \{x \in \R_{>0}^d : \sum_i x_i = 1\}$ with $G = S_d$ (permutation group) or a subgroup \citep{Aitchison1986}.
+
+\begin{example}[Exchangeable Compositions]\label{ex:simplex}
+When compositions are exchangeable (invariant under all permutations), the effective sample space is the set of order statistics, reducing dimension from $d-1$ to the number of distinct values.
+
+The orbital Fisher information incorporates this reduction:
+\begin{equation}\label{eq:orbital_fisher_simplex}
+I^{S_d}(\theta) = \frac{1}{d!} \sum_{\sigma \in S_d} I(\sigma \cdot \theta)
+\end{equation}
+where the sum averages over permutations.
+\end{example}
+
+\subsection{Physical Symmetries: Gauge Invariance}
+
+In physics, measurements are often invariant under gauge transformations \citep{Weinberg1995}.
+
+\begin{example}[Phase Estimation]\label{ex:quantum}
+Consider estimating a quantum state $|\psi\rangle$ that is only defined up to global phase: $|\psi\rangle \sim e^{i\theta}|\psi\rangle$.
+
+The orbit space is the projective Hilbert space $\mathbb{CP}^n$, and the natural metric is the Fubini-Study metric:
+\begin{equation}\label{eq:fubini_study}
+d_{FS}([\psi], [\phi]) = \arccos|\langle\psi|\phi\rangle|.
+\end{equation}
+
+Estimation on $\mathbb{CP}^n$ uses the orbital framework with $G = U(1)$.
+\end{example}
+
+\subsection{Time Series: Stationarity}
+
+For stationary time series, the distribution is invariant under time shifts \citep{Brockwell1991}.
+
+\begin{example}[Shift-Invariant Estimation]\label{ex:time_series}
+Let $X_1, \ldots, X_n$ be a stationary sequence with $G = \Z$ acting by shifts. The orbit-averaged estimator of the autocovariance:
+\begin{equation}\label{eq:autocovariance}
+\hat{\gamma}(h) = \frac{1}{n-h} \sum_{t=1}^{n-h} (X_t - \bar{X})(X_{t+h} - \bar{X})
+\end{equation}
+exploits the shift symmetry to reduce variance compared to a single-lag estimator.
+\end{example}
+
+%==============================================================================
+\section{Computational Aspects}
+\label{sec:computation}
+%==============================================================================
+
+\subsection{Computing Orbital Distances}
+
+For finite $G$:
+\begin{equation}\label{eq:orbital_distance}
+d_G(O(x), O(y)) = \min_{g \in G} d(x, g \cdot y) = \min_{k=0}^{m-1} d(x, \varphi^k(y)).
+\end{equation}
+
+\textbf{Algorithm (Orbital Distance):}
+\begin{enumerate}
+\item Input: Points $x, y \in E$, group generators.
+\item Initialize $d_{\min} = d(x, y)$
+\item For $k = 1, \ldots, m-1$:
+\begin{enumerate}
+\item Compute $y_k = \varphi^k(y)$
+\item Update $d_{\min} = \min(d_{\min}, d(x, y_k))$
+\end{enumerate}
+\item Return $d_{\min}$
+\end{enumerate}
+
+\textbf{Complexity:} $O(m)$ distance computations.
+
+\subsection{Efficient Orbit-Averaged KDE}
+
+\textbf{Algorithm (Orbit-Averaged KDE):}
+\begin{enumerate}
+\item Input: Data $X_1, \ldots, X_n$, evaluation point $x$, bandwidth $h$.
+\item For each $i = 1, \ldots, n$:
+\begin{enumerate}
+\item Compute orbital distance $d_i = d_G(O(x), O(X_i))$
+\item Add contribution $K(d_i/h)$ (automatically averages over orbits)
+\end{enumerate}
+\item Return $\frac{1}{nh^d} \sum_{i=1}^n K(d_i/h)$
+\end{enumerate}
+
+%==============================================================================
+\section{Discussion}
+\label{sec:discussion}
+%==============================================================================
+
+\subsection{Summary of Results}
+
+We have developed a comprehensive theory of empirical estimation on orbital spaces:
+\begin{enumerate}
+\item \textbf{Orbital Glivenko-Cantelli:} Uniform convergence of orbital empirical measures with explicit rates depending on the metric entropy of the quotient space.
+\item \textbf{Orbital Donsker:} Functional central limit theorem for orbital empirical processes.
+\item \textbf{Equivariant KDE:} Kernel density estimation using equivariant kernels achieves optimal rates on quotient spaces, with orbit-averaging providing variance reduction.
+\item \textbf{Orbital MLE:} Maximum likelihood on quotient spaces with asymptotic normality governed by orbital Fisher information.
+\item \textbf{Concentration:} Hoeffding and McDiarmid inequalities for orbital statistics.
+\end{enumerate}
+
+\subsection{Benefits of the Orbital Approach}
+
+\begin{enumerate}
+\item \textbf{Dimension reduction:} Working on $E/G$ reduces the effective dimension when $G$ is large.
+\item \textbf{Variance reduction:} Orbit-averaging reduces variance by a factor up to $|G|$.
+\item \textbf{Equivariance:} Estimators automatically respect the symmetry structure.
+\item \textbf{Interpretability:} Results are stated in terms of orbits, which are often the natural objects of interest.
+\end{enumerate}
+
+\subsection{Open Problems}
+
+\begin{enumerate}
+\item Optimal estimation of the group $G$ itself from symmetric data
+\item Minimax rates for density estimation on general quotient spaces. \emph{(Now
+largely established: the exact rate $n^{-2s/(2s+d_{\mathrm{eff}})}$ holds on a
+$d_{\mathrm{eff}}$-dimensional quotient---Fano lower bound matched by a projection
+estimator, exactly and adaptively. What remains open is the fully stratified
+orbifold quotient and the heavy-tailed multiplicative regime.)}
+\item Bootstrap methods adapted to orbital structure
+\item High-dimensional orbital estimation with $\dim(E/G) \to \infty$
+\item Non-parametric hypothesis testing on quotient spaces
+\end{enumerate}
+
+%==============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+%==============================================================================
+
+This article has established the foundations of empirical estimation on orbital spaces, where the sample space is partitioned by the action of a discrete group. The key insight is that statistical procedures should respect the orbital structure, leading to equivariant estimators that exploit symmetry for improved performance.
+
+The orbital framework provides:
+\begin{itemize}
+\item A natural setting for statistics with symmetries
+\item Dimension reduction through quotient spaces
+\item Variance reduction through orbit-averaging
+\item Connection to the Twin Space approximation theory
+\end{itemize}
+
+%==============================================================================
+% Appendix
+%==============================================================================
+
+\appendix
+
+\section{Covering Numbers for Orbital Function Classes}
+
+\begin{lemma}[Orbital Covering Number]\label{lem:orbital_covering}
+Let $\mathcal{F}^G = \{f \in C_{\mathrm{twin}}^G(E) : \|f\|_{\mathrm{Lip},G} \leq L\}$ be the class of $G$-invariant $L$-Lipschitz functions. If $(E/G, d_G)$ has covering dimension $d$, then:
+\begin{equation}\label{eq:covering_bound}
+\log N(\epsilon, \mathcal{F}^G, \|\cdot\|_\infty) \leq C \cdot \left( \frac{L}{\epsilon} \right)^d
+\end{equation}
+for some constant $C$ depending on $E/G$.
+\end{lemma}
+
+\section{Explicit Formulas for Common Groups}
+
+\subsection{Cyclic Group $\Z_m$}
+
+For $E = \R^2$ and $G = \Z_m$ acting by rotation through $2\pi/m$:
+\begin{equation}\label{eq:cyclic_action}
+\varphi^k(x, y) = (x \cos(2\pi k/m) - y \sin(2\pi k/m), x \sin(2\pi k/m) + y \cos(2\pi k/m)).
+\end{equation}
+
+The orbital distance:
+\begin{equation}\label{eq:cyclic_distance}
+d_G(O(z_1), O(z_2)) = \min_{k=0}^{m-1} |z_1 - e^{2\pi i k/m} z_2|
+\end{equation}
+in complex notation.
+
+\subsection{Symmetric Group $S_n$}
+
+For $E = \R^n$ and $G = S_n$ acting by permutation:
+\begin{equation}\label{eq:symmetric_action}
+\sigma \cdot (x_1, \ldots, x_n) = (x_{\sigma^{-1}(1)}, \ldots, x_{\sigma^{-1}(n)}).
+\end{equation}
+
+The orbit is the set of all permutations of $(x_1, \ldots, x_n)$. The orbital distance uses sorted vectors:
+\begin{equation}\label{eq:symmetric_distance}
+d_G(O(x), O(y)) = \|x_{(\cdot)} - y_{(\cdot)}\|
+\end{equation}
+where $x_{(\cdot)}$ denotes the sorted version of $x$.
+
+%==============================================================================
+% References
+%==============================================================================
+
+\bibliographystyle{plainnat}
+
+\begin{thebibliography}{99}
+
+\bibitem[Aitchison(1986)]{Aitchison1986}
+Aitchison, J. (1986).
+\textit{The Statistical Analysis of Compositional Data}.
+Chapman \& Hall, London.
+
+\bibitem[Amari(2016)]{Amari2016}
+Amari, S. (2016).
+\textit{Information Geometry and Its Applications}.
+Springer, Tokyo.
+
+\bibitem[Brockwell and Davis(1991)]{Brockwell1991}
+Brockwell, P.J. and Davis, R.A. (1991).
+\textit{Time Series: Theory and Methods}, 2nd ed.
+Springer, New York.
+
+\bibitem[Cantelli(1933)]{Cantelli1933}
+Cantelli, F.P. (1933).
+Sulla determinazione empirica delle leggi di probabilit\`a.
+\textit{Giorn.\ Ist.\ Ital.\ Attuari} \textbf{4}, 421--424.
+
+\bibitem[Donsker(1952)]{Donsker1952}
+Donsker, M.D. (1952).
+Justification and extension of Doob's heuristic approach to the Kolmogorov-Smirnov theorems.
+\textit{Ann.\ Math.\ Statist.} \textbf{23}, 277--281.
+
+\bibitem[Dudley(1999)]{Dudley1999}
+Dudley, R.M. (1999).
+\textit{Uniform Central Limit Theorems}.
+Cambridge University Press.
+
+\bibitem[Eaton(1989)]{Eaton1989}
+Eaton, M.L. (1989).
+\textit{Group Invariance Applications in Statistics}.
+Institute of Mathematical Statistics, Hayward.
+
+\bibitem[Fisher(1953)]{Fisher1953}
+Fisher, R.A. (1953).
+Dispersion on a sphere.
+\textit{Proc.\ Roy.\ Soc.\ London Ser.\ A} \textbf{217}, 295--305.
+
+\bibitem[Glivenko(1933)]{Glivenko1933}
+Glivenko, V. (1933).
+Sulla determinazione empirica delle leggi di probabilit\`a.
+\textit{Giorn.\ Ist.\ Ital.\ Attuari} \textbf{4}, 92--99.
+
+\bibitem[Hoeffding(1963)]{Hoeffding1963}
+Hoeffding, W. (1963).
+Probability inequalities for sums of bounded random variables.
+\textit{J.\ Amer.\ Statist.\ Assoc.} \textbf{58}, 13--30.
+
+\bibitem[Hunt and Stein(1966)]{Hunt1966}
+Hunt, G. and Stein, C. (1966).
+Most stringent tests of statistical hypotheses.
+Unpublished manuscript.
+
+\bibitem[Lehmann and Casella(1998)]{Lehmann1998}
+Lehmann, E.L. and Casella, G. (1998).
+\textit{Theory of Point Estimation}, 2nd ed.
+Springer, New York.
+
+\bibitem[Mardia and Jupp(2000)]{Mardia2000}
+Mardia, K.V. and Jupp, P.E. (2000).
+\textit{Directional Statistics}.
+Wiley, Chichester.
+
+\bibitem[Nachbin(1965)]{Nachbin1965}
+Nachbin, L. (1965).
+\textit{Elements of Approximation Theory}.
+Van Nostrand, Princeton.
+
+\bibitem[Patrangenaru and Ellingson(2016)]{Patrangenaru2016}
+Patrangenaru, V. and Ellingson, L. (2016).
+\textit{Nonparametric Statistics on Manifolds and Their Applications to Object Data Analysis}.
+CRC Press, Boca Raton.
+
+\bibitem[Pennec(2006)]{Pennec2006}
+Pennec, X. (2006).
+Intrinsic statistics on Riemannian manifolds: Basic tools for geometric measurements.
+\textit{J.\ Math.\ Imaging Vision} \textbf{25}, 127--154.
+
+\bibitem[Stein(1956)]{Stein1956}
+Stein, C. (1956).
+Inadmissibility of the usual estimator for the mean of a multivariate normal distribution.
+\textit{Proc.\ Third Berkeley Symp.\ Math.\ Statist.\ Prob.} \textbf{1}, 197--206.
+
+\bibitem[Stone(1948)]{Stone1948}
+Stone, M.H. (1948).
+The generalized Weierstrass approximation theorem.
+\textit{Math.\ Mag.} \textbf{21}, 167--184, 237--254.
+
+\bibitem[van der Vaart(1998)]{vanderVaart1998}
+van der Vaart, A.W. (1998).
+\textit{Asymptotic Statistics}.
+Cambridge University Press.
+
+\bibitem[van der Vaart and Wellner(1996)]{vanderVaartWellner1996}
+van der Vaart, A.W. and Wellner, J.A. (1996).
+\textit{Weak Convergence and Empirical Processes}.
+Springer, New York.
+
+\bibitem[Weinberg(1995)]{Weinberg1995}
+Weinberg, S. (1995).
+\textit{The Quantum Theory of Fields}, Vol.~I.
+Cambridge University Press.
+
+\bibitem[Wijsman(1990)]{Wijsman1990}
+Wijsman, R.A. (1990).
+\textit{Invariant Measures on Groups and Their Use in Statistics}.
+Institute of Mathematical Statistics, Hayward.
+
+\end{thebibliography}
+
+\end{document}

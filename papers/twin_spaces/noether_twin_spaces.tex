@@ -1,0 +1,295 @@
+\documentclass[11pt,twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!70!black,citecolor=green!50!black}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=1.5em}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\RR}{\mathbb{R}_{>0}}
+\newcommand{\dd}{\mathrm{d}}
+
+\title{\textbf{Generalized Noether Theory in Twin Spaces:\\Symmetry, Arithmetic Deformations, and Conserved Quantities}}
+\author{Jocelyn Nemb\'e\\
+\small Roots Insights Laboratory, Singapore\\
+\small National Institute of Management Sciences, Libreville\\
+\small \texttt{jnembe777@gmail.com, jnembe@root-insights.org}}
+\date{}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+We generalize Noether's theorem to \emph{twin spaces}: structures in which the arithmetic of the configuration space is deformed by a group action. Given a set $E$ with a reference operation $\alpha$ and a group $G$ acting by bijections, each $g \in G$ induces a transported arithmetic $x \diamond_g y = g^{-1}(g(x) \,\alpha\, g(y))$. We develop the Lagrangian formalism in each arithmetic $\diamond_g$, prove the Euler--Lagrange equations by transport of structure (Theorem~\ref{thm:EL}), and establish a \emph{parametrized Noether theorem}: every continuous symmetry of a $g$-Lagrangian yields a conserved quantity $C_g$ expressed in the arithmetic $\diamond_g$ (Theorem~\ref{thm:noether}). The family $\{C_g\}_{g \in G}$ transforms covariantly under $G$, revealing a form of \emph{arithmetical relativity}: conserved quantities depend on the arithmetic used to describe the system. We prove that a symmetry hidden in one arithmetic may become manifest in another (Theorem~\ref{thm:hidden}). Applications to multiplicative mechanics (dilation symmetry $\to$ relative momentum $m\dot{x}/x$), logarithmic oscillators (Gompertz dynamics), and scale-invariant cosmology illustrate the framework. The results connect to the $(G,H)$-equivariant theory of twin information theory and to the twin variational calculus of twin general relativity.
+\end{abstract}
+
+\noindent\textbf{Keywords:} Noether theorem, twin spaces, deformed arithmetic, conservation laws, arithmetical relativity, Lagrangian mechanics
+
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+% ============================================================================
+
+Noether's theorem~\cite{noether1918} is formulated on the configuration space $\R^n$ with its standard arithmetic $(+, \cdot)$. Velocities, momenta, and energies all use the additive structure of $\R$.
+
+However, many physical systems are more naturally described by non-additive structures: population growth (multiplicative rates $\dot{x}/x$), financial models (compounded returns), perception (Weber--Fechner logarithmic law), and cosmological expansion (Hubble parameter $H = \dot{a}/a$). In these regimes, the ``natural'' primitive operation is not addition but a deformed variant.
+
+The twin spaces framework~\cite{nembe2026vol1,nembe2026vol3} provides a controlled deformation: given a bijection $g: E \to E$, the transported operation $x \diamond_g y = g^{-1}(g(x) + g(y))$ is isomorphic to addition but has different algebraic expressions. Each $g$ induces its own differential calculus, Lagrangian theory, and conservation laws.
+
+Our main result: a Noether theorem in each arithmetic $\diamond_g$, producing a $G$-indexed family of conserved quantities. The classical theorem is the special case $g = \mathrm{id}$.
+
+
+% ============================================================================
+\section{Twin Spaces and Deformed Arithmetics}
+\label{sec:twin}
+% ============================================================================
+
+\begin{definition}[Twin Space]\label{def:twin}
+A \textbf{twin space} is a triple $(E, \alpha, G)$ where $E$ is a set, $\alpha: E \times E \to E$ is a binary operation (the reference), and $G$ acts on $E$ by bijections. For each $g \in G$, the \textbf{$g$-deformed operation} is:
+\begin{equation}
+x \diamond_g y := g^{-1}(g(x) \,\alpha\, g(y))
+\end{equation}
+\end{definition}
+
+\begin{proposition}[Transport of Structure]\label{prop:transport}
+The map $\varphi_g: (E, \diamond_g) \to (E, \alpha)$, $\varphi_g(x) = g(x)$, is an isomorphism of magmas. If $\alpha$ is associative (resp.\ commutative, has identity $e$), then $\diamond_g$ is associative (resp.\ commutative, has identity $g^{-1}(e)$).
+\end{proposition}
+
+\begin{proof}
+$\varphi_g(x \diamond_g y) = g(g^{-1}(g(x) \,\alpha\, g(y))) = g(x) \,\alpha\, g(y) = \varphi_g(x) \,\alpha\, \varphi_g(y)$. Bijectivity of $g$ gives the isomorphism. Properties transfer through isomorphisms.
+\end{proof}
+
+\begin{definition}[Kernel of the Arithmetic Action]\label{def:kernel-arith}
+The \textbf{arithmetic kernel} $\ker\pi = \{g \in G : \diamond_g = \alpha\}$ is the subgroup preserving the reference arithmetic. The quotient $G/\ker\pi$ indexes the distinct arithmetics.
+\end{definition}
+
+\begin{example}[Exponential Hierarchy]\label{ex:exp}
+$E = \RR$, $\alpha = +$, $G = \langle\exp\rangle \cong \mathbb{Z}$. Let $g_n = \exp^{(n)}$ ($n$-fold iterated exponential). Then:
+\begin{itemize}
+    \item $n = 0$: $\diamond_0 = +$ (ordinary addition).
+    \item $n = 1$: $x \diamond_1 y = \log(e^x + e^y)$ (log-sum-exp).
+    \item $n = -1$: $x \diamond_{-1} y = \exp(\log x + \log y) = x \cdot y$ (ordinary multiplication, since $g_{-1} = \log$, $g_{-1}^{-1} = \exp$).
+\end{itemize}
+The hierarchy interpolates between additive, logarithmic, and multiplicative regimes.
+\end{example}
+
+
+% ============================================================================
+\section{Lagrangian Formalism in Deformed Arithmetic}
+\label{sec:lagrangian}
+% ============================================================================
+
+Fix $(E, \alpha, G)$ and $g \in G$. Let $x: [t_1, t_2] \to E$ be a smooth curve.
+
+\begin{definition}[$g$-Velocity]\label{def:g-velocity}
+The \textbf{$g$-velocity} of $x$ is the velocity of the transported curve $u = g \circ x$,
+\begin{equation}
+v_g(t) := \frac{\dd}{\dd t}\,g(x(t)) = \dd g_{x(t)}[\dot{x}(t)],
+\end{equation}
+a tangent vector at $u(t) = g(x(t))$. It is the rate of change of $x$ measured in the reference arithmetic.
+\end{definition}
+
+\begin{remark}
+The outer $g^{-1}$ does \emph{not} appear: $g^{-1}(\tfrac{\dd}{\dd t}g(x))$ is not a well-defined derivative (the difference quotient $g^{-1}(\dot u\,h)/h$ diverges unless $g^{-1}(0)=0$). The well-defined object is the transported tangent vector $\dot u = \dd g_x[\dot x]$.
+\end{remark}
+
+\begin{example}[Multiplicative Velocity]
+For $g = \log$, $x(t) > 0$: $v_{\log}(t) = \frac{\dd}{\dd t}\log x(t) = \dot{x}/x$, the relative growth rate. In the variable $y = \log x$ this is simply $\dot{y}$.
+\end{example}
+
+\begin{definition}[$g$-Lagrangian and $g$-Action]\label{def:g-lagrangian}
+Given a classical Lagrangian $L: TE \to \R$, the \textbf{$g$-Lagrangian} is $L_g(x, v) := L(g(x), v)$ (the second slot already being a velocity in the reference arithmetic), so that $L_g(x, v_g) = L(u, \dot{u})$ with $u = g(x)$. The \textbf{$g$-action} is:
+\begin{equation}
+J_g[x] := \int_{t_1}^{t_2} L_g(x(t), v_g(t))\,\dd t
+\end{equation}
+\end{definition}
+
+\begin{remark}[Reading $L_g$]\label{rem:read-Lg}
+The two slots of $L_g$ play asymmetric roles: the position is deformed ($x\mapsto g(x)$), whereas the velocity
+slot already carries a reference-arithmetic velocity $v_g=\tfrac{\dd}{\dd t}g(x)$. Equivalently, $L_g$ is the
+pullback of $L$ along the point transformation $u=g(x)$, lifted to velocities by $\dd g_x$. This is precisely
+why the $g$-dynamics is the classical dynamics read in the chart $u=g(x)$, as Theorem~\ref{thm:EL} makes exact.
+\end{remark}
+
+\begin{theorem}[Euler--Lagrange in Deformed Arithmetic]\label{thm:EL}
+A curve $x$ with fixed endpoints is a critical point of $J_g$ iff its transport $u = g(x)$ satisfies the classical Euler--Lagrange equation:
+\begin{equation}\label{eq:EL}
+\boxed{\frac{\dd}{\dd t}\!\left(\frac{\partial L}{\partial \dot{u}}(u, \dot{u})\right) - \frac{\partial L}{\partial u}(u, \dot{u}) = 0,\quad u = g(x),\ \dot{u} = v_g.}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Let $u(t) = g(x(t))$. Then $J_g[x] = \int L(u, \dot{u})\,\dd t$ (by definition of $L_g$ and $v_g$). A variation $x_\varepsilon$ with fixed endpoints lifts to $u_\varepsilon = g(x_\varepsilon)$ with fixed endpoints. The first variation $\delta J_g = \int \langle\frac{\partial L}{\partial u} - \frac{\dd}{\dd t}\frac{\partial L}{\partial\dot{u}}, \delta u\rangle\,\dd t = 0$ is the classical Euler--Lagrange equation in $u$-coordinates. Since $u = g(x)$ is a diffeomorphism and the variation has fixed endpoints, criticality of $J_g$ is equivalent to the classical Euler--Lagrange equation \eqref{eq:EL} for $u$.
+\end{proof}
+
+\begin{remark}[Covariance]
+The dynamical equations are covariant under arithmetic deformation: changing $g$ changes the coordinate representation but not the geometric content. This is the Lagrangian version of the ``graph invariance'' principle of the $(G,H)$-equivariant framework~\cite{nembe2026vol17}.
+\end{remark}
+
+
+% ============================================================================
+\section{The Generalized Noether Theorem}
+\label{sec:noether}
+% ============================================================================
+
+\begin{definition}[$g$-Symmetry]\label{def:g-sym}
+A one-parameter family $(\tau_\varepsilon)$ on $E$ is a \textbf{$g$-symmetry} of $J_g$ if $J_g[\tau_\varepsilon \circ x] = J_g[x] + o(\varepsilon)$ for all smooth $x$. Its infinitesimal generator is $X(x) = \frac{\dd}{\dd\varepsilon}|_{\varepsilon=0}\tau_\varepsilon(x)$.
+\end{definition}
+
+\begin{theorem}[Noether Theorem in Twin Spaces]\label{thm:noether}
+Let $(\tau_\varepsilon)$ be a $g$-symmetry of $J_g$ with generator $X$. For every solution $x(t)$ of~\eqref{eq:EL}, the quantity
+\begin{equation}
+\boxed{C_g(x, v_g) := \left\langle\frac{\partial L_g}{\partial v_g}(x, v_g),\; \dd g_x[X(x)]\right\rangle = \left\langle\frac{\partial L}{\partial \dot{u}},\; Y(u)\right\rangle}
+\end{equation}
+is conserved: $\frac{\dd}{\dd t}C_g(x(t), v_g(t)) = 0$, where $u = g(x)$ and $Y(u) = \dd g_x[X(x)]$ is the transported generator. (The generator $X$ must be carried to the reference space by $\dd g_x$; using $X$ in place of $\dd g_x[X]$ gives a quantity that is generally \emph{not} conserved.)
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1 (Lift).} Let $u = g(x)$. The transformation $\sigma_\varepsilon(u) = g(\tau_\varepsilon(g^{-1}(u)))$ is a one-parameter family on the $u$-space with generator $Y(u) = \dd g \cdot X(g^{-1}(u))$.
+
+\textbf{Step 2 (Classical Noether).} The $g$-symmetry condition lifts to invariance of $J[u] = \int L(u, \dot{u})\,\dd t$ under $\sigma_\varepsilon$. The classical Noether theorem~\cite{olver1993} gives: $C(u, \dot{u}) = \langle\frac{\partial L}{\partial\dot{u}}, Y(u)\rangle$ is conserved.
+
+\textbf{Step 3 (Transport back).} Since $L_g(x, v) = L(g(x), v)$ we have $\frac{\partial L_g}{\partial v_g} = \frac{\partial L}{\partial\dot{u}}$ at $u = g(x)$, and $Y(u) = \dd g_x(X(x))$. Hence $C(u, \dot{u}) = \langle\frac{\partial L}{\partial\dot{u}}, Y(u)\rangle = \langle\frac{\partial L_g}{\partial v_g}, \dd g_x[X(x)]\rangle = C_g(x, v_g)$.
+\end{proof}
+
+\begin{corollary}[Family of Conservation Laws]\label{cor:family}
+For each $g \in G$, there exists a conserved quantity $C_g$. The family $\{C_g\}_{g \in G}$ transforms covariantly: $C_t = C_s \circ f_{s,t}$ where $f_{s,t} = g_s \circ g_t^{-1}$.
+\end{corollary}
+
+\begin{theorem}[Hidden Symmetries]\label{thm:hidden}
+A symmetry $(\tau_\varepsilon)$ that is broken for $J_{g_1}$ may be exact for $J_{g_2}$ (with $g_1, g_2 \in G$, $g_1 \neq g_2$). The corresponding conserved quantity $C_{g_2}$, when expressed in the $g_1$-arithmetic, appears as a \textbf{hidden invariant} --- a function conserved along trajectories but not derivable from a manifest symmetry in $\diamond_{g_1}$.
+\end{theorem}
+
+\begin{proof}
+The invariance condition $J_g[\tau_\varepsilon \circ x] = J_g[x]$ depends on $g$ through the $g$-Lagrangian $L_g$. Changing $g$ to $g' = h \circ g$ transforms $L_g$ to $L_{g'}$, which may have different symmetries. Specifically: $L_{g'}(x, v) = L(h(g(x)), \dd h \cdot \dd g[v])$, and the extra factor $\dd h$ may restore or break invariance under $\tau_\varepsilon$.
+\end{proof}
+
+
+% ============================================================================
+\begin{example}[A symmetry hidden by the choice of arithmetic]\label{ex:hidden-free}
+Fix $L(u,\dot u)=\tfrac{m}{2}\dot u^2$ and the dilation $\tau_\varepsilon(x)=e^\varepsilon x$. In the \emph{standard}
+arithmetic ($g=\mathrm{id}$) the action $J_{\mathrm{id}}[x]=\int\tfrac{m}{2}\dot x^2\,\dd t$ is \emph{not}
+dilation-invariant: $\dot x\mapsto e^\varepsilon\dot x$ rescales the integrand by $e^{2\varepsilon}$, so the symmetry
+is broken. In the \emph{multiplicative} arithmetic ($g=\log$) the same dilation acts on $v_g=\dot x/x$ by
+$\dot x/x\mapsto(e^\varepsilon\dot x)/(e^\varepsilon x)=\dot x/x$, leaving $J_{\log}[x]=\int\tfrac{m}{2}(\dot x/x)^2\,\dd t$
+invariant. Thus one and the same symmetry is broken for $J_{\mathrm{id}}$ yet exact for $J_{\log}$, exactly as in
+Theorem~\ref{thm:hidden}. Its twin Noether charge $C_{\log}=m\dot x/x$ is conserved along the $J_{\log}$-trajectories
+$x(t)=x_0e^{a t}$; read back in the standard arithmetic it is the non-obvious invariant $m\dot x/x$ --- conserved
+along these trajectories but not the charge of any manifest symmetry of $J_{\mathrm{id}}$, i.e.\ a hidden invariant.
+\end{example}
+
+% ============================================================================
+\section{Applications}
+\label{sec:applications}
+% ============================================================================
+
+\subsection{Multiplicative Free Particle}
+
+$E = \RR$, $g = \log$ (so $u = \log x$ and $v_g = \dot{x}/x$). In the variable $y = \log x$: $L_\times = \frac{m}{2}\dot{y}^2 = \frac{m}{2}(\dot{x}/x)^2$.
+
+The Euler--Lagrange equation $\ddot{y} = 0$ gives $x(t) = x_0 e^{a(t-t_0)}$ (exponential trajectory --- constant relative growth rate).
+
+\begin{proposition}[Dilation $\to$ Relative Momentum]\label{prop:dilation}
+The dilation $\tau_\varepsilon(x) = e^\varepsilon x$ (generator $X(x) = x$) is a symmetry of $L_\times$. The Noether invariant is $C_\times = m\dot{x}/x$ --- the \textbf{relative (logarithmic) momentum} $m\dot{u}$.
+\end{proposition}
+
+\begin{proof}
+In $y$-coordinates $\tau_\varepsilon$ becomes $y \mapsto y + \varepsilon$ (translation); since $L_\times = \frac{m}{2}\dot{y}^2$ is independent of $y$ it is invariant. The transported generator is $Y = \dd g_x[X] = g'(x)\,x = (1/x)\,x = 1$, so the Noether charge is $C = \frac{\partial L_\times}{\partial\dot{y}}\,Y = m\dot{y} = m\dot{x}/x$. This is conserved because $\ddot{y} = 0 \Rightarrow \dot{y}$ is constant; note that $m\dot{x}$ itself is \emph{not} conserved, since $\dot{x} = x\dot{y}$ grows exponentially.
+\end{proof}
+
+\begin{remark}[Arithmetical relativity in action]
+In the standard arithmetic ($g = \mathrm{id}$): translation symmetry $x \mapsto x + \varepsilon$ gives the additive momentum $p = m\dot{x}$. In the multiplicative arithmetic ($g = \log$): the multiplicative translation (dilation) $x \mapsto e^\varepsilon x$ gives the $\diamond_{\log}$-momentum $m\dot{x}/x = m\dot{u}$. The conservation structure (translation $\to$ momentum) is the same, but the conserved invariant is the one appropriate to each arithmetic. This is arithmetical relativity: which quantity is conserved depends on the arithmetic used to describe the system.
+\end{remark}
+
+\subsection{Logarithmic Harmonic Oscillator}
+
+$L_{\log} = \frac{m}{2}(\dot{x}/x)^2 - \frac{k}{2}(\log(x/x_0))^2 = \frac{m}{2}\dot{y}^2 - \frac{k}{2}y^2$ with $y = \log(x/x_0)$.
+
+Solution: $x(t) = x_0\exp(A\cos\omega t + B\sin\omega t)$ with $\omega = \sqrt{k/m}$. This is a \textbf{multiplicative oscillation} around $x_0$: the ratio $x/x_0$ oscillates on a logarithmic scale.
+
+\begin{proposition}[Logarithmic Energy]
+Time-translation invariance gives the conserved \textbf{logarithmic energy}:
+$E_{\log} = \frac{m}{2}(\dot{x}/x)^2 + \frac{k}{2}(\log(x/x_0))^2$.
+\end{proposition}
+
+Such oscillators model Gompertz growth, Weber--Fechner perception, and critical fluctuations on logarithmic scales.
+
+\subsection{Scale-Invariant Cosmology}
+
+The Hubble parameter $H = \dot{a}/a$ is a multiplicative velocity. The Friedmann Lagrangian $L_{\mathrm{cosmo}} = \frac{M_{\mathrm{Pl}}^2}{2}H^2 - V(a)$ is naturally a $g$-Lagrangian with $g = \log$.
+
+If $V(a) = \Lambda$ (cosmological constant): $L$ is invariant under $a \mapsto \lambda a$ (multiplicative dilation). By Theorem~\ref{thm:noether}: there exists a conserved quantity associated with this scale symmetry, constraining $H(t)$ and $a(t)$.
+
+\begin{remark}[Connection to Vol.~17]
+This is the 1D orbital reduction of FLRW cosmology (Vol.~17,~\cite{nembe2026vol17}): the Friedmann equations are the Euler--Lagrange equations of the $g$-action on the 1D orbit space, and the scale-invariance conservation law is the twin Noether charge $C_g$ with $g = \log$.
+\end{remark}
+
+
+% ============================================================================
+\section{Connection to the $(G,H)$-Equivariant Framework}
+\label{sec:connection}
+% ============================================================================
+
+The Noether theorem in twin spaces connects to two other parts of the ROOTS-INSIGHTS program:
+
+\begin{enumerate}
+    \item \textbf{Twin Information Theory} (Vol.~16,~\cite{nembe2026vol16}): the optimal group selection problem asks which $g \in G$ minimizes the coding cost. The twin Noether theorem asks which $g$ reveals the most symmetries. Both are optimization problems over the group $G$, one information-theoretic, the other variational.
+    
+    \item \textbf{Twin General Relativity} (Vol.~17,~\cite{nembe2026vol17}): the twin Einstein equations $\tilde{G}_{\mu\nu} + \mathcal{J}_{\mu\nu} = 8\pi\tilde{T}_{\mu\nu}$ are the field-theoretic version of the $g$-Euler--Lagrange equations~\eqref{eq:EL}, and the twin Noether charge of \S\ref{sec:noether} is the Lagrangian version of the tensorial twin Noether current $\tilde{J}^\mu_\xi = \tilde{T}^{\mu\nu}\tilde{\xi}_\nu |J|$.
+    
+    \item \textbf{The Splitting Theorem} ($\mathfrak{g} = \mathfrak{ker} \oplus \mathfrak{def}$): the symmetries producing conservation (Noether) live in $\mathfrak{ker}(g)$; the deformations producing dynamics live in $\mathfrak{def}(g)$. The twin Noether theorem is the variational expression of this splitting.
+\end{enumerate}
+
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+% ============================================================================
+
+We have shown that Noether's theorem extends naturally to twin spaces: every continuous symmetry of a $g$-Lagrangian yields a conserved quantity $C_g$ in the arithmetic $\diamond_g$. The family $\{C_g\}_{g \in G}$ reveals arithmetical relativity --- conservation laws depend on the arithmetic --- and hidden symmetries that are manifest in one arithmetic but broken in another.
+
+\textbf{Open problems:} (1) Quantization in twin spaces: Hilbert spaces with deformed inner products, spectra under arithmetic deformation. (2) Selection of optimal arithmetic: variational principle for the arithmetic itself, connecting to the optimal group problem of~\cite{nembe2026vol16}. (3) Stochastic twin calculus: Itô/Stratonovich formulations in deformed arithmetics for multiplicative noise models.
+
+
+% ============================================================================
+\begin{thebibliography}{15}
+
+\bibitem{noether1918} E.~Noether, ``Invariante Variationsprobleme,'' \emph{Nachr.\ Ges.\ Wiss.\ G\"ottingen}, pp.~235--257, 1918.
+
+\bibitem{olver1993} P.J.~Olver, \emph{Applications of Lie Groups to Differential Equations}, 2nd ed., Springer, 1993.
+
+\bibitem{tsallis1988} C.~Tsallis, ``Possible generalization of Boltzmann--Gibbs statistics,'' \emph{J.\ Stat.\ Phys.}, vol.~52, pp.~479--487, 1988.
+
+\bibitem{nembe2026vol1} J.~Nemb\'e, ``Twin Spaces: Foundations,'' \emph{ROOTS-INSIGHTS}, Vol.~1, 2026.
+
+\bibitem{nembe2026vol3} J.~Nemb\'e, ``The Transfer Theorem,'' \emph{ROOTS-INSIGHTS}, Vol.~3, 2026.
+
+\bibitem{nembe2026vol16} J.~Nemb\'e, ``Twin Information Theory,'' \emph{ROOTS-INSIGHTS}, Vol.~16, 2026.
+
+\bibitem{nembe2026vol17} J.~Nemb\'e, ``Twin General Relativity,'' \emph{ROOTS-INSIGHTS}, Vol.~17, 2026.
+
+\bibitem{arnold1989} V.I.~Arnold, \emph{Mathematical Methods of Classical Mechanics}, 2nd ed., Springer, 1989.
+
+\bibitem{gompertz1825} B.~Gompertz, ``On the nature of the function expressive of the law of human mortality,'' \emph{Phil.\ Trans.\ R.\ Soc.}, vol.~115, pp.~513--583, 1825.
+
+\end{thebibliography}
+
+\end{document}

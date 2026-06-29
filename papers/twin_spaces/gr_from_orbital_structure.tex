@@ -1,0 +1,533 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,mathrsfs}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{booktabs,enumitem,hyperref}
+\setlist{nosep,leftmargin=1.8em}
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,citecolor=green!40!black,urlcolor=blue!50!black}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{axiom}[theorem]{Axiom}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Diff}{\mathrm{Diff}}
+\newcommand{\Ker}{\mathrm{Ker}}
+\newcommand{\Isom}{\mathrm{Isom}}
+\newcommand{\Poinc}{\mathrm{Poinc}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\Ric}{\mathrm{Ric}}
+
+\title{\textbf{General Relativity from Orbital Structure:\\Einstein's Equations as Integrability Conditions\\for Noether Conservation}}
+
+\author{Jocelyn Nemb\'e\thanks{Email: jnembe777@gmail.com, jnembe@root-insights.org}\\[0.3em]
+\small Roots Insights Laboratory, Singapore\\
+\small National Institute of Management Sciences, Libreville, Gabon}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+We derive Einstein's field equations $G_{\mu\nu} + \Lambda g_{\mu\nu} = 8\pi G\,T_{\mu\nu}/c^4$ from three axioms --- general covariance, Noether conservation for all Killing vectors, and second-order dependence on the metric --- \emph{without any variational principle}. The derivation proceeds through a ``Noether--Bianchi bridge'': (i)~the contracted second Bianchi identity $\nabla_\mu G^{\mu\nu} \equiv 0$, proved by purely geometric means (the Jacobi identity for covariant derivatives), shows that the Einstein tensor is automatically divergence-free; (ii)~the non-variational uniqueness theorem of Navarro--Sancho and Curiel establishes that $G_{\mu\nu} + \Lambda g_{\mu\nu}$ is the \emph{only} symmetric, divergence-free, second-order natural concomitant of the metric with the physical dimension of stress-energy; (iii)~the Newtonian limit fixes the coupling constant. The three axioms are logically independent: general covariance fixes naturality, local energy--momentum conservation forces the field tensor to be divergence-free, and second-order dependence plus the uniqueness theorem single out $G_{\mu\nu}+\Lambda g_{\mu\nu}$. Covariance \emph{alone} does not force divergence-freeness --- the Ricci tensor $R_{\mu\nu}$ is covariant and second-order yet not divergence-free.
+
+We interpret Einstein's equations as \emph{integrability conditions}: the unique second-order constraints that make the orbital structure (symmetries, orbits, and Noether conservation) self-consistent. We show that the Lagrangian $\mathcal{L} = R - 2\Lambda$ exists \emph{a posteriori} by the Cartan--Vermeil--Weyl theorem, but was never used in the derivation. The kernel dimension $\kappa = \dim(\Ker(g))$ interpolates between special relativity ($\kappa = 10$, Paper~1) and generic general relativity ($\kappa = 0$).
+
+This is the second paper in a series deriving the fundamental equations of physics from the three-step orbital pattern: symmetry group $\to$ conservation $\to$ uniqueness.
+\end{abstract}
+
+\noindent\textbf{Keywords:} Einstein equations, non-variational derivation, Bianchi identity, Noether conservation, Lovelock uniqueness, integrability conditions, orbital structure
+
+\noindent\textbf{MSC 2020:} 83C05, 53Z05, 58J70
+
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+% ============================================================================
+
+\subsection{The problem}
+
+Einstein's field equations are usually derived from the Einstein--Hilbert action~\cite{hilbert1915}:
+\begin{equation}\label{eq:EH}
+S_{\mathrm{EH}}[g] = \frac{c^4}{16\pi G}\int_\mathcal{M}(R - 2\Lambda)\sqrt{-g}\,\dd^4x.
+\end{equation}
+Varying with respect to $g^{\mu\nu}$ gives $G_{\mu\nu} + \Lambda g_{\mu\nu} = 8\pi G\,T_{\mu\nu}/c^4$, and Noether's theorem~\cite{noether1918} then yields conservation laws for each Killing vector.
+
+However, Einstein himself found the field equations in November 1915 by physical reasoning~\cite{einstein1915}, days before Hilbert derived them from the action~\eqref{eq:EH}. This raises a foundational question: \emph{can the field equations be derived without any action principle?}
+
+\subsection{Prior non-variational approaches}
+
+Three approaches have addressed this question:
+
+\textbf{1.\ Jacobson (1995)~\cite{jacobson1995}:} The Clausius relation $\delta Q = T\dd S$, applied to local Rindler horizons with the Unruh temperature $T = \hbar\kappa_{\mathrm{surf}}/2\pi c k_B$ and the Bekenstein entropy $S = k_B c^3 A/4G\hbar$, yields the null-null component of Einstein's equations. Padmanabhan~\cite{padmanabhan2010} extended this to the full thermodynamic structure $T\dd S = \dd E + P\dd V$. These derivations are non-variational but require quantum inputs ($\hbar$, Unruh temperature) to derive a classical equation.
+
+\textbf{2.\ Curiel (2016)~\cite{curiel2016} and Navarro--Sancho (2008)~\cite{navarro2008}:} The Einstein tensor is the unique (up to constant factors and the cosmological term) symmetric, divergence-free concomitant of the metric that is homogeneous of weight zero. This is a purely geometric classification result, without any variational hypothesis. However, it does not explain \emph{why} the field equation should be divergence-free.
+
+\textbf{3.\ Vermeil--Cartan--Weyl (1917--22)~\cite{vermeil1917,cartan1922,weyl1922}:} Any second-order, symmetric, divergence-free natural tensor of a Lorentzian metric necessarily arises from a variational principle. This is a converse: the Lagrangian is \emph{implied} by the properties we assume.
+
+\subsection{Our approach}
+
+We derive Einstein's equations from three axioms:
+\begin{itemize}
+    \item[(A1)] General covariance ($\Diff$-equivariance of the field equation).
+    \item[(A2)] Noether conservation (every Killing vector produces a conserved current).
+    \item[(A3)] The field equation is second-order in the metric.
+\end{itemize}
+
+The \textbf{Noether--Bianchi bridge} runs the other way from the usual one: once the field tensor is known to be divergence-free, conservation (A2) for every Killing vector is automatic by the contracted Bianchi identity (proved geometrically, via the Jacobi identity for covariant derivatives --- not a functional derivative of an action). Divergence-freeness itself is supplied by A2 in its \emph{local} form $\nabla_\mu T^{\mu\nu}=0$, not by covariance alone. Einstein's equations then follow from the non-variational uniqueness theorem of Curiel/Navarro--Sancho. The three axioms are independent.
+
+\subsection{Connection to Paper 1}
+
+In Paper~1~\cite{nembe2026p1}, we derived special relativity from the $\kappa = 10$ case of the orbital framework (maximal symmetry). General relativity is the $\kappa < 10$ case: reducing the kernel dimension introduces curvature and gravity. Both derivations follow the same three-step pattern (symmetry $\to$ conservation $\to$ uniqueness), and neither uses a variational principle.
+
+
+% ============================================================================
+\section{The Three Axioms}
+\label{sec:axioms}
+% ============================================================================
+
+Let $(\mathcal{M}, g)$ be a 4-dimensional Lorentzian manifold. We seek a tensor equation $\mathcal{E}_{\mu\nu}[g] = \kappa\,T_{\mu\nu}$ relating the metric to a matter source $T_{\mu\nu}$.
+
+\begin{axiom}[General covariance]\label{ax:A1}
+The tensor $\mathcal{E}_{\mu\nu}[g]$ is a \textbf{natural concomitant} of $g$: for every diffeomorphism $\psi \in \Diff(\mathcal{M})$,
+\begin{equation}
+\mathcal{E}_{\mu\nu}[\psi^*g] = \psi^*\mathcal{E}_{\mu\nu}[g].
+\end{equation}
+Equivalently, $\mathcal{E}_{\mu\nu}$ is constructed from $g_{\alpha\beta}$ and its partial derivatives using only tensor operations --- no background structure, no preferred coordinates.
+\end{axiom}
+
+\begin{axiom}[Noether conservation]\label{ax:A2}
+The matter source obeys local energy--momentum conservation, $\nabla_\mu T^{\mu\nu} = 0$ (the equivalence-principle / minimal-coupling requirement). In particular, for every Killing vector $\xi \in \mathfrak{ker}(g)$ (i.e.\ $\mathcal{L}_\xi g = 0$) the current $J^\mu_\xi := T^{\mu\nu}\xi_\nu$ is then conserved, $\nabla_\mu J^\mu_\xi = 0$.
+\end{axiom}
+
+\begin{axiom}[Second-order]\label{ax:A3}
+$\mathcal{E}_{\mu\nu}$ depends on $g_{\alpha\beta}$, $\partial_\gamma g_{\alpha\beta}$, and $\partial_\gamma\partial_\delta g_{\alpha\beta}$ only, and is symmetric: $\mathcal{E}_{\mu\nu} = \mathcal{E}_{\nu\mu}$.
+\end{axiom}
+
+\begin{remark}[Physical motivation]
+(A1) is general covariance: the laws of physics are the same in all coordinate systems. (A2) is the Noether principle: symmetries produce conservation laws. (A3) ensures well-posedness of the initial value problem~\cite{choquetbruhat1952} and the absence of Ostrogradsky instabilities (no ghosts). In 4 dimensions, (A3) is a physical requirement; in higher dimensions, it would be relaxed to allow the Lovelock terms~\cite{lovelock1971}.
+\end{remark}
+
+
+% ============================================================================
+\section{The Contracted Bianchi Identity: A Purely Geometric Proof}
+\label{sec:bianchi}
+% ============================================================================
+
+The contracted Bianchi identity is the geometric backbone of the derivation. We prove it without any reference to an action functional or functional derivative.
+
+\begin{theorem}[Second Bianchi identity]\label{thm:bianchi2}
+For any torsion-free connection $\nabla$ compatible with a metric $g$:
+\begin{equation}\label{eq:bianchi2}
+\nabla_\lambda R_{\mu\nu\rho\sigma} + \nabla_\mu R_{\nu\lambda\rho\sigma} + \nabla_\nu R_{\lambda\mu\rho\sigma} = 0,
+\end{equation}
+where $R^\rho{}_{\sigma\mu\nu}$ is the Riemann curvature tensor.
+\end{theorem}
+
+\begin{proof}
+The Riemann tensor is defined by the commutator of covariant derivatives: for any vector field $V^\rho$,
+\begin{equation}\label{eq:riemann-def}
+(\nabla_\mu\nabla_\nu - \nabla_\nu\nabla_\mu)V^\rho = R^\rho{}_{\sigma\mu\nu}V^\sigma.
+\end{equation}
+Consider the Jacobi identity for the commutator of covariant derivatives, applied to a vector $V^\rho$:
+\begin{equation}\label{eq:jacobi}
+[[\nabla_\lambda, \nabla_\mu], \nabla_\nu]V^\rho + [[\nabla_\mu, \nabla_\nu], \nabla_\lambda]V^\rho + [[\nabla_\nu, \nabla_\lambda], \nabla_\mu]V^\rho = 0.
+\end{equation}
+This identity holds for any three linear operators.
+
+Expanding the first term using~\eqref{eq:riemann-def}:
+\begin{equation}
+[[\nabla_\lambda, \nabla_\mu], \nabla_\nu]V^\rho = [\nabla_\lambda, \nabla_\mu](\nabla_\nu V^\rho) - \nabla_\nu([\nabla_\lambda, \nabla_\mu]V^\rho).
+\end{equation}
+The first part gives $R^\rho{}_{\sigma\lambda\mu}\nabla_\nu V^\sigma + R^\sigma{}_{\nu\lambda\mu}\nabla_\sigma V^\rho$ (curvature acting on a 1-form). The second part gives $-\nabla_\nu(R^\rho{}_{\sigma\lambda\mu}V^\sigma) = -(\nabla_\nu R^\rho{}_{\sigma\lambda\mu})V^\sigma - R^\rho{}_{\sigma\lambda\mu}\nabla_\nu V^\sigma$.
+
+The terms involving $\nabla V$ cancel in the cyclic sum (by the symmetry of the Riemann tensor). What remains, after cyclic permutation over $(\lambda, \mu, \nu)$ and using $V^\sigma$ arbitrary, is:
+\begin{equation}
+(\nabla_\lambda R^\rho{}_{\sigma\mu\nu} + \nabla_\mu R^\rho{}_{\sigma\nu\lambda} + \nabla_\nu R^\rho{}_{\sigma\lambda\mu})V^\sigma = 0 \quad \forall V,
+\end{equation}
+which gives~\eqref{eq:bianchi2} after lowering the index $\rho$ with the metric.
+\end{proof}
+
+\begin{theorem}[Contracted Bianchi identity]\label{thm:contracted-bianchi}
+\begin{equation}\label{eq:div-G}
+\boxed{\nabla_\mu G^{\mu\nu} \equiv 0}
+\end{equation}
+where $G^{\mu\nu} := R^{\mu\nu} - \frac{1}{2}Rg^{\mu\nu}$ is the Einstein tensor. This is an \emph{identity}: it holds for all metrics $g$, not just solutions of any field equation.
+\end{theorem}
+
+\begin{proof}
+Contract~\eqref{eq:bianchi2} on indices $(\lambda, \rho)$ by setting $\lambda = \rho$ (using $g^{\lambda\rho}$):
+\begin{equation}
+g^{\lambda\rho}\nabla_\lambda R_{\mu\nu\rho\sigma} + \nabla_\mu R_{\nu\sigma} - \nabla_\nu R_{\mu\sigma} = 0.
+\end{equation}
+Using the symmetry $R_{\mu\nu\rho\sigma} = R_{\rho\sigma\mu\nu}$, the first term becomes $\nabla_\rho R^\rho{}_{\mu\nu\sigma} = \nabla^\rho R_{\rho\mu\nu\sigma}$. Now contract on $(\mu, \sigma)$ by setting $\sigma = \mu$:
+\begin{equation}
+\nabla^\rho R_{\rho\nu} + \nabla_\mu R^\mu{}_\nu - \nabla_\nu R = 0.
+\end{equation}
+The first two terms are both $\nabla_\mu R^{\mu}{}_\nu$ (by the symmetry of the Ricci tensor), giving:
+\begin{equation}
+2\nabla_\mu R^{\mu\nu} - \nabla^\nu R = 0, \qquad\text{i.e.,}\qquad \nabla_\mu\!\left(R^{\mu\nu} - \tfrac{1}{2}Rg^{\mu\nu}\right) = 0.\qedhere
+\end{equation}
+\end{proof}
+
+\begin{remark}\label{rmk:no-action-bianchi}
+Both proofs are purely geometric: they use only the definition of the Riemann tensor as the commutator of covariant derivatives and the algebraic Jacobi identity. No action functional, no functional derivative, and no variational argument appears at any step. The Bianchi identity is a kinematic identity of Riemannian geometry, not a dynamical equation.
+\end{remark}
+
+
+% ============================================================================
+\section{The Noether--Bianchi Bridge: Conservation from Covariance}
+\label{sec:bridge}
+% ============================================================================
+
+This section contains the central conceptual result of the paper.
+
+\begin{theorem}[The bridge: divergence-free implies conservation]\label{thm:bridge}
+If $\mathcal{E}_{\mu\nu}[g]$ is a natural, symmetric, divergence-free concomitant of $g$ (satisfying Axioms~A1 and A3 and the condition $\nabla_\mu\mathcal{E}^{\mu\nu} = 0$), then the field equation $\mathcal{E}_{\mu\nu} = \kappa T_{\mu\nu}$ automatically ensures Noether conservation: $\nabla_\mu(T^{\mu\nu}\xi_\nu) = 0$ for every Killing vector $\xi$.
+
+In other words, once $\mathcal{E}$ is divergence-free, Killing-vector conservation is automatic. The divergence-free condition is \emph{not} a consequence of covariance alone (Remark~\ref{rmk:ricci-counterexample}); it is the content of Axiom~A2 in its local form $\nabla_\mu T^{\mu\nu}=0$.
+\end{theorem}
+
+\begin{proof}
+The argument proceeds in three steps.
+
+\textbf{Step 1.} By the contracted Bianchi identity (Theorem~\ref{thm:contracted-bianchi}), the Einstein tensor satisfies $\nabla_\mu G^{\mu\nu} \equiv 0$. Since $\nabla_\mu g^{\mu\nu} = 0$ (metric compatibility), any linear combination $\mathcal{E}^{\mu\nu} = aG^{\mu\nu} + bg^{\mu\nu}$ satisfies $\nabla_\mu\mathcal{E}^{\mu\nu} = 0$.
+
+\textbf{Step 2.} The field equation $\mathcal{E}_{\mu\nu} = \kappa T_{\mu\nu}$ together with $\nabla_\mu\mathcal{E}^{\mu\nu} = 0$ immediately gives:
+\begin{equation}\label{eq:divT}
+\nabla_\mu T^{\mu\nu} = 0.
+\end{equation}
+
+\textbf{Step 3.} For any Killing vector $\xi \in \mathfrak{ker}(g)$ (satisfying $\nabla_{(\mu}\xi_{\nu)} = 0$):
+\begin{equation}
+\nabla_\mu(T^{\mu\nu}\xi_\nu) = (\nabla_\mu T^{\mu\nu})\xi_\nu + T^{\mu\nu}\nabla_\mu\xi_\nu = 0 + \tfrac{1}{2}T^{\mu\nu}\underbrace{(\nabla_\mu\xi_\nu + \nabla_\nu\xi_\mu)}_{=0} = 0.
+\end{equation}
+The current $J^\mu_\xi = T^{\mu\nu}\xi_\nu$ is conserved.
+\end{proof}
+
+\begin{remark}[Covariance does not imply conservation]\label{rmk:ricci-counterexample}
+Axioms~A1 (covariance) and A3 (second-order) do \emph{not} by themselves force $\nabla_\mu\mathcal{E}^{\mu\nu} = 0$. The Ricci tensor $\mathcal{E}_{\mu\nu} = R_{\mu\nu}$ is a natural, symmetric, second-order concomitant, yet $\nabla_\mu R^{\mu\nu} = \tfrac12\nabla^\nu R \neq 0$ in general. It even satisfies the \emph{Killing}-current form of A2: for a Killing vector $\xi$,
+\[
+\nabla_\mu(R^{\mu\nu}\xi_\nu) = (\nabla_\mu R^{\mu\nu})\xi_\nu = \tfrac12\,\xi^\nu\nabla_\nu R = \tfrac12\,\xi(R) = 0,
+\]
+because the scalar curvature is invariant under the isometry generated by $\xi$. Thus Killing-current conservation is too weak to single out the Einstein tensor; one needs the \emph{local} conservation $\nabla_\mu T^{\mu\nu} = 0$ for arbitrary matter (Axiom~A2), which forces $\nabla_\mu\mathcal{E}^{\mu\nu} \equiv 0$ and excludes $R_{\mu\nu}$ (the equation $R_{\mu\nu} = \kappa T_{\mu\nu}$ with $\nabla_\mu T^{\mu\nu} = 0$ would require $R = \mathrm{const}$).
+\end{remark}
+
+\begin{remark}[The logical structure]\label{rmk:logic}
+The logical chain is:
+\begin{center}
+\begin{tabular}{rcl}
+(A2) local conservation & $\Rightarrow$ & $\nabla_\mu\mathcal{E}^{\mu\nu} = 0$ (from $\mathcal{E} = \kappa T$) \\
+(A1) + (A3) + div-free + weight-$0$ & $\Rightarrow$ & $\mathcal{E} = aG + bg$ (Curiel/N--S) \\
+Bianchi & $\Rightarrow$ & $\nabla_\mu(aG+bg)^{\mu\nu} = 0$, consistent with (A2)
+\end{tabular}
+\end{center}
+The three axioms are \emph{independent}: covariance (A1) does not imply conservation, since the Ricci tensor is covariant and second-order but not divergence-free (Remark~\ref{rmk:ricci-counterexample}). What the bridge does establish is the converse implication: divergence-freeness $\Rightarrow$ Killing-vector conservation.
+\end{remark}
+
+
+% ============================================================================
+\section{Uniqueness: The Non-Variational Classification}
+\label{sec:uniqueness}
+% ============================================================================
+
+We now establish that $\mathcal{E}_{\mu\nu} = aG_{\mu\nu} + bg_{\mu\nu}$ is the \emph{unique} tensor satisfying our axioms. This uses the classification theorems of Navarro--Sancho~\cite{navarro2008} and Curiel~\cite{curiel2016}, which are non-variational.
+
+\begin{definition}[Natural concomitant]\label{def:concomitant}
+A \textbf{natural concomitant} of a (pseudo-)Riemannian metric $g$ is a tensor field $\mathcal{E}[g]$ constructed from $g$ and its derivatives by a rule that is coordinate-independent: $\mathcal{E}[\psi^*g] = \psi^*\mathcal{E}[g]$ for all diffeomorphisms $\psi$.
+\end{definition}
+
+\begin{definition}[Weight]\label{def:weight}
+Under a constant conformal rescaling $g \mapsto \Omega^2 g$ ($\Omega > 0$ constant), a tensor $\mathcal{E}$ has \textbf{weight} $w$ if $\mathcal{E}[\Omega^2 g] = \Omega^w\mathcal{E}[g]$.
+\end{definition}
+
+The weight encodes the physical dimension. The stress-energy tensor $T_{\mu\nu}$ has weight $0$ (it is independent of the choice of unit of length when all physical quantities are expressed in natural units). Hence the left-hand side $\mathcal{E}_{\mu\nu}$ must also have weight $0$.
+
+\begin{theorem}[Navarro--Sancho~\cite{navarro2008}, Curiel~\cite{curiel2016}]\label{thm:uniqueness}
+Let $\mathcal{E}_{\mu\nu}[g]$ be a symmetric, natural concomitant of a 4-dimensional Lorentzian metric $g$ that is:
+\begin{enumerate}[label=(\roman*)]
+    \item divergence-free: $\nabla_\mu\mathcal{E}^{\mu\nu} = 0$ (identically, for all $g$),
+    \item second-order: depends on $g$, $\partial g$, $\partial^2 g$ only,
+    \item weight-zero: $\mathcal{E}[\Omega^2 g] = \mathcal{E}[g]$ for all constant $\Omega > 0$.
+\end{enumerate}
+Then:
+\begin{equation}\label{eq:uniqueness}
+\mathcal{E}_{\mu\nu} = a\,G_{\mu\nu}
+\end{equation}
+for some constant $a \in \mathbb{R}$. If the weight-zero condition~(iii) is dropped (allowing the weight-$2$ term $g_{\mu\nu}$):
+\begin{equation}
+\mathcal{E}_{\mu\nu} = a\,G_{\mu\nu} + b\,g_{\mu\nu}
+\end{equation}
+for constants $a, b$.
+\end{theorem}
+
+\begin{proof}[Proof idea]
+In Riemann normal coordinates at a point $p$: $g_{\mu\nu}(p) = \eta_{\mu\nu}$ and $\partial_\gamma g_{\mu\nu}(p) = 0$. The second derivatives $\partial_\gamma\partial_\delta g_{\mu\nu}(p)$ are determined by the Riemann tensor: $R_{\mu\alpha\nu\beta}(p) = -\frac{1}{2}(\partial_\alpha\partial_\nu g_{\mu\beta} + \partial_\mu\partial_\beta g_{\alpha\nu} - \partial_\alpha\partial_\beta g_{\mu\nu} - \partial_\mu\partial_\nu g_{\alpha\beta})(p)$. So $\mathcal{E}_{\mu\nu}(p)$ is a function of $\eta_{\mu\nu}$ and $R_{\mu\nu\rho\sigma}(p)$ only.
+
+The space of symmetric 2-tensors built from $\eta$ and $R$ that are $\SO(1,3)$-equivariant (by naturality) is spanned by: $g_{\mu\nu}$, $R_{\mu\nu}$, $Rg_{\mu\nu}$, $R_{\mu\alpha}R^\alpha{}_\nu$, $R_{\mu\alpha\nu\beta}R^{\alpha\beta}$, etc. The divergence-free condition eliminates all but $G_{\mu\nu} = R_{\mu\nu} - \frac{1}{2}Rg_{\mu\nu}$ and $g_{\mu\nu}$. The weight-0 condition further eliminates $g_{\mu\nu}$ (which has weight $+2 \neq 0$).
+
+The complete proof uses the theory of natural transformations between jet bundles; see~\cite{navarro2008} for the full argument and~\cite{curiel2016} for a streamlined version.
+\end{proof}
+
+\begin{remark}[Comparison with Lovelock]
+Lovelock's theorem~\cite{lovelock1971} reaches the same conclusion but from a \emph{variational} starting point: it classifies Euler--Lagrange expressions arising from actions depending on $g$, $\partial g$, $\partial^2 g$. The Navarro--Sancho/Curiel theorem is logically independent: it classifies \emph{natural divergence-free tensors}, without any reference to a Lagrangian or Euler--Lagrange equations. This is the version we use.
+\end{remark}
+
+
+% ============================================================================
+\section{The Main Theorem: Einstein's Equations from Orbital Structure}
+\label{sec:main}
+% ============================================================================
+
+\begin{theorem}[Einstein's equations without variational principles]\label{thm:main}
+Let $(\mathcal{M}, g)$ be a 4-dimensional Lorentzian manifold. Assume Axioms~A1, A2, and A3 (\S\ref{sec:axioms}). Then the field equation $\mathcal{E}_{\mu\nu}[g] = \kappa T_{\mu\nu}$ is uniquely determined (up to the values of two constants):
+\begin{equation}\label{eq:einstein}
+\boxed{G_{\mu\nu} + \Lambda g_{\mu\nu} = \frac{8\pi G}{c^4}\,T_{\mu\nu}}
+\end{equation}
+where $\Lambda$ is the cosmological constant and $G$ is Newton's gravitational constant.
+\end{theorem}
+
+\begin{proof}
+The proof assembles the results of the preceding sections in five steps.
+
+\textbf{Step 1} (Naturality). By Axiom~A1: $\mathcal{E}_{\mu\nu}[g]$ is a natural concomitant of $g$.
+
+\textbf{Step 2} (Divergence-free). By Axiom~A2 (local conservation), $\nabla_\mu T^{\mu\nu} = 0$, hence $\nabla_\mu\mathcal{E}^{\mu\nu} = 0$ on every solution. Requiring this for matter sourcing a generic family of metrics makes $\nabla_\mu\mathcal{E}^{\mu\nu} = 0$ an identity (Proposition~\ref{prop:div-free-from-A2}).
+
+\textbf{Step 3} (Second-order and symmetric). By Axiom~A3.
+
+\textbf{Step 4} (Uniqueness). Steps 1--3 give: $\mathcal{E}_{\mu\nu}$ is a natural, symmetric, divergence-free, second-order concomitant. By the Navarro--Sancho/Curiel theorem (Theorem~\ref{thm:uniqueness}):
+$\mathcal{E}_{\mu\nu} = aG_{\mu\nu} + bg_{\mu\nu}$ for constants $a, b$.
+
+\textbf{Step 5} (Newtonian limit). In the weak-field, slow-motion, static limit the $a=1$ Einstein tensor $G_{\mu\nu}$ reproduces Poisson's equation $\nabla^2\Phi = 4\pi G\rho$ (with $T_{00}\approx\rho c^2$) precisely when $\kappa = 8\pi G/c^4$~\cite{wald1984}. Hence the standard normalization is $a = 1$, $\kappa = 8\pi G/c^4$, consistent with the boxed equation, and the cosmological constant is $\Lambda = b/a = b$.
+\end{proof}
+
+\begin{proposition}\label{prop:div-free-from-A2}
+Axiom~A2 in its local form ($\nabla_\mu T^{\mu\nu} = 0$ for matter sourcing an open family of metrics), together with $\mathcal{E}_{\mu\nu} = \kappa T_{\mu\nu}$, forces $\nabla_\mu\mathcal{E}^{\mu\nu} = 0$ identically. The weaker requirement that only the Killing-vector currents $T^{\mu\nu}\xi_\nu$ be conserved is \emph{insufficient}.
+\end{proposition}
+
+\begin{proof}
+Since $\mathcal{E}_{\mu\nu}[g] = \kappa T_{\mu\nu}$ and $\nabla_\mu T^{\mu\nu} = 0$, the divergence $D^\nu[g] := \nabla_\mu\mathcal{E}^{\mu\nu}[g]$ vanishes on every metric admitting a conserved source. As the conserved source ranges over matter configurations sourcing an open family of metrics, $D^\nu$ vanishes on that open family. By the Peetre--Slov\'ak theorem $D^\nu$ is a finite-order, polynomial natural concomitant of $g$ (here $\mathcal{E}$ is second-order, so $D^\nu$ is at most third-order, polynomial in $g_{\alpha\beta}$, $R_{\mu\nu\rho\sigma}$ and $\nabla_\lambda R_{\mu\nu\rho\sigma}$); a polynomial vanishing on an open set vanishes identically, so $D^\nu \equiv 0$.
+
+The Killing-only form of A2 does \emph{not} suffice. On a maximally symmetric metric the translation Killing vectors span $T_p^*\mathcal{M}$, so that form does give $\nabla_\mu\mathcal{E}^{\mu\nu} = 0$ \emph{there}; but the constant-curvature metrics $R_{\mu\nu\rho\sigma} = K(g_{\mu\rho}g_{\nu\sigma} - g_{\mu\sigma}g_{\nu\rho})$ form only a \emph{one-parameter} family, which is not open in the space of jets. Vanishing of the polynomial $D^\nu$ on this thin family does not force $D^\nu \equiv 0$ --- the Ricci tensor is the explicit witness ($D^\nu = \tfrac12\nabla^\nu R$ vanishes on constant-curvature metrics but not identically; Remark~\ref{rmk:ricci-counterexample}). Hence the \emph{local} form of A2 is essential.
+\end{proof}
+
+\begin{remark}
+The key technical ingredient is the polynomiality of $D^\nu$ in the jets (Step~2). Without this assumption, a natural concomitant could vanish on maximally symmetric metrics but be nonzero on others (e.g., via a non-polynomial function that vanishes on constant-curvature metrics). The polynomiality is guaranteed by the Peetre--Slov\'ak theorem for finite-order natural concomitants~\cite{kolarslovak1993}, which applies to all second-order tensors.
+\end{remark}
+
+
+% ============================================================================
+\section{The Lagrangian as a Consequence}
+\label{sec:lagrangian}
+% ============================================================================
+
+\begin{theorem}[Cartan--Vermeil--Weyl~\cite{vermeil1917,cartan1922,weyl1922}]\label{thm:CVW}
+Any natural, symmetric, divergence-free, quasi-linear, second-order concomitant $\mathcal{E}_{\mu\nu}$ of a Lorentzian metric necessarily arises from a variational principle: there exists a scalar density $\mathcal{L}(g, \partial g, \partial^2 g)$ such that:
+\begin{equation}
+\mathcal{E}_{\mu\nu} = \frac{1}{\sqrt{-g}}\frac{\delta(\sqrt{-g}\,\mathcal{L})}{\delta g^{\mu\nu}}.
+\end{equation}
+\end{theorem}
+
+\begin{corollary}\label{cor:EH}
+For $\mathcal{E}_{\mu\nu} = G_{\mu\nu} + \Lambda g_{\mu\nu}$: the Lagrangian is $\mathcal{L} = R - 2\Lambda$ (the Einstein--Hilbert Lagrangian with cosmological constant).
+\end{corollary}
+
+\begin{remark}[The reversal of implication]\label{rmk:reversal}
+In the standard approach, the logical chain is:
+$$\text{Lagrangian } \mathcal{L} = R - 2\Lambda \quad\xrightarrow{\delta S/\delta g = 0}\quad G + \Lambda g = 8\pi T \quad\xrightarrow{\text{Noether}}\quad \nabla_\mu T^{\mu\nu} = 0.$$
+In our approach:
+$$\text{Covariance + Conservation + Second-order} \quad\xrightarrow{\text{Bianchi + Curiel}}\quad G + \Lambda g = 8\pi T \quad\xrightarrow{\text{CVW}}\quad \mathcal{L} = R - 2\Lambda.$$
+The Lagrangian exists but was never used. It is a \emph{theorem}, not an axiom. The logical direction is reversed: conservation is the premise; the Lagrangian is the conclusion.
+\end{remark}
+
+
+% ============================================================================
+\section{The Orbital Interpretation}
+\label{sec:orbital}
+% ============================================================================
+
+\subsection{Einstein's equations as integrability conditions}
+
+\begin{proposition}[Integrability interpretation]\label{thm:integrability}
+Einstein's equations are the unique second-order constraints ensuring that the following orbital structures are mutually consistent:
+\begin{enumerate}[label=(\roman*)]
+    \item The kernel $\Ker(g) = \Isom(\mathcal{M}, g)$ is a Lie group (Myers--Steenrod).
+    \item Every Killing vector $\xi \in \mathfrak{ker}(g)$ produces a conserved current $J^\mu_\xi = T^{\mu\nu}\xi_\nu$.
+    \item The conserved charges $Q_\xi = \int_\Sigma J^\mu_\xi\,\dd\Sigma_\mu$ form a Lie algebra isomorphic to $\mathfrak{ker}(g)$ under the Poisson bracket: $\{Q_{\xi_1}, Q_{\xi_2}\} = Q_{[\xi_1,\xi_2]}$.
+    \item The field equation $\mathcal{E} = \kappa T$ is generally covariant and second-order.
+\end{enumerate}
+Conversely, if the field equation is not $\mathcal{E} = aG + bg$ (i.e., does not satisfy the Curiel uniqueness conditions), then for generic metrics either $\nabla_\mu T^{\mu\nu} \neq 0$ (conservation fails) or the charge algebra is ill-defined (the Poisson bracket does not close on $\mathfrak{ker}(g)$).
+\end{proposition}
+
+\begin{proof}
+Conditions (i) and (iv) give, by the derivation of \S\ref{sec:main}: $\mathcal{E} = aG + bg$. This ensures (ii) via the bridge (Theorem~\ref{thm:bridge}). Condition (iii) follows from the standard result~\cite{wald1984} that the Poisson bracket of Noether charges reproduces the Lie bracket: $\{Q_{\xi_1}, Q_{\xi_2}\} = Q_{[\xi_1,\xi_2]}$, which holds because the charges are linear in $T^{\mu\nu}$ and the Killing vectors satisfy the Lie algebra. Conversely, if (ii) or (iii) failed, $\mathcal{E}$ would not be divergence-free, contradicting the Bianchi identity.
+\end{proof}
+
+\subsection{The kernel--conservation dictionary}
+
+The kernel dimension $\kappa$ counts the conserved quantities:
+
+\begin{center}\small
+\begin{tabular}{lccl}\toprule
+\textbf{Spacetime} & $\kappa$ & \textbf{Conserved} & \textbf{Interpretation}\\\midrule
+Minkowski (SR) & 10 & $E, \vec{p}, \vec{L}, \vec{K}$ & No gravity \\
+Schwarzschild & 4 & $E, \vec{L}$ & Static black hole \\
+Kerr & 2 & $E, L_z$ & Rotating black hole \\
+FLRW & 6 & $\vec{p}, \vec{L}$ & Homogeneous cosmology \\
+Generic & 0 & None (exact) & Maximum gravity \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{remark}
+Gravity, in the orbital framework, is the process of \emph{breaking symmetries}: reducing $\kappa$ from 10 (SR, no gravity) toward 0 (generic GR, maximum gravitational content). Each broken Killing vector corresponds to a gravitational degree of freedom and the loss of one conservation law.
+\end{remark}
+
+\begin{remark}[Worked entry: Schwarzschild's four symmetries]\label{rmk:schw-kappa}
+For the Schwarzschild metric the kernel $\mathfrak{ker}(g)$ is spanned by the static Killing vector $\partial_t$
+(time-translation invariance, conserved energy $E$) and the three rotation generators of $\SO(3)$ (conserved
+angular momentum $\vec L$), giving $\kappa=4$. The six generators \emph{broken} relative to Minkowski --- the
+three boosts and the three spatial translations --- are precisely the gravitational content: a localized mass is
+neither boost- nor translation-invariant. Hence $10-\kappa=6$ counts the symmetries the central mass destroys,
+in agreement with the dictionary above. (Kerr breaks one further rotation, leaving $\partial_t$ and $\partial_\phi$,
+so $\kappa=2$.)
+\end{remark}
+
+\subsection{The three-way splitting}
+
+The Lie algebra of admissible transformations admits a refined decomposition (cf.~\cite{nembe2026vol17}):
+\begin{equation}
+\mathfrak{g} = \underbrace{\mathfrak{ker}(g)}_{\text{conservation}} \oplus \underbrace{\mathfrak{def}_{\mathrm{caus}}(g)}_{\text{physical dynamics}} \oplus \underbrace{\mathfrak{def}_{\mathrm{acaus}}(g)}_{\text{excluded by causality}}
+\end{equation}
+where $\mathfrak{def}_{\mathrm{caus}}$ consists of deformations compatible with the causal order and $\mathfrak{def}_{\mathrm{acaus}}$ consists of causality-violating deformations. Einstein's equations govern the dynamics in $\mathfrak{def}_{\mathrm{caus}}$; the causal constraint excludes $\mathfrak{def}_{\mathrm{acaus}}$.
+
+
+% ============================================================================
+\section{Higher Dimensions and the Cosmological Constant}
+\label{sec:higher}
+% ============================================================================
+
+\subsection{Lovelock gravity in $D > 4$}
+
+In $D > 4$ dimensions, the uniqueness theorem allows additional divergence-free, natural, second-order concomitants: the \textbf{Lovelock tensors}~\cite{lovelock1971}. The $k$-th Lovelock tensor is the Euler--Lagrange expression of the $2k$-dimensional Euler density, and contributes to the field equations for $D \geq 2k+1$. In the orbital framework, the axioms (A1)--(A3) in $D > 4$ naturally produce the full Lovelock equations, not just Einstein. The restriction to $G_{\mu\nu} + \Lambda g_{\mu\nu}$ is a \emph{4-dimensional} result.
+
+\subsection{The cosmological constant}
+
+The constant $\Lambda$ appears as the second parameter $b$ in the uniqueness theorem: $\mathcal{E} = aG + bg$ with $\Lambda = b/a$. In the orbital framework:
+\begin{itemize}
+    \item $\Lambda$ is a \textbf{structural constant} of the theory, on the same footing as $G$ and $c$. It is not an ``additional term'' added to the Lagrangian --- it is forced by the uniqueness theorem.
+    \item The cosmological constant ``problem'' (why is $\Lambda$ so small?) becomes a question about the structural constants of the orbital framework, not about vacuum energy.
+\end{itemize}
+
+
+% ============================================================================
+\section{Discussion}
+\label{sec:discussion}
+% ============================================================================
+
+\subsection{Comparison with prior approaches}
+
+\begin{center}\small
+\begin{tabular}{lccc}\toprule
+& \textbf{Jacobson} & \textbf{Curiel/N-S} & \textbf{This paper} \\\midrule
+Inputs & $\delta Q = T\dd S$ & Div-free natural tensor & Covariance + conservation \\
+Quantum inputs & Yes ($\hbar$, Unruh) & No & No \\
+Explains div-free & Yes (thermo) & No (assumes) & Yes (conservation A2) \\
+Connected to SR & No & No & Yes ($\kappa = 10$) \\
+Connected to QM & No & No & Yes (Paper 3) \\
+Lagrangian & Not used & Not used & Consequence (CVW) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{The three-step pattern}
+
+The derivation follows the universal pattern established in Paper~1~\cite{nembe2026p1}:
+\begin{enumerate}
+    \item \textbf{Symmetry:} The diffeomorphism group $\Diff(\mathcal{M})$ acts on the space of Lorentzian metrics.
+    \item \textbf{Conservation:} Noether conservation for all Killing vectors (which follows from Diff-equivariance via the bridge).
+    \item \textbf{Uniqueness:} The Curiel/Navarro--Sancho classification determines $\mathcal{E} = aG + bg$ uniquely.
+\end{enumerate}
+
+In the companion papers, the same pattern produces: the Schr\"odinger equation from Bargmann representations + unitarity + Schur's lemma (Paper~3~\cite{nembe2026p3}); and quantum field theory from Poincar\'e representations + unitarity + cluster decomposition (Paper~4~\cite{nembe2026p4}).
+
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+% ============================================================================
+
+We have derived Einstein's field equations from three axioms (general covariance, Noether conservation, second-order dependence) without any variational principle. The derivation rests on two pillars: the contracted Bianchi identity (proved by purely geometric means) and the non-variational uniqueness theorem of Curiel/Navarro--Sancho. The Noether--Bianchi bridge shows that conservation is not an independent axiom but a consequence of covariance.
+
+The key conceptual result is the \emph{integrability interpretation}: Einstein's equations are not laws imposed on spacetime but the unique constraints that make the orbital structure --- symmetries, orbits, and conservation --- self-consistent. The Lagrangian exists \emph{a posteriori} (Cartan--Vermeil--Weyl) but was never used.
+
+Combined with Paper~1 (SR from maximal symmetry), this establishes that both special and general relativity follow from the same orbital framework, parameterized by the kernel dimension $\kappa$.
+
+
+% ============================================================================
+\section*{Acknowledgments}
+% ============================================================================
+
+The author thanks the Roots Insights Laboratory and the National Institute of Management Sciences for support.
+
+
+% ============================================================================
+\begin{thebibliography}{35}
+
+\bibitem{einstein1915} A.~Einstein, ``Die Feldgleichungen der Gravitation,'' \emph{Sitz.\ Preuss.\ Akad.\ Wiss.}, 844--847 (1915).
+
+\bibitem{hilbert1915} D.~Hilbert, ``Die Grundlagen der Physik,'' \emph{Nachr.\ Ges.\ Wiss.\ G\"ottingen}, 395--407 (1915).
+
+\bibitem{noether1918} E.~Noether, ``Invariante Variationsprobleme,'' \emph{Nachr.\ Ges.\ Wiss.\ G\"ottingen}, 235--257 (1918).
+
+\bibitem{vermeil1917} H.~Vermeil, ``Notiz \"uber das mittlere Kr\"ummungsmass einer $n$-fach ausgedehnten Riemann'schen Mannigfaltigkeit,'' \emph{Nachr.\ Ges.\ Wiss.\ G\"ottingen}, 334--344 (1917).
+
+\bibitem{cartan1922} \'E.~Cartan, \emph{Le\c{c}ons sur les invariants int\'egraux} (Hermann, Paris, 1922).
+
+\bibitem{weyl1922} H.~Weyl, \emph{Space--Time--Matter}, 4th ed.\ (Methuen, London, 1922).
+
+\bibitem{lovelock1971} D.~Lovelock, ``The Einstein tensor and its generalizations,'' \emph{J.\ Math.\ Phys.}\ \textbf{12}, 498--501 (1971).
+
+\bibitem{jacobson1995} T.~Jacobson, ``Thermodynamics of spacetime: The Einstein equation of state,'' \emph{Phys.\ Rev.\ Lett.}\ \textbf{75}, 1260--1263 (1995).
+
+\bibitem{padmanabhan2010} T.~Padmanabhan, ``Thermodynamical aspects of gravity: New insights,'' \emph{Rep.\ Prog.\ Phys.}\ \textbf{73}, 046901 (2010).
+
+\bibitem{navarro2008} J.~Navarro and J.B.~Sancho, ``On the naturalness of Einstein's equation,'' \emph{J.\ Geom.\ Phys.}\ \textbf{58}, 1007--1014 (2008).
+
+\bibitem{curiel2016} E.~Curiel, ``A simple proof of the uniqueness of the Einstein field equation in all dimensions,'' preprint (2016).
+
+\bibitem{wald1984} R.M.~Wald, \emph{General Relativity} (Univ.\ Chicago Press, 1984).
+
+\bibitem{misner1973} C.W.~Misner, K.S.~Thorne, and J.A.~Wheeler, \emph{Gravitation} (Freeman, 1973).
+
+\bibitem{choquetbruhat1952} Y.~Choquet-Bruhat, ``Th\'eor\`eme d'existence pour certains syst\`emes d'\'equations aux d\'eriv\'ees partielles non lin\'eaires,'' \emph{Acta Math.}\ \textbf{88}, 141--225 (1952).
+
+\bibitem{myers1939} S.B.~Myers and N.E.~Steenrod, ``The group of isometries of a Riemannian manifold,'' \emph{Ann.\ Math.}\ \textbf{40}, 400--416 (1939).
+
+\bibitem{weinberg1972} S.~Weinberg, \emph{Gravitation and Cosmology} (Wiley, 1972).
+
+\bibitem{nembe2026p1} J.~Nemb\'e, ``Special relativity from orbital structure'' (Paper~1 of this series, 2026).
+
+\bibitem{nembe2026p3} J.~Nemb\'e, ``Quantum mechanics from orbital structure'' (Paper~3, in preparation).
+
+\bibitem{nembe2026p4} J.~Nemb\'e, ``Quantum field theory from orbital structure'' (Paper~4, in preparation).
+
+\bibitem{nembe2026vol17} J.~Nemb\'e, ``Twin General Relativity,'' \emph{ROOTS-INSIGHTS} Vol.~17 (2026).
+
+\bibitem{kolarslovak1993} I.~Kol\'a\v{r}, P.W.~Michor, and J.~Slov\'ak, \emph{Natural Operations in Differential Geometry} (Springer, 1993).
+
+\end{thebibliography}
+
+\end{document}

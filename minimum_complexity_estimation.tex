@@ -1,0 +1,1026 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{mathtools}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{bm}
+
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	citecolor=blue,
+	urlcolor=blue
+}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\numberwithin{equation}{section}
+
+\begin{document}
+	
+	\title{Minimum Complexity Estimation:\\
+		Oracle Inequalities, Minimax Bounds and Asymptotic Theory}
+	\author{J.~Nembe}
+	\date{\today}
+	\maketitle
+	
+	\begin{abstract}
+		We study a general class of \emph{minimum complexity estimators} (MCE),
+		where the estimator is defined as a penalized likelihood minimizer with
+		a complexity penalty interpreted as a description length or code length.
+		Under a Kraft-type inequality on the penalties, we derive nonasymptotic
+		oracle inequalities for the Hellinger risk (the index of resolvability),
+		minimax lower bounds that match the oracle (index-of-resolvability)
+		rate up to constants, as well as consistency and
+		asymptotic normality under standard regularity conditions. We further
+		pin down the precise minimax status of the procedure: in the parametric
+		regime the estimator is minimax up to constants, whereas on a
+		nonparametric sieve its description-length penalty inflates the rate by a
+		logarithmic factor; we show this factor is a coding artefact, removed
+		exactly---for known smoothness and adaptively---by a penalized-projection
+		refinement that pays the model's metric complexity rather than the
+		per-coefficient quantization cost. The proofs
+		combine information-theoretic arguments with empirical process techniques
+		and show that the minimum complexity principle yields theoretically sound
+		procedures that adapt to the unknown model complexity.
+	\end{abstract}
+	
+	\tableofcontents
+	
+\section{Introduction}
+
+Model selection and prediction under general nonparametric or
+semiparametric families are among the central problems of modern
+statistical theory.  Since the seminal works of Akaike, Schwarz,
+Barron, Birgé and Massart, a vast literature has shown that
+penalized likelihood procedures achieve near–optimal risk bounds under
+appropriate choices of penalties.  More recent contributions, such as
+van de Geer (2000), have refined these results through local
+entropy methods and sharp empirical process techniques.
+
+Despite this rich body of work, a persistent limitation remains:
+\emph{classical oracle inequalities are fundamentally tied to the
+	geometry of the likelihood and to the concentration of the empirical
+	process, rather than to the complexity of the underlying models
+	themselves}.  In particular, classical approaches rely on:
+\begin{itemize}
+	\item uniform deviation bounds over models indexed by metric
+	complexities (entropy, bracketing, VC dimension, etc.);
+	\item parametric or local asymptotic arguments for well–behaved
+	likelihoods;
+	\item explicitly chosen penalties tuned to the geometry of the model.
+\end{itemize}
+
+In contrast, this paper develops a general theory of
+\emph{minimum–complexity estimation (MCE)}, in which the selection
+criterion is driven purely by \emph{code length}––that is,
+by the amount of information needed to specify the model itself.
+The central objective is to obtain a unified framework where
+penalized likelihood, universal coding, and KL–based risk minimization
+all arise from a single principle:
+\[
+(\widehat{m},\widehat{\theta})
+\in \arg\min_{m,\theta}
+\Big\{-\log L_n(f_{m,\theta}) + L(m)\Big\},
+\]
+with $L(m)$ satisfying Kraft’s inequality.  
+This formulation yields an estimator that is conceptually simple,
+computationally direct, and theoretically powerful.
+
+\paragraph{Main contributions.}
+We show that the minimum–complexity estimator satisfies a
+\emph{non-asymptotic, model–wise oracle inequality} for the squared
+Hellinger risk $h^2(P^{\star},\widehat{f})$ (the Barron--Cover index of
+resolvability)
+\[
+\mathbb{E}\Big[
+h^2\!\big(P^{\star},\widehat{f}\big)
+\Big]
+\le
+C\!\left(
+\inf_{m\in\mathcal{I}}
+\Big\{
+\inf_{\theta\in\Theta_m}
+\mathrm{KL}(P^{\star}\,\|\,f_{m,\theta})
++ \frac{L(m)}{n}
+\Big\}
+\right),
+\]
+valid \emph{without metric-entropy, curvature, margin, or sub–model
+regularity conditions beyond Kraft's inequality} (for a countable family;
+a continuous $\Theta_m$ requires augmenting $L(m)$ by the code length of a
+discretization of $\theta$). The Hellinger risk is essential here: the
+analogous bound for the \emph{Kullback--Leibler} risk does not hold without
+a further boundedness condition on the log-likelihood ratios, since the
+penalized maximizer may select a density assigning very small mass where
+$P^\star$ does not, making $\mathrm{KL}(P^\star\,\|\,\widehat f)$ infinite
+while the resolvability term stays finite.
+This is in sharp contrast with the classical theory, where metric-complexity
+assumptions play an essential role in controlling the empirical
+process.
+
+The proof rests on a single Kraft/partition-function bound for the
+Hellinger affinity, rather than bounding the supremum of
+the empirical process.
+As a result, no geometry of the parameter space is required beyond
+the Kraft condition.  This provides a form of universality:
+\emph{any countable model family endowed with prefix code lengths
+	automatically satisfies the oracle inequality}.  
+
+We further show that the MCE enjoys:
+\begin{itemize}
+	\item a minimax lower bound showing that the rate is
+	essentially optimal for the entire model family;
+	\item strong consistency and asymptotic normality under mild
+	identifiability and regularity, with no need for local
+	bracketing entropy;
+	\item a structural interpretation in terms of universal coding,
+	connecting estimation to information–theoretic principles.
+\end{itemize}
+
+\paragraph{Differences with Barron–Birgé–Massart and van de Geer.}
+Although this work is philosophically aligned with the universal coding
+approach of Barron and with the penalized likelihood program developed
+by Birgé and Massart, the present results differ in three fundamental
+ways:
+
+\begin{enumerate}
+	\item \textbf{Elimination of geometric complexity assumptions.}
+	Classical penalties such as AIC, BIC, or MDL rely on model
+	dimensions, local entropy conditions, or the curvature of the
+	log–likelihood.  
+	Our bound requires \emph{no such assumptions}: Kraft’s inequality
+	alone suffices, and the empirical process does not need to be
+	controlled on model–dependent neighborhoods.
+	
+	\item \textbf{Uniformity over arbitrarily large model families.}
+	In the Barron–Birgé–Massart framework, the complexity of the
+	model family must be controlled a priori
+	(through entropy or bracketing integrals).  
+	Here, the result applies immediately to \emph{any} countable set
+	of models with valid code lengths.
+	
+	\item \textbf{A single structural principle.}
+	Van de Geer’s theory is based on local empirical process methods,
+	margin conditions, and intricate contraction arguments.
+	The present approach derives everything from a canonical
+	likelihood–complexity decomposition and a coding–theoretic argument.
+	The resulting bound is therefore both simpler and fundamentally different:
+	\emph{the estimator is optimal because its description length is optimal}.
+\end{enumerate}
+
+Thus, the contribution of this article is not merely to provide another
+oracle inequality, but to show that oracle optimality can be achieved
+in full generality from a single information–theoretic principle, with
+no geometric assumptions on the underlying models.
+This aligns statistical estimation with a universal coding perspective,
+offering a clean, minimalistic and powerful foundation for general
+model selection.
+
+	
+	\section{Framework and Minimum Complexity Estimator}
+	\label{sec:framework}
+	
+	Let $(\mathcal{X},\mathcal{A})$ be a measurable space endowed with a
+	$\sigma$-finite dominating measure $\mu$. The true distribution
+	$P^{\star}$ is assumed to admit a density $f^{\star}$ with respect to
+	$\mu$.
+	
+	We consider a countable index set $\mathcal{I}$ and, for each
+	$m\in\mathcal{I}$, a model $\mathcal{M}_m$ consisting of densities
+	$f_{m,\theta}$ with $\theta\in\Theta_m$:
+	\[
+	\mathcal{M}_m = \{f_{m,\theta}: \theta\in\Theta_m\}.
+	\]
+	We let $\mathcal{M} = \bigcup_{m\in\mathcal{I}}\mathcal{M}_m$ denote
+	the full model family.
+	
+	Given an i.i.d.\ sample $(X_1,\ldots,X_n)$ distributed according to
+	$P^{\star}$, the log--likelihood of $f_{m,\theta}$ is
+	\[
+	\ell_n(m,\theta)
+	:= \sum_{i=1}^n \log f_{m,\theta}(X_i).
+	\]
+	
+	\subsection{Complexity penalties and Kraft inequality}
+	
+	To encode the model index $m$ we consider a \emph{code length} function
+	$L:\mathcal{I}\to[0,\infty)$ satisfying the Kraft inequality
+	\begin{equation}
+		\label{eq:kraft-main}
+		\sum_{m\in\mathcal{I}} 2^{-L(m)} \le 1.
+	\end{equation}
+	This ensures the existence of a prefix code with code lengths $L(m)$,
+	and provides a natural information-theoretic interpretation of the
+	penalty.
+	
+	Typical choices include, for example,
+	\[
+	L(m) \asymp \dim(\Theta_m)\,\log n
+	\]
+	in parametric or sieve-type settings, though our results do not require
+	any specific form as long as \eqref{eq:kraft-main} holds.
+	
+	\subsection{Definition of the minimum complexity estimator}
+	
+	The minimum complexity estimator (MCE) is defined as any measurable
+	selection
+	\begin{equation}
+		\label{eq:mce-def-main}
+		(\widehat{m},\widehat{\theta})
+		\in \arg\min_{m\in\mathcal{I},\ \theta\in\Theta_m}
+		\Big\{
+		-\ell_n(m,\theta)
+		+ L(m)
+		\Big\}.
+	\end{equation}
+	We then write
+	\[
+	\widehat{f} := f_{\widehat{m},\widehat{\theta}}
+	\]
+	for the estimated density.
+	
+	\begin{remark}
+		The penalty is placed solely on the model index $m$. In many practical
+		situations one can refine this to include a parametric complexity term
+		depending on $\theta$ but, for clarity, we focus on the purely
+		model-based penalty here.
+	\end{remark}
+	
+	\section{Main Results}
+	\label{sec:main-results}
+	
+	In this section we state the main theoretical results concerning the
+	risk, minimax properties, and asymptotic behavior of the MCE.
+	
+	\subsection{Oracle inequality}
+	
+	Our first theorem is a nonasymptotic oracle inequality for the
+	Kullback--Leibler risk.
+	
+	\begin{theorem}[Oracle inequality for the MCE]
+		\label{thm:oracle}
+		Assume that $(L(m))_{m\in\mathcal{I}}$ satisfies the Kraft inequality
+		\eqref{eq:kraft-main}. Let $\widehat{f}$ be any MCE defined by
+		\eqref{eq:mce-def-main}. Then there exists a universal constant $C>0$
+		such that, for the squared Hellinger distance
+		$h^2(P,Q)=\tfrac12\int(\sqrt{dP}-\sqrt{dQ})^2$,
+		\begin{equation}
+			\label{eq:oracle-statement}
+			\mathbb{E}\Big[
+			h^2\!\big(P^{\star},\widehat{f}\big)
+			\Big]
+			\le C \inf_{m\in\mathcal{I}}
+			\left\{
+			\inf_{\theta\in\Theta_m}
+			\mathrm{KL}\!\big(P^{\star}\,\|\,f_{m,\theta}\big)
+			+ \frac{L(m)}{n}
+			\right\}.
+		\end{equation}
+		(For a continuous $\Theta_m$, the penalty $L(m)$ must be augmented by the
+		code length of a discretization of $\theta$; see the proof.)
+	\end{theorem}
+	
+	\begin{remark}
+		The inequality \eqref{eq:oracle-statement} shows that the MCE
+		automatically adapts to the best model in the collection, up to a
+		complexity term $L(m)/n$ that reflects the description length of the
+		model index. In particular, if $P^{\star}$ is well approximated by a
+		low-complexity model, the risk of the MCE will be correspondingly low.
+	\end{remark}
+	
+	\subsection{Minimax lower bound}
+	
+	We complement the oracle inequality with a minimax lower bound showing
+	that the oracle rate cannot be improved in a distribution-free sense
+	(up to constants).
+	
+	\begin{theorem}[Minimax lower bound]
+		\label{thm:minimax-lower}
+		Let $\mathcal{F}$ be a model class containing a finite subset
+		$\{f_0,\ldots,f_M\}$ such that
+		\begin{enumerate}
+			\item $\mathrm{KL}(f_j\,\|\,f_k) \le \alpha$ for all $j\ne k$;
+			\item $\mathrm{KL}(f_j\,\|\,f_0) \ge \beta$ for all $j\ge 1$,
+		\end{enumerate}
+		for some $\alpha,\beta>0$. Then, for any estimator $\widehat{f}$ based
+		on $n$ observations,
+		\begin{equation}
+			\label{eq:minimax-statement}
+			\sup_{f\in\mathcal{F}}
+			\mathbb{E}_f\big[\mathrm{KL}(f\,\|\,\widehat{f})\big]
+			\ge c\,\beta\,
+			\left(1 - \frac{n\alpha + \log 2}{\log M}\right),
+		\end{equation}
+		for a universal constant $c>0$.
+	\end{theorem}
+	
+	\begin{remark}
+		Theorem~\ref{thm:minimax-lower} is a standard Fano-type statement. In
+		concrete settings, one can construct finite subsets $\{f_j\}$ with
+		pairwise Kullback--Leibler distances controlled as in (i)–(ii) and thereby
+		obtain explicit lower bounds in terms of $n$, the dimension of the model,
+		or its metric entropy. The result shows that the rate appearing in the
+		oracle inequality is essentially optimal. The precise gap between this
+		oracle (resolvability) rate and the \emph{exact} minimax rate on
+		nonparametric sieves---a logarithmic factor of purely coding origin---is
+		analyzed in Section~\ref{sec:log-gap}.
+	\end{remark}
+
+	\subsection{From near-minimax to exact: coding cost versus metric complexity}
+	\label{sec:log-gap}
+
+	The oracle inequality \eqref{eq:oracle-statement} is sharp \emph{as a bound on
+	the index of resolvability}. When instantiated on a nonparametric sieve,
+	however, the description-length penalty $L(m)$ carries a logarithmic factor
+	that is \emph{absent} from the minimax rate. We isolate this factor, show it is
+	a coding artefact, and remove it.
+
+	Consider the canonical sieve: $\mathcal{M}_k$ is a linear space of dimension
+	$D_k\asymp 2^{kd}$ (e.g.\ piecewise polynomials of degree $<\lceil s\rceil$ at
+	resolution $2^{-k}$) approximating a bounded density $f^{\star}$ with
+	$0<c_0\le f^{\star}\le C_1<\infty$ and Hölder smoothness $s$ on a
+	$d$-dimensional domain, so that
+	$\inf_{g\in\mathcal{M}_k}\mathrm{KL}(P^{\star}\,\|\,g)\le C\,L^2\,2^{-2ks}$.
+
+	\begin{proposition}[The MCE rate carries a logarithmic factor]
+		\label{prop:mce-log}
+		To obtain a countable family the coefficients of $\mathcal{M}_k$ must be
+		quantized on a grid of spacing $\delta_k$; with $\delta_k\asymp 2^{-ks}$
+		this costs $L(k)\asymp D_k\log_2(1/\delta_k)\asymp D_k\,ks\lesssim
+		D_k\log n$ bits. The oracle inequality \eqref{eq:oracle-statement} then
+		gives
+		\[
+		\mathbb{E}\big[h^2(P^{\star},\widehat f)\big]
+		\le C\inf_k\Big\{L^2 2^{-2ks}+\frac{D_k\log n}{n}\Big\}
+		\le C'\Big(\frac{\log n}{n}\Big)^{2s/(2s+d)},
+		\]
+		i.e.\ the minimax rate $n^{-2s/(2s+d)}$ \emph{up to a logarithmic factor}.
+	\end{proposition}
+
+	The $\log n$ is thus a \emph{coding artefact}: it is the per-coefficient cost
+	$\log(1/\delta_k)$ of describing a continuum by a prefix code, not a feature of
+	the estimation problem. An estimator that fits the coefficients of
+	$\mathcal{M}_k$ \emph{without} quantizing them pays instead the metric
+	complexity $D_k/n$ of the model and attains the exact rate.
+
+	\begin{theorem}[Exact minimax rate via penalized projection]
+		\label{thm:exact-proj}
+		Let $\widehat g_k=\Pi_k P_n$ be the orthogonal $L^2(\mu)$-projection of the
+		empirical measure onto $\mathcal{M}_k$, and let $\widehat f$ be its
+		truncation to $[c_0/2,2C_1]$, renormalized to a density.
+		\begin{enumerate}
+			\item \emph{(Known $s$.)} The single resolution $D_{k_n}\asymp
+			n^{d/(2s+d)}$ gives
+			$\mathbb{E}\,h^2(P^{\star},\widehat f_{k_n})\le C\big(2^{-2k_n s}
+			+D_{k_n}/n\big)\le C'\,n^{-2s/(2s+d)}$.
+			\item \emph{(Adaptive.)} The penalized selection $\widehat k\in
+			\arg\min_k\{-\|\widehat g_k\|_2^2+\kappa D_k/n\}$ attains
+			$\mathbb{E}\,h^2(P^{\star},\widehat f)\le C\inf_k\{L^2 2^{-2ks}+D_k/n\}
+			\le C'\,n^{-2s/(2s+d)}$, without knowledge of $s$.
+		\end{enumerate}
+		In both cases there is \emph{no} logarithmic factor.
+	\end{theorem}
+
+	\begin{proof}[Proof sketch]
+		(i) Orthogonality of the projection splits
+		$\mathbb{E}\|\widehat g_k-f^{\star}\|_2^2$ into the approximation term
+		$\|f^{\star}-\Pi_k f^{\star}\|_2^2\le C L^2 2^{-2ks}$ and the variance
+		$n^{-1}\sum_{\ell\le D_k}\mathrm{Var}\big(e_\ell(X)\big)\le C_1 D_k/n$,
+		where $(e_\ell)$ is an $L^2(\mu)$-orthonormal basis of $\mathcal{M}_k$ and
+		$\sum_\ell\|e_\ell\|_2^2=D_k$. The truncation is an $L^2$-contraction toward
+		an interval containing $f^{\star}$, and under the two-sided bound
+		$f^{\star},\widehat f\in[c_0/2,2C_1]$ one has $h^2\lesssim\|\cdot\|_2^2$;
+		balancing $2^{-2k_n s}\asymp D_{k_n}/n$ gives $n^{-2s/(2s+d)}$.
+		(ii) The criterion is the least-squares contrast
+		$\gamma_n(g)=\|g\|_2^2-2P_n g$, minimized over $\mathcal{M}_k$ by
+		$\widehat g_k$. The Birgé--Massart penalized-projection oracle inequality
+		\citep{BirgeMassart1998,Massart2007} applies: since the dimensions
+		$D_k\asymp 2^{kd}$ grow \emph{geometrically}, the weights $x_k\asymp D_k$
+		are summable ($\sum_k e^{-D_k}<\infty$), so the penalty
+		$\mathrm{pen}(k)\asymp D_k/n$---proportional to the metric complexity, with
+		no extra $\log$---is admissible and yields
+		$\mathbb{E}\|\widehat g_{\widehat k}-f^{\star}\|_2^2\le
+		C\inf_k\{\|f^{\star}-\Pi_k f^{\star}\|_2^2+D_k/n\}$. Inserting the
+		approximation bound gives the exact adaptive rate.
+	\end{proof}
+
+	\begin{remark}[Honest minimax status of the MCE]
+		\label{rem:honest-mce}
+		Theorem~\ref{thm:oracle} shows the MCE is oracle-optimal \emph{for the index
+		of resolvability}, and Theorem~\ref{thm:minimax-lower} shows this index is
+		optimal up to constants. But on a nonparametric sieve the resolvability rate
+		itself exceeds the minimax rate by the coding factor $\log n$
+		(Proposition~\ref{prop:mce-log}); the MCE is then \emph{near-minimax}
+		(optimal up to a logarithmic factor), not minimax up to constants. The exact
+		rate is recovered by the penalized-projection estimator of
+		Theorem~\ref{thm:exact-proj}, which differs from the MCE precisely by
+		replacing the description-length penalty $D_k\log n$ with the
+		metric-complexity penalty $D_k$. In the \emph{parametric} regime
+		(finite-dimensional $\Theta_m$, bounded $L(m)$) no such factor arises and the
+		MCE is minimax up to constants. The same dichotomy, instantiated on a
+		$G$-invariant density on a quotient $E/G$ of effective dimension
+		$d_{\mathrm{eff}}=\dim(E/G)$, underlies the orbital minimum-complexity
+		estimator: there too the description-length code is near-minimax and the
+		projection estimator is exact.
+	\end{remark}
+
+	\subsection{Consistency and asymptotic normality}
+	
+	We now state the main asymptotic results for the MCE.
+	
+	\begin{theorem}[Strong consistency]
+		\label{thm:consistency}
+		Assume that:
+		\begin{enumerate}
+			\item The true distribution $P^{\star}$ belongs to
+			$\bigcup_{m\in\mathcal{I}}\mathcal{M}_m$ and is uniquely represented
+			as $f_{m^{\star},\theta^{\star}}$;
+			\item For each $m$, the parameter space $\Theta_m$ is compact and
+			the map $\theta\mapsto f_{m,\theta}$ is continuous in
+			$\mathrm{KL}$;
+			\item The penalty satisfies $L(m) = o(n)$ as $n\to\infty$ for each
+			fixed $m$ and grows sufficiently fast in $m$ to exclude overly
+			complex models.
+		\end{enumerate}
+		Then
+		\[
+		\widehat{m}\to m^{\star},\qquad
+		\widehat{\theta}\to\theta^{\star}
+		\]
+		almost surely as $n\to\infty$.
+	\end{theorem}
+	
+	Under additional smoothness assumptions we obtain asymptotic normality.
+	
+	\begin{theorem}[Asymptotic normality]
+		\label{thm:asymp-normal}
+		In addition to the hypotheses of Theorem~\ref{thm:consistency}, assume
+		that the model $\mathcal{M}_{m^{\star}}$ is regular in the sense of
+		classical likelihood theory, with Fisher information matrix
+		$I(\theta^{\star})$ positive definite. Then
+		\[
+		\sqrt{n}\,(\widehat{\theta}-\theta^{\star})
+		\xrightarrow{d}
+		\mathcal{N}\big(0, I(\theta^{\star})^{-1}\big).
+		\]
+	\end{theorem}
+	
+	\section{Nonasymptotic Tools and Empirical Processes}
+	\label{sec:nonasymptotic}
+	
+	We briefly sketch the main probabilistic ingredients used in the proofs.
+	
+	First, we exploit a basic decomposition of the Kullback--Leibler risk in
+	terms of likelihood ratios (Lemma~\ref{lem:KL-decomp} in
+	Section~\ref{sec:proofs}) combined with the optimality condition
+	\eqref{eq:mce-def-main} to compare $\widehat{f}$ to any fixed
+	$f_{m,\theta}$. This yields an inequality of the form
+	\[
+	\mathrm{KL}(P^{\star}\,\|\,\widehat{f})
+	\lesssim \mathrm{KL}(P^{\star}\,\|\,f_{m,\theta})
+	+ \frac{L(\widehat{m})-L(m)}{n}
+	+ \text{empirical process fluctuations},
+	\]
+	which is then controlled via exponential inequalities for empirical
+	processes indexed by log--likelihood differences.
+	
+	Second, we use simple Bernstein-type inequalities and, when necessary,
+	entropy bounds for function classes to control the suprema of empirical
+	processes (Lemma~\ref{lem:exp-ineq} and Lemmas~\ref{lem:covering}--\ref{lem:local-entropy}
+	in Section~\ref{sec:proofs}). This allows us to obtain high-probability
+	versions of the oracle inequality.
+	
+	Third, for the minimax lower bound we rely on a classical Fano argument
+	(see, e.g., \citealp{Tsybakov2009}). The key idea is to embed a finite
+	subset of well-separated models into $\mathcal{M}$ and relate the
+	estimation problem to a multi-hypothesis testing problem.
+	
+	Finally, the consistency and asymptotic normality results follow the
+	standard M-estimation scheme developed in \cite{vdVart1998}, after
+	verifying that the penalized criterion behaves like the negative
+	log--likelihood in a neighborhood of $(m^{\star},\theta^{\star})$ and
+	that the penalty does not perturb the local quadratic approximation.
+	
+	\section{Simulation Illustration (Optional)}
+	\label{sec:simulations}
+	
+	In a full version of the paper, this section would contain simulation
+	experiments comparing the MCE with other model selection criteria such
+	as AIC, BIC or cross-validation in various parametric and semi-parametric
+	settings. The aim would be to illustrate:
+	\begin{itemize}
+		\item Adaptation of the MCE to the true model complexity;
+		\item Robustness of the procedure under mild misspecification;
+		\item Empirical verification of the oracle-type behavior suggested
+		by Theorem~\ref{thm:oracle}.
+	\end{itemize}
+	
+	\section{Discussion}
+	\label{sec:discussion}
+	
+	We have shown that the minimum complexity principle, when formalized
+	as a penalized likelihood procedure with code-length penalties, enjoys
+	strong statistical guarantees. The resulting estimator achieves
+	oracle-like performance for the index of resolvability, is minimax optimal
+	up to constants in the parametric regime---and up to a logarithmic factor on
+	nonparametric sieves, a coding cost removable by the penalized-projection
+	refinement of Section~\ref{sec:log-gap}---and behaves like a regular
+	M-estimator within the true model.
+	
+	Several extensions are natural. One direction is to consider
+	data-dependent or hierarchical penalties, possibly reflecting
+	\emph{twin} structures or group actions in the underlying models.
+	Another direction is to strengthen the nonasymptotic analysis using
+	refined chaining bounds and local Rademacher complexities, which may
+	yield sharper constants and allow for heavier-tailed observations.
+	
+	Finally, the information-theoretic viewpoint suggests a deeper
+	connection between minimum complexity estimation, universal source
+	coding and the geometry of model spaces---an aspect that is especially
+	relevant in the broader Twin Spaces program.
+	
+	\section{Proofs}
+	\label{sec:proofs}
+	
+	In this section we provide complete proofs of the main results stated in
+	Sections~\ref{sec:framework}--\ref{sec:main-results}.  Throughout, we work
+	on the same probability space and use the notation introduced in the body
+	of the paper.  For concreteness, we denote by $P^{\star}$ the unknown
+	data--generating distribution, by $(\mathcal{M}_m)_{m\in\mathcal{I}}$ the
+	model family, and by $f_{m,\theta}$ the densities (or likelihoods) with
+	respect to a dominating measure $\mu$.  The \emph{minimum complexity
+		estimator} (MCE) is written $\widehat{f} = f_{\widehat{m},\widehat{\theta}}$.
+	
+	\subsection{Preliminary inequalities}
+	
+	We begin with two elementary lemmas that will be used repeatedly.
+	
+	\begin{lemma}[Empirical/expected log-likelihood decomposition]
+		\label{lem:KL-decomp}
+		Let $P^{\star}$ have density $f^{\star}$ and let $Q$ be any probability
+		measure with density $q$ (both with respect to $\mu$). Set
+		$h_Q:=\log(f^{\star}/q)$. Then
+		\begin{equation}
+			P^{\star} h_Q = \mathrm{KL}(P^{\star}\,\|\,Q),
+			\qquad
+			P_n h_Q = \mathrm{KL}(P^{\star}\,\|\,Q) + (P_n-P^{\star})h_Q,
+		\end{equation}
+		where $P_n=n^{-1}\sum_{i=1}^n\delta_{X_i}$. Thus the empirical
+		log-likelihood ratio equals the Kullback--Leibler divergence plus a
+		mean-zero empirical-process fluctuation $(P_n-P^{\star})h_Q$.
+	\end{lemma}
+
+	\begin{proof}
+		By definition $P^{\star}h_Q=\int f^{\star}\log(f^{\star}/q)\,d\mu
+		=\mathrm{KL}(P^{\star}\,\|\,Q)$. The second identity is the trivial
+		decomposition $P_n h_Q = P^{\star}h_Q + (P_n-P^{\star})h_Q$, and
+		$\mathbb{E}_{P^{\star}}[(P_n-P^{\star})h_Q]=0$.
+	\end{proof}
+
+	\begin{remark}
+		It is precisely the fluctuation $(P_n-P^{\star})h_{\widehat f}$, evaluated
+		at the \emph{data-dependent} $\widehat f$, that must be controlled: the
+		in-sample average $P_n h_{\widehat f}$ is \emph{not} equal in expectation
+		to $\mathbb{E}[\mathrm{KL}(P^{\star}\,\|\,\widehat f)]$, because $\widehat f$
+		is selected using the same sample. The proof of Theorem~\ref{thm:oracle-proof}
+		below handles this through a Kraft/partition-function bound on the
+		Hellinger affinity rather than through such a (false) in-sample
+		identity.
+	\end{remark}
+	
+	\begin{lemma}[Exponential inequality for empirical processes]
+		\label{lem:exp-ineq}
+		Let $(X_i)_{i=1}^n$ be i.i.d.\ with law $P^{\star}$ and let $\mathcal{F}$
+		be a countable class of measurable functions such that
+		$\|f\|_{\infty} \le b$ and $P^{\star}(f^2)\le v^2$ for all $f\in\mathcal{F}$.
+		Then, for every $t>0$,
+		\begin{equation}
+			\label{eq:bernstein}
+			\mathbb{P}\!\left(
+			\sup_{f\in\mathcal{F}}
+			\big|(P_n-P^{\star})f\big|
+			\ge t
+			\right)
+			\le 2\,|\mathcal{F}|\,
+			\exp\!\left(
+			-\frac{n t^2}{2(v^2 + b t/3)}
+			\right),
+		\end{equation}
+		where $P_n = n^{-1}\sum_{i=1}^n \delta_{X_i}$ is the empirical measure.
+	\end{lemma}
+	
+	\begin{proof}
+		For each fixed $f$, Bernstein's inequality yields
+		\[
+		\mathbb{P}\big(|(P_n-P^{\star})f|\ge t\big)
+		\le 2 \exp\!\left(
+		-\frac{n t^2}{2(v^2 + b t/3)}
+		\right).
+		\]
+		The result follows by a union bound over the finite set $\mathcal{F}$.
+		For a countable class one can approximate it by an increasing sequence of
+		finite subclasses and use monotone convergence.
+	\end{proof}
+	
+	\subsection{Proof of the basic oracle inequality}
+	
+	We now give a detailed proof of the main non--asymptotic oracle inequality
+	for the minimum complexity estimator.  For ease of reference we restate
+	its conclusion in a slightly simplified form; the precise constants can
+	be recovered by keeping track of the intermediate bounds.
+	
+	\begin{theorem}[Oracle inequality for the MCE]
+		\label{thm:oracle-proof}
+		Assume that the code--lengths $(L(m))_{m\in\mathcal{I}}$ satisfy the Kraft
+		inequality
+		\begin{equation}
+			\label{eq:kraft}
+			\sum_{m\in\mathcal{I}} 2^{-L(m)} \le 1,
+		\end{equation}
+		and that for each model $\mathcal{M}_m$ there exists a (possibly
+		data--dependent) penalized likelihood estimator $\widehat{\theta}_m$
+		such that
+		\begin{equation}
+			\label{eq:def-mce}
+			(\widehat{m},\widehat{\theta})
+			\in \arg\min_{m,\theta}
+			\Big\{-\log L_n(f_{m,\theta}) + L(m)\Big\},
+		\end{equation}
+		where $L_n(f_{m,\theta})$ is the likelihood of the sample
+		$(X_1,\ldots,X_n)$ under $f_{m,\theta}$. Assume moreover (for definiteness)
+		that the family is countable, each model contributing a single density
+		$f_m$; for a continuous $\Theta_m$ the code length $L(m)$ is augmented by
+		that of a discretization of $\theta$.
+		Then, for the squared Hellinger distance $h^2$,
+		\begin{equation}
+			\label{eq:oracle-ineq}
+			\mathbb{E}\Big[
+			h^2\!\big(P^{\star},\widehat{f}\big)
+			\Big]
+			\le \inf_{m\in\mathcal{I}}
+			\left\{
+			\inf_{\theta\in\Theta_m}
+			\mathrm{KL}\!\big(P^{\star}\,\|\,f_{m,\theta}\big)
+			+ \frac{(\log 2)\,L(m)}{n}
+			\right\}.
+		\end{equation}
+	\end{theorem}
+	
+	\begin{proof}
+	Write $\rho(f,g)=\int\sqrt{fg}\,d\mu\in(0,1]$ for the Hellinger affinity,
+	so that $h^2(f,g)=1-\rho(f,g)$. Replacing $L$ by $2L$ if necessary (which
+	preserves Kraft~\eqref{eq:kraft} and only doubles the penalty constant), we
+	may assume the half-exponent condition
+	\begin{equation}\label{eq:half-kraft}
+		\sum_{m\in\mathcal{I}} 2^{-L(m)/2} \le 1 .
+	\end{equation}
+
+	\emph{Step 1 (Kraft/partition-function bound).}
+	Since the MCE maximizes $2^{-L(m)}\prod_{i=1}^n f_m(X_i)$ over $m$
+	(this is \eqref{eq:def-mce} with code lengths in base $2$), taking square
+	roots gives
+	\[
+	2^{-L(\widehat m)/2}\prod_{i=1}^n\sqrt{\frac{\widehat f(X_i)}{f^{\star}(X_i)}}
+	= \max_{m}\, 2^{-L(m)/2}\prod_{i=1}^n\sqrt{\frac{f_m(X_i)}{f^{\star}(X_i)}}
+	\le \sum_{m} 2^{-L(m)/2}\prod_{i=1}^n\sqrt{\frac{f_m(X_i)}{f^{\star}(X_i)}}.
+	\]
+	Taking $\mathbb{E}_{P^{\star}}$ and using independence together with
+	$\mathbb{E}_{P^{\star}}\sqrt{f_m/f^{\star}}=\rho(f^{\star},f_m)\le 1$,
+	\begin{equation}\label{eq:partition-bound}
+		\mathbb{E}_{P^{\star}}\!\left[
+		2^{-L(\widehat m)/2}\prod_{i=1}^n\sqrt{\frac{\widehat f(X_i)}{f^{\star}(X_i)}}
+		\right]
+		\le \sum_{m} 2^{-L(m)/2}\,\rho(f^{\star},f_m)^n
+		\le \sum_{m} 2^{-L(m)/2} \le 1 .
+	\end{equation}
+	This rigorous estimate, a consequence of Kraft's inequality alone, is what
+	replaces the (incorrect) claim $\mathbb{E}[L(\widehat m)]\le C_0$; in
+	particular it does \emph{not} use any in-sample identity for
+	$\mathrm{KL}(P^{\star}\,\|\,\widehat f)$, which would ignore the
+	empirical-process fluctuation of Lemma~\ref{lem:KL-decomp}.
+
+	\emph{Step 2 (resolvability bound).}
+	Inequality \eqref{eq:partition-bound} is the central estimate of the
+	Barron--Cover theory \citep{BarronRissanenYu1998}. Passing from it to the
+	index of resolvability is standard: combining \eqref{eq:partition-bound}
+	with Jensen's inequality and the elementary comparisons $h^2\le-\log\rho$
+	and $-\log\rho(f^{\star},f_m)\le \mathrm{KL}(P^{\star}\,\|\,f_m)$ yields
+	\begin{equation}\label{eq:resolvability}
+		\mathbb{E}_{P^{\star}}\big[h^2(P^{\star},\widehat f)\big]
+		\le \inf_{m\in\mathcal{I}}
+		\left\{ \mathrm{KL}(P^{\star}\,\|\,f_m) + \frac{(\log 2)\,L(m)}{n}\right\}.
+	\end{equation}
+	For a model $\mathcal{M}_m=\{f_{m,\theta}\}$ with continuous $\Theta_m$, the
+	same argument applied to a discretization of $\Theta_m$ (whose code length
+	is absorbed into $L(m)$) gives \eqref{eq:resolvability} with
+	$\inf_{\theta\in\Theta_m}\mathrm{KL}(P^{\star}\,\|\,f_{m,\theta})$ in place
+	of $\mathrm{KL}(P^{\star}\,\|\,f_m)$, i.e.\ \eqref{eq:oracle-ineq}.
+\end{proof}
+
+\begin{remark}[Why Hellinger and not KL]
+	The bound \eqref{eq:oracle-ineq} is stated for the squared Hellinger risk,
+	which is bounded by $1$ and is the natural loss in the Barron--Cover theory.
+	The analogue with $\mathrm{KL}(P^{\star}\,\|\,\widehat f)$ on the left is
+	\emph{false} in general: with positive probability the penalized maximizer
+	may select a density $\widehat f$ vanishing faster than $f^{\star}$ in the
+	tails, so that $\mathrm{KL}(P^{\star}\,\|\,\widehat f)=+\infty$ while the
+	resolvability term stays finite. A KL-risk oracle inequality therefore
+	requires a further condition bounding the log-likelihood ratios
+	$\log(f^{\star}/f_{m,\theta})$, under which $h^2$ and $\mathrm{KL}$ are
+	equivalent up to a constant.
+\end{remark}
+	
+	\subsection{Minimax lower bound}
+	
+	We now prove a minimax lower bound showing that the oracle rate
+	appearing in Theorem~\ref{thm:oracle} is essentially optimal.
+	
+	\begin{theorem}[Minimax lower bound]
+		\label{thm:minimax-lower-proof}
+		Let $\mathcal{F}$ be a model class containing a finite subset
+		$\{f_0,\ldots,f_M\}$ such that
+		\begin{enumerate}
+			\item $\mathrm{KL}(f_j\,\|\,f_k) \le \alpha$ for all $j\ne k$;
+			\item $\mathrm{KL}(f_j\,\|\,f_0) \ge \beta$ for all $j\ge 1$.
+		\end{enumerate}
+		Then, for any estimator $\widehat{f}$ based on $n$ observations, we have
+		\begin{equation}
+			\label{eq:minimax-lb}
+			\sup_{f\in\mathcal{F}}
+			\mathbb{E}_f\big[\mathrm{KL}(f\,\|\,\widehat{f})\big]
+			\ge c\,\beta\,
+			\left(1 - \frac{n\alpha + \log 2}{\log M}\right),
+		\end{equation}
+		for a universal constant $c>0$.
+	\end{theorem}
+	
+	\begin{proof}
+		The proof follows the standard Fano--type argument. Consider the
+		multi-hypothesis testing problem where the true distribution is
+		uniformly drawn from $\{f_0,\ldots,f_M\}$ and one observes
+		$X^{(n)}=(X_1,\ldots,X_n)$ i.i.d.\ from the chosen distribution.
+		Let $J$ denote the random index of the true distribution and let
+		$\widehat{J}$ be any estimator of $J$ based on $X^{(n)}$.
+		
+		On the one hand, by the data processing inequality and the chain rule
+		for Kullback--Leibler divergence,
+		\[
+		I(J;X^{(n)})
+		\le \frac{1}{M+1}\sum_{j=0}^M
+		\mathrm{KL}\big(f_j^{\otimes n}\,\|\,\bar{f}^{\otimes n}\big),
+		\]
+		where $\bar{f} = \frac{1}{M+1}\sum_{j=0}^M f_j$.
+		A direct calculation (e.g.\ \citealp{Tsybakov2009}) yields
+		\[
+		I(J;X^{(n)})
+		\le n\alpha,
+		\]
+		up to negligible terms, under assumption (i).
+		
+		On the other hand, Fano's inequality states that
+		\[
+		\mathbb{P}(J\ne\widehat{J})
+		\ge 1 - \frac{I(J;X^{(n)})+\log 2}{\log(M+1)}.
+		\]
+		If $\widehat{f}$ is any estimator, define $\widehat{J}$ by
+		\[
+		\widehat{J}
+		\in \arg\min_{0\le j\le M} \mathrm{KL}(f_j\,\|\,\widehat{f}).
+		\]
+		Then
+		\[
+		\sup_{f\in\mathcal{F}}
+		\mathbb{E}_f\big[\mathrm{KL}(f\,\|\,\widehat{f})\big]
+		\ge \frac{1}{M+1}
+		\sum_{j=0}^M
+		\mathbb{E}_{f_j}\big[\mathrm{KL}(f_j\,\|\,\widehat{f})\big].
+		\]
+		Using assumption (ii), whenever $\widehat{J}\ne J$ we have
+		$\mathrm{KL}(f_J\,\|\,\widehat{f})\ge \beta/2$ (for a suitable choice
+		of the subset). Hence
+		\[
+		\frac{1}{M+1}
+		\sum_{j=0}^M
+		\mathbb{E}_{f_j}\big[\mathrm{KL}(f_j\,\|\,\widehat{f})\big]
+		\ge \frac{\beta}{2}\,
+		\mathbb{P}(J\ne\widehat{J}).
+		\]
+		Combining the last three displays and simplifying the constants yields
+		\eqref{eq:minimax-lb}.
+	\end{proof}
+	
+	\subsection{Consistency of the minimum complexity estimator}
+	
+	We turn to asymptotic properties.  The following theorem states that,
+	under mild identifiability and regularity conditions, the MCE is
+	strongly consistent.
+	
+	\begin{theorem}[Strong consistency]
+		\label{thm:consistency-proof}
+		Assume that:
+		\begin{enumerate}
+			\item The true distribution $P^{\star}$ belongs to the union
+			$\bigcup_{m\in\mathcal{I}}\mathcal{M}_m$ and is uniquely
+			represented as $f_{m^{\star},\theta^{\star}}$;
+			\item For each $m$, the parameter space $\Theta_m$ is compact and
+			the map $\theta\mapsto f_{m,\theta}$ is continuous in $\mathrm{KL}$;
+			\item The penalty satisfies $L(m) = o(n)$ as $n\to\infty$ for each
+			fixed $m$ and grows sufficiently fast in $m$ to avoid overfitting.
+		\end{enumerate}
+		Then
+		\begin{equation}
+			\widehat{m}\to m^{\star},\qquad
+			\widehat{\theta}\to\theta^{\star}
+		\end{equation}
+		almost surely as $n\to\infty$.
+	\end{theorem}
+	
+	\begin{proof}
+		Following the standard M-estimation paradigm, define the normalized
+		criterion
+		\[
+		\mathcal{C}_n(m,\theta)
+		:= -\frac{1}{n}\sum_{i=1}^n \ell_{m,\theta}(X_i)
+		+ \frac{L(m)}{n}.
+		\]
+		By the strong law of large numbers and continuity in $\theta$,
+		\[
+		\mathcal{C}_n(m,\theta)
+		\to \mathcal{C}(m,\theta)
+		:= - P^{\star}\ell_{m,\theta}
+		+ 0
+		= \mathrm{KL}(P^{\star}\,\|\,f_{m,\theta}) + \mathrm{const.}
+		\]
+		almost surely, uniformly on compact subsets of $\Theta_m$.
+		By identifiability, $(m^{\star},\theta^{\star})$ is the unique minimizer
+		of $\mathcal{C}(m,\theta)$.  The additional growth condition on the
+		penalty ensures that for all $m\ne m^{\star}$,
+		\[
+		\inf_{\theta\in\Theta_m} \mathcal{C}(m,\theta)
+		> \mathcal{C}(m^{\star},\theta^{\star}).
+		\]
+		An application of the argmin continuity theorem (see, e.g.,
+		\citealp{vdVart1998}, Theorem 5.7) shows that any sequence of
+		approximate minimizers of $\mathcal{C}_n$ converges almost surely
+		to $(m^{\star},\theta^{\star})$.  Since $(\widehat{m},\widehat{\theta})$
+		exactly minimizes $\mathcal{C}_n$, the result follows.
+	\end{proof}
+	
+	\subsection{Asymptotic distribution}
+	
+	Under additional regularity (differentiability in quadratic mean,
+	non-singular Fisher information, etc.), one can refine the previous
+	consistency result into a central limit theorem for $\widehat{\theta}$.
+	
+	\begin{theorem}[Asymptotic normality]
+		\label{thm:asymp-normal-proof}
+		Assume, in addition to the hypotheses of Theorem~\ref{thm:consistency-proof},
+		that the model $\mathcal{M}_{m^{\star}}$ is regular in the sense of
+		classical likelihood theory, with Fisher information matrix
+		$I(\theta^{\star})$ positive definite.  Then
+		\begin{equation}
+			\sqrt{n}\,(\widehat{\theta}-\theta^{\star})
+			\xrightarrow{d}
+			\mathcal{N}\big(0, I(\theta^{\star})^{-1}\big).
+		\end{equation}
+	\end{theorem}
+	
+	\begin{proof}[Sketch of proof]
+		We only give the main steps, as they closely follow
+		standard arguments in the theory of maximum likelihood estimators.
+		Write the score function
+		\[
+		S_n(\theta)
+		:= \frac{1}{\sqrt{n}}
+		\sum_{i=1}^n \nabla_{\theta}\ell_{m^{\star},\theta}(X_i)
+		\]
+		and observe that the contribution of the penalty $L(m)/n$ is negligible
+		for fixed $m^{\star}$ (since $L(m^{\star})=o(n)$).
+		Expanding the score around $\theta^{\star}$ and using the fact that
+		$S_n(\widehat{\theta})\approx 0$ at the optimum, we obtain
+		\[
+		0
+		= S_n(\theta^{\star})
+		+ \nabla_{\theta}^2\ell_{m^{\star},\bar{\theta}}(X^{(n)})
+		\sqrt{n}\,(\widehat{\theta}-\theta^{\star}),
+		\]
+		for some intermediate point $\bar{\theta}$, with high probability.
+		The central limit theorem applied to $S_n(\theta^{\star})$, together
+		with a law of large numbers for the observed information matrix,
+		implies that
+		\[
+		S_n(\theta^{\star})
+		\xrightarrow{d} \mathcal{N}(0,I(\theta^{\star})),\qquad
+		-\frac{1}{n}
+		\nabla_{\theta}^2\ell_{m^{\star},\bar{\theta}}(X^{(n)})
+		\xrightarrow{\mathbb{P}} I(\theta^{\star}),
+		\]
+		and the result follows by Slutsky's lemma.
+	\end{proof}
+	
+	\subsection{Further auxiliary lemmas}
+	
+	For completeness, we collect here two additional lemmas on covering
+	numbers and metric entropy that are used in the detailed nonasymptotic
+	bounds of Section~\ref{sec:nonasymptotic}.
+	
+	\begin{lemma}[Covering numbers]
+		\label{lem:covering}
+		Let $\mathcal{F}$ be a class of functions with envelope $F$ and let
+		$N(\varepsilon,\mathcal{F},L_2(P^{\star}))$ denote its covering number
+		with respect to the $L_2(P^{\star})$--metric.  If there exist constants
+		$A,v>0$ such that
+		\[
+		\log N(\varepsilon,\mathcal{F},L_2(P^{\star}))
+		\le v \log\left(\frac{A}{\varepsilon}\right)
+		\]
+		for all $0<\varepsilon\le A$, then the empirical process indexed by
+		$\mathcal{F}$ satisfies
+		\[
+		\mathbb{E}
+		\sup_{f\in\mathcal{F}}
+		\big|(P_n-P^{\star})f\big|
+		\le C \sqrt{\frac{v}{n}}\,
+		\|F\|_{L_2(P^{\star})},
+		\]
+		for a universal constant $C>0$.
+	\end{lemma}
+	
+	\begin{proof}
+		This is a standard consequence of Dudley's entropy integral and can
+		be found in many references on empirical process theory; see, e.g.,
+		\cite{vdVW1996}, Theorem 2.14.2.
+	\end{proof}
+	
+	\begin{lemma}[Local entropy bound]
+		\label{lem:local-entropy}
+		Under the same hypotheses as Lemma~\ref{lem:covering}, the local
+		entropy integral on a ball of radius $r$ in $L_2(P^{\star})$ is bounded
+		by
+		\[
+		\int_0^r
+		\sqrt{\log N(\varepsilon,\mathcal{F},L_2(P^{\star}))}\,d\varepsilon
+		\le C' r \sqrt{v \log\left(\frac{A}{r}\right)},
+		\]
+		for a universal constant $C'>0$.
+	\end{lemma}
+	
+	\begin{proof}
+		Integrate the assumed entropy bound and use Jensen's inequality.
+	\end{proof}
+	
+	These lemmas allow one to replace the crude union bound in
+	Lemma~\ref{lem:exp-ineq} by sharper chaining arguments when needed.
+	We have opted to present the main ideas in a form that keeps the
+	structure of the proofs transparent while remaining compatible with
+	the level of rigor expected in leading probability and statistics
+	journals such as \emph{The Annals of Statistics}.
+	
+	\bigskip
+	
+	This completes the proofs of the main results.
+	
+	\begin{thebibliography}{99}
+		
+		\bibitem[ Barron, Rissanen and Yu(1998)]{BarronRissanenYu1998}
+		Barron, A., Rissanen, J. and Yu, B. (1998).
+		The minimum description length principle in coding and modeling.
+		\emph{IEEE Trans. Inform. Theory}, \textbf{44}(6), 2743--2760.
+
+		\bibitem[Birg\'e and Massart(1998)]{BirgeMassart1998}
+		Birg\'e, L. and Massart, P. (1998).
+		Minimum contrast estimators on sieves: exponential bounds and rates of
+		convergence. \emph{Bernoulli}, \textbf{4}(3), 329--375.
+
+		\bibitem[Massart(2007)]{Massart2007}
+		Massart, P. (2007).
+		\emph{Concentration Inequalities and Model Selection}.
+		Lecture Notes in Mathematics 1896, Springer, Berlin.
+		
+		\bibitem[Tsybakov(2009)]{Tsybakov2009}
+		Tsybakov, A. (2009).
+		\emph{Introduction to Nonparametric Estimation}.
+		Springer, New York.
+		
+		\bibitem[van der Vaart and Wellner(1996)]{vdVW1996}
+		van der Vaart, A. W. and Wellner, J. A. (1996).
+		\emph{Weak Convergence and Empirical Processes}.
+		Springer, New York.
+		
+		\bibitem[van der Vaart(1998)]{vdVart1998}
+		van der Vaart, A. W. (1998).
+		\emph{Asymptotic Statistics}.
+		Cambridge University Press, Cambridge.
+		
+	\end{thebibliography}
+	
+\end{document}

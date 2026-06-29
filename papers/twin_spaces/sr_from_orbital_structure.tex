@@ -1,0 +1,553 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,mathrsfs}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{booktabs,enumitem,hyperref}
+\usepackage{tikz}
+\setlist{nosep,leftmargin=1.8em}
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,citecolor=green!40!black,urlcolor=blue!50!black}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Poinc}{\mathrm{Poinc}}
+\newcommand{\Isom}{\mathrm{Isom}}
+\newcommand{\Ker}{\mathrm{Ker}}
+\newcommand{\Stab}{\mathrm{Stab}}
+\newcommand{\Ad}{\mathrm{Ad}}
+\newcommand{\ad}{\mathrm{ad}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\ISO}{\mathrm{ISO}}
+\newcommand{\Diff}{\mathrm{Diff}}
+\newcommand{\dd}{\mathrm{d}}
+
+\title{\textbf{Special Relativity from Orbital Structure:\\Lorentz Transformations, Mass-Shell,\\and Energy-Momentum\\without Lagrangian Principles}}
+
+\author{Jocelyn Nemb\'e\thanks{Email: jnembe777@gmail.com, jnembe@root-insights.org}\\[0.3em]
+\small Roots Insights Laboratory, Singapore\\
+\small National Institute of Management Sciences, Libreville, Gabon}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+We present a derivation of special relativity --- including the Lorentz transformations, time dilation, length contraction, and the energy-momentum relation $E^2 = p^2c^2 + m^2c^4$ --- from three structural axioms about the symmetry group of spacetime, \emph{without writing or minimizing any Lagrangian}. The three axioms are: (S1)~maximal symmetry (the spacetime admits $10$ independent Killing vectors in $4$ dimensions); (S2)~vanishing curvature ($K=0$); and (S3)~free particles correspond to coadjoint orbits of the isometry group. The dynamics are obtained via the Kirillov--Kostant--Souriau symplectic structure on coadjoint orbits --- a Hamiltonian (symplectic), not Lagrangian, framework.
+
+We prove four results that go beyond reformulation: (i)~the speed of light $c$ is the \emph{normalization constant of the kernel} --- the relative scale between time and space translations that fixes the realization $\mathfrak{poinc}(c) \subset \mathfrak{gl}(4,\R)$ and the light cone (the abstract algebras for different $c$ are isomorphic, so $c$ is a units constant rather than an invariant) (Theorem~\ref{thm:c-structural}); (ii)~relativistic velocity addition is a \emph{twin operation} $v_1 \oplus_g v_2 = \phi_g^{-1}(\phi_g(v_1) + \phi_g(v_2))$ with gauge map $\phi_g = \mathrm{artanh}(v/c)$ (Theorem~\ref{thm:twin-addition}); (iii)~time dilation and length contraction are \emph{intrinsic properties of the deformed arithmetic $\oplus_v$}, not dynamical consequences of motion (Theorem~\ref{thm:dilation}); (iv)~the Lorentz--multiplicative analogy reveals the algebraic origin of all relativistic ``effects.''
+
+This paper is the first of a series in which the same three-step pattern (symmetry group $\to$ conservation $\to$ uniqueness) is used to derive general relativity (Paper~2), quantum mechanics (Paper~3), and quantum field theory (Paper~4), each time without Lagrangian input.
+\end{abstract}
+
+\noindent\textbf{Keywords:} special relativity, orbital structure, coadjoint orbits, Poincar\'e group, twin operations, kernel structural constant, Lagrangian-free derivation
+
+\noindent\textbf{MSC 2020:} 83A05, 22E70, 53D20, 70H33
+
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+% ============================================================================
+
+\subsection{Why rederive special relativity?}
+
+Special relativity (SR) is among the best-tested theories in physics, and its derivations are textbook material. Einstein's original approach~\cite{einstein1905} uses two physical postulates: the constancy of the speed of light and the relativity principle. Minkowski's reformulation~\cite{minkowski1908} reinterprets SR as the geometry of $(\R^{1,3}, \eta)$. Group-theoretic treatments derive the Lorentz transformations from the structure of the Poincar\'e group~\cite{weinberg1995,wald1984}. For the dynamics of free particles, the standard approach minimizes the proper-time action $S = -mc\int ds$.
+
+All standard derivations use at least one of: (a)~Einstein's physical postulates about light, (b)~a Lagrangian action ($S = -mc\int \dd s$), or (c)~transformation rules derived from postulates. This raises a foundational question: \emph{can the content of SR be derived from purely structural (group-theoretic) axioms, without physical postulates about light and without a Lagrangian?}
+
+\subsection{Prior work}
+
+Several authors have addressed aspects of this question.
+
+Ignatowski~\cite{ignatowski1910} showed in 1910 that the Lorentz transformations follow from group-theoretic axioms (linearity, reciprocity, isotropy) alone, without postulating the constancy of~$c$; the speed $c$ then appears as an undetermined structural constant.
+
+Zeeman~\cite{zeeman1964} proved in 1964 that the group of bijections preserving the causal order of Minkowski spacetime is $\Poinc(c) \rtimes \R_{>0}$ --- without assuming continuity, differentiability, or the metric. The causal order alone determines the Poincar\'e group.
+
+Souriau~\cite{souriau1970} developed in 1970 a symplectic framework in which elementary particles are identified with coadjoint orbits of the Poincar\'e group. The dynamics is given by the Kirillov--Kostant--Souriau (KKS) symplectic form on the orbit, not by a Lagrangian.
+
+Ehlers, Pirani, and Schild~\cite{eps1972} gave in 1972 a constructive axiomatics of general relativity based on light rays and free-fall trajectories, without postulating the metric \emph{a priori}.
+
+\subsection{Our contribution}
+
+We unify these threads into a single derivation using what we call the \emph{three-step orbital pattern}:
+\begin{center}
+\fbox{\textbf{Symmetry group} $\to$ \textbf{Conservation principle} $\to$ \textbf{Uniqueness theorem} $\to$ \textbf{The equation}}
+\end{center}
+For SR, the instantiation is: Poincar\'e group (from maximal symmetry) $\to$ Noether conservation (from Killing vectors) $\to$ classification of maximally symmetric spaces and coadjoint orbits $\to$ Lorentz transformations + mass-shell.
+
+Beyond the derivation itself, we establish four results (Theorems~\ref{thm:c-structural}, \ref{thm:twin-addition}, \ref{thm:dilation}, and Remark~\ref{rmk:lorentz-mult}) that reinterpret the structure of SR in the language of the twin spaces framework~\cite{nembe2026vol17}, preparing the ground for the extension to GR (Paper~2) and quantum mechanics (Paper~3).
+
+\subsection{Structure of the paper}
+
+Section~\ref{sec:orbital} presents the orbital framework. Section~\ref{sec:maxsym} derives Minkowski spacetime from maximal symmetry. Section~\ref{sec:poincare} computes the Poincar\'e group and identifies $c$ as a kernel structural constant. Section~\ref{sec:coadjoint} derives the mass-shell relation and free-particle dynamics from coadjoint orbits. Section~\ref{sec:lorentz} obtains the Lorentz transformations and velocity addition as orbital and twin-algebraic operations. Section~\ref{sec:effects} reinterprets time dilation and length contraction. Section~\ref{sec:discussion} discusses the results and their connection to the rest of the series.
+
+
+% ============================================================================
+\section{The Orbital Framework}
+\label{sec:orbital}
+% ============================================================================
+
+\begin{definition}[Spacetime $G$-space]\label{def:gspace}
+A \textbf{spacetime $G$-space} is a quadruple $(\mathcal{M}, g, \mathcal{G}, \Phi)$ where $\mathcal{M}$ is a smooth 4-manifold, $g$ is a Lorentzian metric on $\mathcal{M}$, $\mathcal{G}$ is a Lie group (the group of admissible transformations), and $\Phi: \mathcal{G} \times \mathcal{M} \to \mathcal{M}$ is a smooth left action.
+\end{definition}
+
+\begin{definition}[Kernel and kernel dimension]\label{def:kernel}
+The \textbf{kernel} of a spacetime $G$-space is the isometry group:
+\begin{equation}
+\Ker(g) := \Isom(\mathcal{M}, g) = \{\psi \in \mathcal{G} : \psi^*g = g\}.
+\end{equation}
+The \textbf{kernel dimension} is $\kappa := \dim(\Ker(g))$. The Lie algebra of the kernel is:
+\begin{equation}
+\mathfrak{ker}(g) = \{\xi \in \mathfrak{X}(\mathcal{M}) : \mathcal{L}_\xi g = 0\},
+\end{equation}
+the space of Killing vector fields.
+\end{definition}
+
+\begin{theorem}[Myers--Steenrod bound~\cite{myers1939}]\label{thm:ms}
+For a connected $n$-dimensional pseudo-Riemannian manifold $(\mathcal{M}, g)$:
+\begin{equation}
+\kappa \leq \frac{n(n+1)}{2}.
+\end{equation}
+In $4$ dimensions: $\kappa \leq 10$. The bound is attained if and only if $(\mathcal{M}, g)$ has constant sectional curvature.
+\end{theorem}
+
+\begin{proof}
+An isometry $\psi \in \Isom(\mathcal{M}, g)$ is uniquely determined by a pair $(\psi(p), \dd\psi_p) \in \mathcal{M} \times O(T_p\mathcal{M}, g_p)$ at any point $p$. The point $\psi(p)$ has $n$ degrees of freedom; the orthogonal frame $\dd\psi_p$ has $n(n-1)/2$ degrees of freedom (the dimension of the pseudo-orthogonal group). Total: $n + n(n-1)/2 = n(n+1)/2$.
+\end{proof}
+
+\begin{definition}[Conservation principle]\label{def:conservation}
+Let $\xi \in \mathfrak{ker}(g)$ be a Killing vector and $T^{\mu\nu}$ a symmetric divergence-free tensor field ($\nabla_\mu T^{\mu\nu} = 0$). The \textbf{Noether current} associated to $\xi$ is $J^\mu_\xi := T^{\mu\nu}\xi_\nu$, and the \textbf{Noether charge} on a spacelike hypersurface $\Sigma$ is:
+\begin{equation}
+Q_\xi := \int_\Sigma J^\mu_\xi \,\dd\Sigma_\mu.
+\end{equation}
+\end{definition}
+
+\begin{proposition}[Current conservation]\label{prop:conservation}
+If $\xi \in \mathfrak{ker}(g)$ and $\nabla_\mu T^{\mu\nu} = 0$, then $\nabla_\mu J^\mu_\xi = 0$.
+\end{proposition}
+
+\begin{proof}
+$\nabla_\mu(T^{\mu\nu}\xi_\nu) = (\nabla_\mu T^{\mu\nu})\xi_\nu + T^{\mu\nu}\nabla_\mu\xi_\nu$. The first term vanishes by hypothesis; the second vanishes because $T^{\mu\nu}\nabla_\mu\xi_\nu = \frac{1}{2}T^{\mu\nu}(\nabla_\mu\xi_\nu + \nabla_\nu\xi_\mu) = 0$ by the Killing equation $\nabla_{(\mu}\xi_{\nu)} = 0$ and the symmetry of $T^{\mu\nu}$.
+\end{proof}
+
+
+% ============================================================================
+\section{Maximal Symmetry and Minkowski Spacetime}
+\label{sec:maxsym}
+% ============================================================================
+
+\begin{axiom}[Maximal symmetry]\label{ax:maxsym}
+The spacetime $(\mathcal{M}, g)$ has the maximum number of independent Killing vectors: $\kappa = n(n+1)/2 = 10$ in $4$ dimensions.
+\end{axiom}
+
+\begin{theorem}[Constant curvature from maximal symmetry]\label{thm:constcurv}
+A connected 4-dimensional Lorentzian manifold with $\kappa = 10$ has constant sectional curvature $K$. The three possibilities are: $K = 0$ (Minkowski), $K > 0$ (de Sitter), $K < 0$ (anti-de Sitter).
+\end{theorem}
+
+\begin{proof}
+Since the isometry group acts transitively on $\mathcal{M}$ (transitivity requires $\dim(\mathrm{orbit}) = n$, and the orbit-stabilizer theorem gives $\dim(\mathrm{orbit}) = \kappa - \dim(\Stab(p)) = 10 - 6 = 4 = n$), the stabilizer at any point $p$ has dimension $6 = n(n-1)/2$, hence $\Stab(p) \cong \SO^+(1,3)$.
+
+The Riemann tensor $R_{\mu\nu\rho\sigma}$ at $p$ is an element of $S^2(\Lambda^2 T_p^*\mathcal{M})$ that is invariant under $\Stab(p) = \SO^+(1,3)$. The space of $\SO^+(1,3)$-invariant elements of $S^2(\Lambda^2 T_p^*\mathcal{M})$ is one-dimensional, spanned by $g_{\mu[\rho}g_{\sigma]\nu}$ (by Schur's lemma applied to the representation of $\SO(1,3)$ on curvature tensors). Therefore:
+\begin{equation}\label{eq:constcurv}
+R_{\mu\nu\rho\sigma} = K(g_{\mu\rho}g_{\nu\sigma} - g_{\mu\sigma}g_{\nu\rho})
+\end{equation}
+for some constant $K \in \R$. Since the isometry group acts transitively, $K$ is the same at every point.
+\end{proof}
+
+\begin{axiom}[Vanishing curvature]\label{ax:flat}
+$K = 0$.
+\end{axiom}
+
+\begin{remark}[The de Sitter generalization]\label{rmk:desitter}
+Axiom~\ref{ax:flat} is a physical input, equivalent to the absence of a cosmological constant in the SR regime. Setting $K > 0$ or $K < 0$ gives de Sitter or anti-de Sitter spacetime, which are SR with a cosmological constant $\Lambda = 3K$. The orbital framework accommodates all three; the entire derivation of this paper generalizes to the de Sitter case with $\Poinc(c)$ replaced by the de Sitter group $\SO(1,4)$ (for $K > 0$) or $\SO(2,3)$ (for $K < 0$), both of which have the same dimension $10$. The coadjoint orbits of $\SO(1,4)$ produce a modified dispersion relation in which the flat Casimir $\eta^{\mu\nu}p_\mu p_\nu$ is replaced by the $\SO(1,4)$ Casimir, giving curvature corrections of order $\Lambda$ to the mass-shell; the twin operations likewise acquire $O(\Lambda)$ corrections. (We do not record the explicit corrected dispersion here, as its form depends on the chosen coordinates/embedding of de Sitter space.) We restrict to $K = 0$ for the standard SR case.
+\end{remark}
+
+\begin{corollary}\label{cor:minkowski}
+Axioms \ref{ax:maxsym} and \ref{ax:flat} imply $(\mathcal{M}, g) \cong (\R^{1,3}, \eta_c)$ where $\eta_c = \mathrm{diag}(-c^2, 1, 1, 1)$ for some constant $c > 0$.
+\end{corollary}
+
+\begin{proof}
+A simply connected, complete, flat Lorentzian 4-manifold is isometric to $(\R^{1,3}, \eta)$, where $\eta$ is defined up to a positive rescaling of the time coordinate. The parameter $c$ converts between time and space units and is fixed by the choice of units.
+\end{proof}
+
+
+% ============================================================================
+\section{The Poincar\'e Group and the Structural Constant $c$}
+\label{sec:poincare}
+% ============================================================================
+
+\begin{theorem}[Poincar\'e algebra]\label{thm:poincare-algebra}
+The $10$ independent Killing vectors of $(\R^{1,3}, \eta_c)$ are:
+\begin{itemize}
+    \item Translations: $P_\mu = \partial_\mu$ ($\mu = 0,1,2,3$), with $P_0 = \partial_t$.
+    \item Rotations: $L_{ij} = x_i\partial_j - x_j\partial_i$ ($i,j = 1,2,3$).
+    \item Boosts: $K_i^{(c)} = x_i\partial_t + c^2 t\,\partial_i$ ($i = 1,2,3$).
+\end{itemize}
+They generate the Poincar\'e algebra $\mathfrak{poinc}(c) = \mathfrak{so}(1,3) \ltimes \R^4$ with non-vanishing brackets:
+\begin{align}
+[L_{ij}, L_{kl}] &= \delta_{ik}L_{jl} - \delta_{il}L_{jk} - \delta_{jk}L_{il} + \delta_{jl}L_{ik}, \label{eq:LL}\\
+[L_{ij}, P_k] &= \delta_{ik}P_j - \delta_{jk}P_i, \quad [L_{ij}, K_k^{(c)}] = \delta_{ik}K_j^{(c)} - \delta_{jk}K_i^{(c)}, \label{eq:LP}\\
+[K_i^{(c)}, P_0] &= -c^2 P_i, \quad [K_i^{(c)}, P_j] = -\delta_{ij}\,P_0, \label{eq:KP}\\
+[K_i^{(c)}, K_j^{(c)}] &= c^2\,L_{ij}. \label{eq:KK}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+Each vector field is verified to satisfy the Killing equation $\mathcal{L}_\xi\eta_c = 0$, and the brackets are computed directly: for instance, $[K_i^{(c)}, P_j] = [x_i\partial_t + c^2 t\,\partial_i, \partial_j] = -\delta_{ij}\partial_t = -\delta_{ij}P_0$.
+\end{proof}
+
+\begin{theorem}[$c$ as kernel structural constant]\label{thm:c-structural}
+The speed of light $c$ is the structural constant of the kernel $\Ker(\eta_c) = \Poinc(c)$. Specifically:
+\begin{enumerate}[label=\textup{(\alph*)}]
+    \item For $c_1 \neq c_2$, the realizations $\mathfrak{poinc}(c_1)$ and $\mathfrak{poinc}(c_2)$ are conjugate inside $\mathfrak{gl}(4,\R)$ (hence isomorphic), via the time-rescaling $D = \mathrm{diag}(c_2/c_1,1,1,1)$. Thus $c$ is \emph{not} an abstract isomorphism invariant but a units constant fixing the relative scale of time and space translations.
+    \item The light cone $\mathcal{C}_c = \{x \in \R^{1,3} : \eta_c(x,x) = 0\} = \{x : |\vec{x}| = c|t|\}$ depends on $c$: a pair of events that is lightlike for $\eta_{c_1}$ is spacelike for $\eta_{c_2}$ when $c_2 > c_1$.
+    \item The value of $c$ determines the splitting $\mathfrak{g} = \mathfrak{poinc}(c) \oplus \mathfrak{def}(c)$ of any larger algebra $\mathfrak{g} \supset \mathfrak{poinc}(c)$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(a) Rescaling $\tilde K_i = K_i^{(c)}/c$ and $\tilde P_0 = P_0/c$ brings the brackets \eqref{eq:KP}--\eqref{eq:KK} to the $c=1$ Poincar\'e form: $[\tilde K_i, \tilde K_j] = L_{ij}$, $[\tilde K_i, P_j] = -\delta_{ij}\tilde P_0$, $[\tilde K_i, \tilde P_0] = -P_i$. Hence $\mathfrak{poinc}(c) \cong \mathfrak{poinc}(1)$ as abstract Lie algebras for every $c$. At the level of realizations in $\mathfrak{gl}(4,\R)$, conjugation by $D = \mathrm{diag}(c_2/c_1, 1,1,1)$ sends $\eta_{c_1} \mapsto \eta_{c_2}$ and hence $\mathfrak{poinc}(c_1) \mapsto \mathfrak{poinc}(c_2)$. The constant $c$ is therefore a units/normalization parameter, not an invariant separating non-isomorphic algebras.
+
+(b) Direct: $\eta_{c_1}(x,x) = -c_1^2 t^2 + |\vec{x}|^2 = 0$ iff $|\vec{x}| = c_1|t|$, which is $\neq 0$ for $\eta_{c_2}$ when $c_2 \neq c_1$.
+
+(c) A generator $\xi \in \mathfrak{g}$ is in $\mathfrak{poinc}(c)$ iff $\mathcal{L}_\xi\eta_c = 0$. Changing $c$ changes the Killing equation, hence the kernel, hence the splitting.
+\end{proof}
+
+\begin{remark}\label{rmk:c-not-postulate}
+Theorem~\ref{thm:c-structural} reinterprets the constancy of $c$. In Einstein's formulation, ``the speed of light is the same for all observers'' is a physical postulate. In the orbital framework, once units are fixed, $c$ is the normalization of the kernel metric $\eta_c$, and the admissible observer changes are exactly the transformations preserving $\eta_c$ --- the elements of $\Poinc(c)$ --- which therefore leave $c$ invariant by construction. The observer-independence of $c$ is thus built into the definition of the symmetry group, rather than being an additional postulate.
+\end{remark}
+
+
+% ============================================================================
+\section{Free Particles as Coadjoint Orbits}
+\label{sec:coadjoint}
+% ============================================================================
+
+This section derives the mass-shell relation and free-particle dynamics without any action functional, using the Kirillov--Kostant--Souriau structure on coadjoint orbits~\cite{souriau1970,kirillov1976,kostant1970}.
+
+\subsection{Coadjoint orbits of the Poincar\'e group}
+
+\begin{definition}[Coadjoint representation]\label{def:coadjoint}
+The Poincar\'e group acts on the dual $\mathfrak{poinc}(c)^*$ of its Lie algebra by the coadjoint action: $\Ad^*_g(\mu) := \mu \circ \Ad_{g^{-1}}$ for $g \in \Poinc(c)$, $\mu \in \mathfrak{poinc}(c)^*$.
+\end{definition}
+
+An element $\mu \in \mathfrak{poinc}(c)^*$ is specified by a pair $(p_\mu, m_{\mu\nu})$ dual to the generators $(P^\mu, M^{\mu\nu})$. Here $p_\mu$ is the 4-momentum and $m_{\mu\nu}$ encodes angular momentum and boost charges.
+
+\begin{theorem}[Casimir invariants]\label{thm:casimirs}
+The coadjoint orbits of $\Poinc(c)$ are classified by two Casimir invariants:
+\begin{align}
+C_1 &= \eta^{\mu\nu}p_\mu p_\nu = -p_0^2/c^2 + |\vec{p}|^2, \label{eq:C1}\\
+C_2 &= W^\mu W_\mu, \quad \text{where } W^\mu = \tfrac{1}{2}\epsilon^{\mu\nu\rho\sigma}M_{\nu\rho}P_\sigma \text{ (Pauli--Lubanski)}. \label{eq:C2}
+\end{align}
+For a massive spinless particle: $C_1 = -m^2c^2$ and $C_2 = 0$.
+\end{theorem}
+
+\begin{proof}
+$C_1 = \eta^{\mu\nu}P_\mu P_\nu$ commutes with all generators because it is the quadratic Casimir of the Lorentz subalgebra extended to the Poincar\'e algebra; this follows from $[P_\mu, P_\nu] = 0$ and the transformation law $[\Lambda, P_\mu] \propto P_\nu$. Similarly, $C_2 = W^\mu W_\mu$ is the quartic Casimir~\cite{wigner1939}. On a massive orbit ($C_1 < 0$), the rest frame gives $C_2 = -m^2c^2\,s(s+1)\hbar^2$ where $s$ is the spin; for $s = 0$: $C_2 = 0$.
+\end{proof}
+
+\begin{axiom}[Free particle as coadjoint orbit]\label{ax:particle}
+A free particle with mass $m > 0$ and spin $s = 0$ is a point on the coadjoint orbit:
+\begin{equation}
+\mathcal{O}_{m} := \{p \in \mathfrak{poinc}(c)^* : C_1(p) = -m^2c^2,\ C_2(p) = 0,\ p^0 > 0\}.
+\end{equation}
+\end{axiom}
+
+\begin{remark}
+Axiom~\ref{ax:particle} replaces the standard postulate ``free particles extremize $S = -mc\int\dd s$.'' The two are logically independent: Axiom~\ref{ax:particle} is a statement about the group-theoretic nature of particles (following Souriau~\cite{souriau1970} and Wigner~\cite{wigner1939}), while the action principle is a variational statement. They lead to the same dynamics (as we show below), but the logical pathways differ.
+\end{remark}
+
+\subsection{The mass-shell relation}
+
+\begin{theorem}[Mass-shell from orbit constraint]\label{thm:mass-shell}
+For a particle on $\mathcal{O}_m$, the energy-momentum relation is:
+\begin{equation}\label{eq:mass-shell}
+\boxed{E^2 = |\vec{p}\,|^2\,c^2 + m^2c^4}
+\end{equation}
+where $E := c^2 p^0 = -p_0$ is the energy.
+\end{theorem}
+
+\begin{proof}
+The orbit constraint $C_1 = -m^2c^2$ (Eq.~\eqref{eq:C1}) reads $-p_0^2/c^2 + |\vec{p}\,|^2 = -m^2c^2$. Writing $E = c^2 p^0 = -p_0$ (so $p_0^2 = E^2$): $-E^2/c^2 + |\vec{p}\,|^2 = -m^2c^2$, hence $E^2 = |\vec{p}\,|^2c^2 + m^2c^4$.
+\end{proof}
+
+\begin{remark}
+The mass-shell relation is not a dynamical equation but an \emph{orbit constraint}: it specifies which coadjoint orbit the particle lives on. No action was minimized. The constraint arises from the algebraic structure of the Poincar\'e group (the value of the Casimir invariant on the orbit).
+\end{remark}
+
+\subsection{Dynamics from the KKS symplectic structure}
+
+\begin{theorem}[Free-particle dynamics from symplectic structure]\label{thm:dynamics}
+The coadjoint orbit $\mathcal{O}_m$ carries the Kirillov--Kostant--Souriau symplectic form $\omega_{\mathrm{KKS}}$, which is the unique (up to sign) $\Poinc(c)$-invariant symplectic form on $\mathcal{O}_m$~\cite{kirillov1976,kostant1970}. The Hamiltonian flow of $H := E = c^2 p^0$ on $(\mathcal{O}_m, \omega_{\mathrm{KKS}})$ gives the equations of motion:
+\begin{equation}\label{eq:eom}
+\dot{x}^i = \frac{p^i}{m\gamma}, \qquad \dot{p}^i = 0, \qquad \gamma = \frac{E}{mc^2} = \frac{1}{\sqrt{1 - v^2/c^2}},
+\end{equation}
+where $v^i = \dot{x}^i$. These are the equations of free relativistic motion: uniform velocity in a straight line.
+\end{theorem}
+
+\begin{proof}
+Lift the problem to the cotangent bundle $T^*\R^{1,3}$ with canonical coordinates $(x^\mu, p_\nu)$ and the standard symplectic form $\omega = \dd p_\mu \wedge \dd x^\mu$. The coadjoint orbit $\mathcal{O}_m$ is embedded in $T^*\R^{1,3}$ by the momentum map $\mu: T^*\R^{1,3} \to \mathfrak{poinc}^*$, which identifies $(x, p)$ with the linear functional $\mu(x,p)(\xi) = p_\mu \xi^\mu(x)$ for $\xi \in \mathfrak{poinc}$.
+
+On the constraint surface $C_1 = -m^2c^2$, the Hamiltonian $H = c^2 p^0 = c\sqrt{|\vec{p}\,|^2 + m^2c^2}$ generates the flow via Hamilton's equations on the symplectic manifold:
+\begin{equation}
+\dot{x}^i = \frac{\partial H}{\partial p_i} = \frac{cp^i}{\sqrt{|\vec{p}\,|^2 + m^2c^2}} = \frac{p^i}{m\gamma}, \qquad \dot{p}_i = -\frac{\partial H}{\partial x^i} = 0.
+\end{equation}
+This gives $\vec{p} = \text{const}$ and $\vec{x}(t) = \vec{x}_0 + (\vec{p}/m\gamma)t$: straight-line, constant-velocity motion.
+\end{proof}
+
+\begin{remark}[Lagrangian vs.\ Hamiltonian vs.\ symplectic]\label{rmk:not-variational}
+We must distinguish three levels of ``variational structure'':
+\begin{enumerate}[label=(\roman*)]
+    \item \textbf{Lagrangian:} Start from $L(x, \dot{x})$, form $S = \int L\,\dd t$, require $\delta S = 0$. This is the standard textbook approach.
+    \item \textbf{Hamiltonian:} Start from $(q, p, H)$, use $\dot{q} = \partial H/\partial p$, $\dot{p} = -\partial H/\partial q$. Equivalent to the Lagrangian approach via Legendre transform; can also be derived from the action $S = \int(p\dot{q} - H)\,\dd t$ with $\delta S = 0$.
+    \item \textbf{Symplectic:} Start from a symplectic manifold $(\mathcal{O}, \omega)$ and a Hamiltonian function $H$, define the flow via the Poisson bracket $\dot{f} = \{f, H\}$. No action is written or extremized.
+\end{enumerate}
+Our derivation uses level~(iii): the symplectic structure on the coadjoint orbit $\mathcal{O}_m$ is \emph{intrinsic} to the orbit (the KKS form), and the Hamiltonian $H = c^2 p^0$ is the natural generator of time translations in $\Poinc(c)$. No Lagrangian is written or varied at any step. However, we acknowledge that the Hamiltonian formulation is ``variational'' in a generalized sense: Hamilton's equations can be obtained from $\delta\int(p\dot{q} - H)\,\dd t = 0$, and a Lagrangian $L = -mc^2\sqrt{1 - v^2/c^2}$ can be obtained via Legendre transform of $H$. The precise claim is: \emph{the Lagrangian is never an input; it can be reconstructed a posteriori, but the derivation does not require it.}
+\end{remark}
+
+\subsection{Conservation laws}
+
+\begin{theorem}[Ten conservation laws]\label{thm:ten-laws}
+The 10 Killing vectors of $(\R^{1,3}, \eta_c)$ produce 10 conserved quantities for a free particle:
+\begin{center}\small
+\begin{tabular}{llll}\toprule
+\textbf{Killing vector} & \textbf{Charge} & \textbf{Quantity} & \textbf{Count}\\\midrule
+$P_0 = \partial_t$ & $E = c^2 p^0$ & Energy & 1\\
+$P_i = \partial_i$ & $p_i$ & Momentum & 3\\
+$L_{ij} = x_i\partial_j - x_j\partial_i$ & $\ell_{ij} = x_ip_j - x_jp_i$ & Ang.\ momentum & 3\\
+$K_i^{(c)} = x_i\partial_t + (t/c^2)\partial_i$ & $k_i = Ex_i/c^2 - p_it$ & Boost charge & 3\\\bottomrule
+\end{tabular}
+\end{center}
+These are precisely the components of the coadjoint orbit element $(p_\mu, m_{\mu\nu})$, which are constant along the Hamiltonian flow (since the flow is generated by an element of $\mathfrak{poinc}$, it preserves the coadjoint orbit).
+\end{theorem}
+
+
+% ============================================================================
+\section{Lorentz Transformations as Orbit Maps}
+\label{sec:lorentz}
+% ============================================================================
+
+\begin{theorem}[Boosts from orbit-stabilizer]\label{thm:boosts}
+The orbit of the rest-frame momentum $p_0 = (mc, \vec{0}\,)$ under $\SO^+(1,3)$ is the future mass hyperboloid $\mathcal{O}_m \cong H^3_+$, with stabilizer $\Stab(p_0) = \SO(3)$ (spatial rotations). The orbit-stabilizer theorem gives:
+\begin{equation}
+\mathcal{O}_m \cong \SO^+(1,3)/\SO(3) \cong H^3_+.
+\end{equation}
+The unique symmetric Lorentz transformation mapping $p_0$ to $p = (m\gamma c, m\gamma\vec{v})$ is, in coordinates $(ct,\vec x)$ (so that $\eta = \mathrm{diag}(-1,1,1,1)$ and $p^0 = E/c$), the boost:
+\begin{equation}\label{eq:boost}
+B_v = \begin{pmatrix} \gamma & -\gamma v_i/c \\ -\gamma v_j/c & \delta_{ij} + (\gamma-1)v_iv_j/v^2 \end{pmatrix}, \qquad \gamma = (1 - v^2/c^2)^{-1/2}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The stabilizer of $p_0 = (mc, \vec{0}\,)$ consists of all $\Lambda \in \SO^+(1,3)$ with $\Lambda p_0 = p_0$. Since $p_0$ has only a time component, $\Lambda$ must fix the time axis, hence $\Lambda = \mathrm{diag}(1, R)$ with $R \in \SO(3)$. So $\Stab(p_0) = \SO(3)$.
+
+The boost $B_v$ is the unique element of $\SO^+(1,3)$ that is symmetric (as a matrix with respect to $\eta$) and maps $p_0 \mapsto p = (m\gamma c, m\gamma\vec{v})$. It is obtained by exponentiating the boost generator: $B_v = \exp(\theta\hat{v}\cdot\vec{K}/c)$ where $\theta = \mathrm{artanh}(v/c)$ is the rapidity and $\hat{v} = \vec{v}/v$. The matrix entries follow from $\cosh\theta = \gamma$ and $\sinh\theta = \gamma v/c$.
+\end{proof}
+
+\begin{theorem}[Velocity addition as twin operation]\label{thm:twin-addition}
+For collinear boosts $B_{v_1}$ and $B_{v_2}$, the composition $B_{v_1} B_{v_2} = B_{v_{12}} R$ (where $R$ is a Wigner rotation, trivial for collinear boosts) gives the velocity addition:
+\begin{equation}\label{eq:twin-add}
+\boxed{v_1 \oplus_g v_2 := \frac{v_1 + v_2}{1 + v_1v_2/c^2} = c\tanh\!\big(\mathrm{artanh}(v_1/c) + \mathrm{artanh}(v_2/c)\big)}
+\end{equation}
+This is a \textbf{twin operation}: $v_1 \oplus_g v_2 = \phi_g^{-1}(\phi_g(v_1) + \phi_g(v_2))$ with gauge map $\phi_g(v) = \mathrm{artanh}(v/c)$ (the rapidity map).
+\end{theorem}
+
+\begin{proof}
+Rapidities are additive under boost composition: $\theta_{12} = \theta_1 + \theta_2$ (since $B_v = e^{\theta K/c}$ and the exponential map is a group homomorphism for the abelian boost subgroup). Converting back: $v_{12} = c\tanh(\theta_1 + \theta_2)$. Using $\theta_k = \mathrm{artanh}(v_k/c)$ and the identity $\tanh(\alpha + \beta) = (\tanh\alpha + \tanh\beta)/(1 + \tanh\alpha\tanh\beta)$:
+$v_{12} = c \cdot (v_1/c + v_2/c)/(1 + v_1v_2/c^2) = (v_1+v_2)/(1+v_1v_2/c^2)$.
+
+The twin operation form: $\phi_g^{-1}(\phi_g(v_1) + \phi_g(v_2)) = c\tanh(\mathrm{artanh}(v_1/c) + \mathrm{artanh}(v_2/c)) = v_{12}$.
+\end{proof}
+
+\begin{remark}\label{rmk:nonlinearity}
+The non-linearity of velocity addition has an algebraic origin: it is the conjugation of ordinary addition by the nonlinear map $\phi_g = \mathrm{artanh}(v/c)$. The rapidity $\theta$ is the ``linear'' (twin) coordinate; the velocity $v$ is the ``physical'' coordinate. The non-linearity is in the coordinate change, not in the physics.
+\end{remark}
+
+\begin{example}[The speed limit is the edge of the twin chart]\label{ex:vel-add}
+With $\phi_g=\operatorname{artanh}(v/c)$, composing two half-light-speed boosts gives (in units of $c$)
+$0.5c\oplus_g 0.5c=\dfrac{0.5c+0.5c}{1+0.25}=0.8c$, not $c$. More strikingly, for every $v$,
+\[
+c\oplus_g v=\frac{c+v}{1+v/c}=\frac{c+v}{(c+v)/c}=c,
+\]
+so $c$ is an absorbing element. Algebraically this is because $c$ is the boundary value of the twin chart:
+$\operatorname{artanh}(v/c)\to+\infty$ as $v\to c$, and no finite rapidity sum leaves the interval $(-c,c)$. The
+speed limit is thus not a dynamical bound but the edge of the domain of $\phi_g$ --- exactly as the
+multiplicative twin of $+$ (with $\phi=\exp$) keeps products positive because $\exp$ maps onto $\R_{>0}$.
+\end{example}
+
+\begin{remark}[Non-collinear boosts and the Wigner rotation]\label{rmk:wigner}
+For non-collinear boosts $B_{v_1}$ and $B_{v_2}$ (with $\vec{v}_1 \not\parallel \vec{v}_2$), the composition is $B_{v_1}B_{v_2} = B_{v_{12}}R_W$, where $R_W \in \SO(3)$ is the \textbf{Wigner rotation} (or Thomas rotation). The resulting velocity $\vec{v}_{12}$ is given by the general Einstein addition formula, and $R_W$ is a pure rotation whose angle depends on $|\vec{v}_1|$, $|\vec{v}_2|$, and the angle between them. The Wigner rotation is a direct consequence of the non-abelian structure of $\SO^+(1,3)$: the boost subgroup is not a subgroup (the product of two boosts is a boost composed with a rotation). In the twin language: the non-collinear twin addition $\vec{v}_1 \oplus_g \vec{v}_2$ lives in a non-abelian extension of the rapidity addition, and the Wigner rotation is the obstruction to commutativity of $\oplus_g$ in three dimensions. The Thomas precession (observed in atomic physics) is the physical manifestation of this group-theoretic fact.
+\end{remark}
+
+
+% ============================================================================
+\section{Relativistic Effects as Arithmetic Properties}
+\label{sec:effects}
+% ============================================================================
+
+\begin{theorem}[Time dilation from orbit geometry]\label{thm:dilation}
+Let $\gamma(t)$ be the worldline of a particle with constant velocity $\vec{v}$ in frame $S$. The proper time element along $\gamma$ is:
+\begin{equation}
+\dd\tau = \frac{\dd t}{\gamma(v)}, \qquad \gamma(v) = \frac{1}{\sqrt{1 - v^2/c^2}}.
+\end{equation}
+This is a property of the orbit metric: the induced metric on the mass hyperboloid $\mathcal{O}_m \cong H^3_+$, restricted to the worldline parameterized by $v$, gives $\dd\tau = \dd t/\gamma$.
+\end{theorem}
+
+\begin{proof}
+Along the worldline $\gamma(t) = (t, \vec{v}t)$: $\dd s^2 = \eta_c(\dot\gamma, \dot\gamma)\dd t^2 = (-c^2 + v^2)\dd t^2$. The proper time: $\dd\tau = \sqrt{-\dd s^2/c^2} = \sqrt{1 - v^2/c^2}\,\dd t = \dd t/\gamma$.
+\end{proof}
+
+\begin{corollary}[Length contraction]
+A rod of proper length $L_0$ (measured in its rest frame) has length $L = L_0/\gamma$ in a frame where it moves with velocity $v$. This follows from the Lorentz boost~\eqref{eq:boost} applied to the spacelike separation between the rod's endpoints at simultaneous time in the moving frame.
+\end{corollary}
+
+\begin{remark}[The Lorentz--multiplicative analogy]\label{rmk:lorentz-mult}
+The twin operation structure reveals a deep analogy between the Lorentz and multiplicative arithmetics:
+
+\begin{center}\small
+\begin{tabular}{lll}\toprule
+& \textbf{Multiplicative} ($\phi = \exp$) & \textbf{Lorentz} ($\phi = \mathrm{artanh}(v/c)$) \\\midrule
+Base operation & $+$ (addition) & $+$ (addition of rapidities) \\
+Twin operation & $x \cdot y = e^{\ln x + \ln y}$ & $v_1\oplus_g v_2 = c\tanh(\theta_1+\theta_2)$ \\
+``Dilation'' & $e^{\lambda t}$ & $\gamma = \cosh\theta$ \\
+Parameter & $\lambda$ (rate) & $\theta$ (rapidity) \\
+Bound & None & $c$ (since $|\tanh\theta| < 1$) \\
+Structural constant & None & $c$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+In both cases, the ``effects'' (exponential growth / time dilation) are \emph{intrinsic properties of the twin arithmetic} $\oplus_g$, not dynamical consequences of motion. Velocity does not ``cause'' time dilation any more than the growth rate ``causes'' exponential growth. Both are structural properties of the deformed operation.
+
+We emphasize that the mathematical content of time dilation (the formula $\dd\tau = \dd t/\gamma$) is identical to the standard derivation. What is new is the \emph{interpretive framework}: viewing it as a property of the twin arithmetic $\oplus_g$ rather than as a kinematic effect of relative motion. The mathematics is equivalent; the conceptual framing differs.
+\end{remark}
+
+
+% ============================================================================
+\section{Discussion}
+\label{sec:discussion}
+% ============================================================================
+
+\subsection{Comparison with Einstein's postulates}
+
+Einstein's derivation and ours are logically equivalent but conceptually different:
+
+\begin{center}\small
+\begin{tabular}{lll}\toprule
+& \textbf{Einstein (1905)} & \textbf{This paper} \\\midrule
+Inputs & Constancy of $c$ + relativity & Max.\ symmetry + $K = 0$ + coadjoint orbits \\
+Type & Physical postulates & Structural axioms \\
+Dynamics & Action $S = -mc\int\dd s$ & KKS flow on $\mathcal{O}_m$ \\
+$c$ & Empirical constant & Kernel structural constant \\
+Vel.\ addition & Kinematic derivation & Twin operation $\oplus_g$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Neither derivation is ``better'' --- they address different foundational concerns. Einstein's is physically motivated; ours is group-theoretically motivated.
+
+\subsection{Comparison with Ignatowski}
+
+Ignatowski~\cite{ignatowski1910} showed that the Lorentz transformations follow from group-theoretic axioms alone (linearity, reciprocity, isotropy), without postulating the constancy of $c$. The speed $c$ appears as an undetermined constant. Our approach goes further in two ways: (i)~we identify $c$ as the \emph{kernel structural constant} (Theorem~\ref{thm:c-structural}), giving it a precise algebraic meaning beyond ``undetermined parameter''; (ii)~we derive the dynamics (mass-shell and equations of motion) from coadjoint orbits, which Ignatowski's purely kinematic approach does not address.
+
+\subsection{The three-step pattern}
+
+The derivation follows the pattern:
+\begin{enumerate}
+    \item \textbf{Symmetry:} Maximal symmetry ($\kappa = 10$) selects the Poincar\'e group.
+    \item \textbf{Conservation:} Killing vectors produce 10 conserved quantities (Theorem~\ref{thm:ten-laws}).
+    \item \textbf{Uniqueness:} The classification of maximally symmetric spaces (Theorem~\ref{thm:constcurv}) and the Casimir classification of coadjoint orbits (Theorem~\ref{thm:casimirs}) uniquely determine the spacetime and the mass-shell.
+\end{enumerate}
+
+In the companion papers, the same pattern produces: Einstein's field equations from $\Diff$-equivariance + conservation + Curiel's uniqueness theorem (Paper~2~\cite{nembe2026p2}); the Schr\"odinger equation from Bargmann representations + unitarity + Schur's lemma (Paper~3~\cite{nembe2026p3}); and quantum field theory from Poincar\'e representations + unitarity + cluster decomposition (Paper~4~\cite{nembe2026p4}).
+
+\subsection{Connection to general relativity}
+
+Reducing the kernel dimension from $\kappa = 10$ to $\kappa < 10$ introduces curvature and gravity. In the orbital framework, GR is the $\kappa < 10$ regime of the same structure. The transition SR $\to$ GR is parameterized by the single integer $\kappa$, and all the concepts of this paper (kernel, coadjoint orbits, twin operations, conservation) generalize naturally to the curved case~\cite{nembe2026vol17}.
+
+
+% ============================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+% ============================================================================
+
+We have derived the content of special relativity from three structural axioms (maximal symmetry, vanishing curvature, and coadjoint orbit identification of particles) without writing or minimizing any Lagrangian. The Lorentz transformations arise as orbit maps (Theorem~\ref{thm:boosts}), the mass-shell relation as a Casimir eigenvalue (Theorem~\ref{thm:mass-shell}), the dynamics from the KKS symplectic structure on coadjoint orbits (Theorem~\ref{thm:dynamics}), and velocity addition as a twin operation (Theorem~\ref{thm:twin-addition}). We note that the symplectic (Hamiltonian) framework used for the dynamics is itself a form of variational structure in the generalized sense; the precise claim is that no Lagrangian input is required.
+
+The speed of light $c$ is not an empirical speed limit but the structural constant of the Poincar\'e kernel (Theorem~\ref{thm:c-structural}). Time dilation and length contraction are not dynamical consequences of motion but intrinsic properties of the deformed arithmetic $\oplus_g$ (Theorem~\ref{thm:dilation}).
+
+This derivation is the first instantiation of a universal three-step pattern (symmetry $\to$ conservation $\to$ uniqueness) that, in subsequent papers, will be shown to produce general relativity, quantum mechanics, and quantum field theory from the same structural framework.
+
+
+% ============================================================================
+\section*{Acknowledgments}
+% ============================================================================
+
+The author thanks the Roots Insights Laboratory and the National Institute of Management Sciences for support.
+
+
+% ============================================================================
+\begin{thebibliography}{30}
+
+\bibitem{einstein1905} A.~Einstein, ``Zur Elektrodynamik bewegter K\"orper,'' \emph{Ann.\ Phys.} \textbf{322}, 891--921 (1905).
+
+\bibitem{minkowski1908} H.~Minkowski, ``Die Grundgleichungen f\"ur die elektromagnetischen Vorg\"ange in bewegten K\"orpern,'' \emph{Nachr.\ Ges.\ Wiss.\ G\"ottingen}, 53--111 (1908).
+
+\bibitem{ignatowski1910} W.~von Ignatowski, ``Einige allgemeine Bemerkungen zum Relativit\"atsprinzip,'' \emph{Phys.\ Z.} \textbf{11}, 972--976 (1910).
+
+\bibitem{zeeman1964} E.C.~Zeeman, ``Causality implies the Lorentz group,'' \emph{J.\ Math.\ Phys.} \textbf{5}, 490--493 (1964).
+
+\bibitem{souriau1970} J.-M.~Souriau, \emph{Structure des syst\`emes dynamiques} (Dunod, Paris, 1970). English translation: \emph{Structure of Dynamical Systems} (Birkh\"auser, 1997).
+
+\bibitem{eps1972} J.~Ehlers, F.A.E.~Pirani, and A.~Schild, ``The geometry of free fall and light propagation,'' in \emph{General Relativity} (Papers in Honour of J.L.~Synge), ed.\ L.~O'Raifeartaigh (Clarendon, Oxford, 1972), pp.~63--84.
+
+\bibitem{wigner1939} E.P.~Wigner, ``On unitary representations of the inhomogeneous Lorentz group,'' \emph{Ann.\ Math.} \textbf{40}, 149--204 (1939).
+
+\bibitem{kirillov1976} A.A.~Kirillov, \emph{Elements of the Theory of Representations} (Springer, 1976).
+
+\bibitem{kostant1970} B.~Kostant, ``Quantization and unitary representations,'' in \emph{Lectures in Modern Analysis and Applications III}, Lecture Notes in Mathematics \textbf{170} (Springer, 1970), pp.~87--208.
+
+\bibitem{myers1939} S.B.~Myers and N.E.~Steenrod, ``The group of isometries of a Riemannian manifold,'' \emph{Ann.\ Math.} \textbf{40}, 400--416 (1939).
+
+\bibitem{weinberg1972} S.~Weinberg, \emph{Gravitation and Cosmology} (Wiley, 1972).
+
+\bibitem{weinberg1995} S.~Weinberg, \emph{The Quantum Theory of Fields}, Vol.~1 (Cambridge Univ.\ Press, 1995).
+
+\bibitem{wald1984} R.M.~Wald, \emph{General Relativity} (Univ.\ Chicago Press, 1984).
+
+\bibitem{misner1973} C.W.~Misner, K.S.~Thorne, and J.A.~Wheeler, \emph{Gravitation} (Freeman, 1973).
+
+\bibitem{arnold1989} V.I.~Arnold, \emph{Mathematical Methods of Classical Mechanics}, 2nd ed.\ (Springer, 1989).
+
+\bibitem{marsden1974} J.~Marsden and A.~Weinstein, ``Reduction of symplectic manifolds with symmetry,'' \emph{Rep.\ Math.\ Phys.} \textbf{5}, 121--130 (1974).
+
+\bibitem{berzi1969} V.~Berzi and V.~Gorini, ``Reciprocity principle and the Lorentz transformations,'' \emph{J.\ Math.\ Phys.} \textbf{10}, 1518--1524 (1969).
+
+\bibitem{alexandrov1967} A.D.~Alexandrov, ``A contribution to chronogeometry,'' \emph{Canad.\ J.\ Math.} \textbf{19}, 1119--1128 (1967).
+
+\bibitem{nembe2026vol17} J.~Nemb\'e, ``Twin General Relativity,'' \emph{ROOTS-INSIGHTS} Vol.~17 (2026).
+
+\bibitem{nembe2026p2} J.~Nemb\'e, ``General relativity from orbital structure'' (Paper~2, in preparation).
+
+\bibitem{nembe2026p3} J.~Nemb\'e, ``Quantum mechanics from orbital structure'' (Paper~3, in preparation).
+
+\bibitem{nembe2026p4} J.~Nemb\'e, ``Quantum field theory from orbital structure'' (Paper~4, in preparation).
+
+\end{thebibliography}
+
+\end{document}

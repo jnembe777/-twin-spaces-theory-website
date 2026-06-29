@@ -1,0 +1,374 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,citecolor=green!45!black,urlcolor=blue!60!black}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Diff}{\mathrm{Diff}}
+\newcommand{\KL}{\mathrm{KL}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\title{\textbf{Concentration of Measure under Diffeomorphisms:\\
+What Coordinate Choice Can and Cannot Do}\\[0.4em]
+\large (corrected and rescoped version)}
+\author{Jocelyn Nemb\'e\\[0.2em]
+\small L.I.A.G.E, Institut National des Sciences de Gestion, Libreville, Gabon\\
+\small Modeling and Calculus Lab, ROOTS-INSIGHTS}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We revisit the idea that concentration of measure can be ``improved'' by an
+optimal choice of coordinate (diffeomorphism). The transport (covariance) of
+concentration inequalities under a diffeomorphism $\phi$ is exact and useful as
+an organizing language. However, the stronger claims --- a universal optimal
+coordinate, and order-of-magnitude ``strict improvement'' over classical
+inequalities --- do not survive scrutiny: the proposed concentration functional
+is not scale-normalized, its unconstrained minimization over the diffeomorphism
+group is degenerate (infimum $0$), and the advertised improvement factors compare
+quantities carried in different units (and, in fact, bounds on \emph{different}
+functionals). We give the corrected statements. The genuine residue is twofold:
+(i) for a \emph{fixed} target functional the bounded-difference bound is
+coordinate-intrinsic, so the only legitimate role of $\phi$ is to \emph{match the
+coordinate to the target} (e.g.\ the logarithm for multiplicative data), turning
+an inapplicable inequality into an applicable one --- a \emph{qualitative}
+(finite-vs-infinite) gain for heavy-tailed/multiplicative data, not a numerical
+beat on the same quantity; and (ii) the canonically scale-invariant
+concentration object is the Hellinger affinity, multiplicative under products,
+whose $-\log$ is additive --- i.e.\ concentration of evidence lives in the
+logarithmic twin coordinate, where the Barron--Cover/Kraft bound is the natural
+large-deviation estimate. A closing section determines precisely what these
+corrected results do, and do not, contribute to orbital/MDL statistical
+estimation.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction and the corrected thesis}
+
+Let $(E,\mathcal A)$ carry a probability measure $\mu$, and let $\phi:E\to F$ be a
+diffeomorphism (or measurable bijection) with pushforward $\nu=\phi_*\mu$. The
+\emph{transport principle} is the elementary identity
+\begin{equation}\label{eq:transport}
+\int_E (g\circ\phi)\,d\mu=\int_F g\,d\nu ,\qquad
+\mathrm{Law}_\mu\big(g\circ\phi\big)=\mathrm{Law}_\nu(g).
+\end{equation}
+Thus any concentration statement for the pair $(g,\nu)$ is \emph{the same}
+statement for the pair $(g\circ\phi,\mu)$. This is correct and is a convenient
+language, but it is an isomorphism: it relabels, it does not create.
+
+The temptation is to treat $\phi$ as a free knob and to ``optimize''
+concentration over it. We show this is ill-posed as usually stated and that the
+publicized gains are artifacts (Section~\ref{sec:nolunch}). We then isolate the
+two things that are genuinely true and useful:
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{Match the coordinate to the target.} For a \emph{fixed} functional
+the bounded-difference / sub-Gaussian constants are intrinsic; the role of $\phi$
+is only to express the target where a classical inequality \emph{applies}. For
+heavy-tailed or multiplicative data this is a \emph{qualitative} gain (a finite
+bound where none existed), not a numerical improvement on the same quantity
+(Sections~\ref{sec:multiplicative}--\ref{sec:infogeom}).
+\item \textbf{The scale-invariant object is the affinity.} The Hellinger affinity
+is multiplicative under products, so $-\log$ of it is additive: evidence
+concentrates in the logarithmic (twin) coordinate, where the Barron--Cover/Kraft
+bound is the natural large-deviation estimate (Section~\ref{sec:link}).
+\end{enumerate}
+
+\section{The covariance dictionary (correct)}
+\label{sec:dictionary}
+
+\begin{definition}[Pushforward, pullback]\label{def:pp}
+For $\phi:E\to F$ and $\mu$ on $E$, the pushforward is
+$(\phi_*\mu)(B)=\mu(\phi^{-1}(B))$; for $g:F\to\R$ the pullback is
+$\phi^*g=g\circ\phi$; for a metric $d_F$ the pullback metric is
+$(\phi^*d_F)(x,y)=d_F(\phi(x),\phi(y))$.
+\end{definition}
+
+\begin{lemma}[Exact covariance of concentration]\label{lem:cov}
+Let $\nu=\phi_*\mu$. Then for every functional $g$,
+$\mathrm{Law}_\mu(g\circ\phi)=\mathrm{Law}_\nu(g)$. Consequently:
+\begin{enumerate}[label=(\alph*)]
+\item $g\circ\phi$ is sub-Gaussian under $\mu$ with parameter $\sigma^2$ iff $g$
+is sub-Gaussian under $\nu$ with the same parameter $\sigma^2$;
+\item $\nu$ satisfies a log-Sobolev (resp.\ Poincar\'e) inequality with constant
+$C$ iff $\mu$ satisfies the pulled-back inequality with the \emph{same} constant
+$C$;
+\item the isoperimetric profile is covariant: $I_\mu^{\phi^*d}=I_\nu^{d}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Immediate from \eqref{eq:transport}: entropy, variance, Lipschitz seminorms and
+boundary measures are computed through integrals that are invariant under the
+change of variables $x\mapsto\phi(x)$.
+\end{proof}
+
+\begin{remark}[What Lemma~\ref{lem:cov} does \emph{not} say]
+It transports a \emph{single} inequality between a measure and its pushforward.
+It does \emph{not} unify the distinct classical inequalities (Hoeffding,
+Bernstein, Talagrand, Gaussian isoperimetry): these rest on different hypotheses
+(bounded range, variance control, convexity, Gaussianity) and are not coordinate
+images of one another. The earlier claim that they are ``manifestations of a
+single principle'' over-reaches.
+\end{remark}
+
+\section{No free improvement: the central correction}
+\label{sec:nolunch}
+
+Fix the sub-Gaussian functional of a measure,
+\begin{equation}\label{eq:F}
+F[\mu,\phi]:=\inf\{\sigma^2:\ \phi_*\mu\ \text{is sub-Gaussian with parameter}\ \sigma^2\}.
+\end{equation}
+
+\begin{proposition}[The unconstrained optimum is degenerate]\label{prop:degenerate}
+For any non-degenerate $\mu$ on $\R^n$,
+\[
+\inf_{\phi\in\Diff(\R^n)} F[\mu,\phi]=0,
+\]
+and the infimum is not attained by a diffeomorphism: it is approached by
+compressive maps $\phi=\varepsilon\,\psi$ ($\psi$ bounded, $\varepsilon\to0$), or by any
+$\phi$ with $\phi_*\mu$ supported in a vanishing ball. Hence
+``$\phi^\star=\argmin_\phi\sup_{\mu}F[\mu,\phi]$'' is \emph{ill-posed} without a
+normalization of $\phi$.
+\end{proposition}
+
+\begin{proof}
+$F[\varepsilon\psi\cdot\,;\mu]=\varepsilon^2 F[\psi_*\mu]\to0$. A deviation of
+$\phi(X)$ by $t$ corresponds to a deviation of $X$ by $\asymp t/\varepsilon\to\infty$;
+the small ``concentration constant'' is bought by inflating the scale of the
+quantity being controlled.
+\end{proof}
+
+The correct way to make the question meaningful is to \emph{fix what is being
+bounded}.
+
+\begin{proposition}[Bounded-difference bounds are coordinate-intrinsic]\label{prop:intrinsic}
+Let $h:E^n\to\R$ be a fixed functional with bounded differences $c_i$: for all
+$x,x_i'$,
+$|h(\dots,x_i,\dots)-h(\dots,x_i',\dots)|\le c_i$ whenever $x_i,x_i'$ range over
+the support. Then $P(|h-\E h|\ge t)\le 2\exp(-2t^2/\sum_i c_i^2)$, and the
+constants $c_i$ depend only on $h$ and the supports, \emph{not} on any coordinate
+$\phi$ used to describe the data. In particular no diffeomorphism improves the
+McDiarmid bound for a fixed $h$.
+\end{proposition}
+
+\begin{proof}
+McDiarmid's inequality applied to $h$. Reparametrizing the data by $\phi$ replaces
+$h$ by $h\circ\phi^{-1}$ acting on $\phi(X_i)$; the increments are unchanged
+because $h\circ\phi^{-1}(\phi(x))=h(x)$, so $c_i$ is the same number computed in
+either chart.
+\end{proof}
+
+\begin{remark}[Consequence for ``optimal coordinates'']
+Propositions~\ref{prop:degenerate}--\ref{prop:intrinsic} together say: the only
+legitimate effect of $\phi$ is to change \emph{which functional} one bounds (or
+to make a previously inapplicable inequality applicable). There is no universal
+coordinate that tightens concentration for a fixed target; the well-posed problem
+is to \emph{match} $\phi$ to the target functional.
+\end{remark}
+
+\section{Multiplicative data: the matched coordinate (corrected)}
+\label{sec:multiplicative}
+
+Let $X_1,\dots,X_n$ be independent with $X_i\in[a_i,b_i]\subset(0,\infty)$, and
+let $P_n=\prod_i X_i$. The natural (scale-invariant) deviation of a product is
+\emph{multiplicative}, i.e.\ a deviation of $\log P_n$.
+
+\begin{theorem}[Concentration of products, corrected]\label{thm:product}
+\[
+P\big(|\log P_n-\E\log P_n|\ge t\big)\ \le\ 2\exp\!\Big(-\frac{2t^2}{\sum_{i=1}^n\log^2(b_i/a_i)}\Big).
+\]
+Equivalently, the multiplicative deviation $P_n/\exp(\E\log P_n)$ is controlled
+at the dimensionless scale $\sum_i\log^2(b_i/a_i)$.
+\end{theorem}
+
+\begin{proof}
+$\log P_n=\sum_i\log X_i$ with $\log X_i\in[\log a_i,\log b_i]$ of range
+$\log(b_i/a_i)$; apply Hoeffding. By Proposition~\ref{prop:intrinsic} the same
+constant is obtained by McDiarmid on the functional $\log P_n$ in \emph{any}
+chart: the logarithm is merely the chart in which $\log P_n$ is a sum of bounded
+terms.
+\end{proof}
+
+\begin{remark}[Why there is no ``$\Gamma\approx 21000$'' free lunch]
+The previously claimed improvement factor $\Gamma=(b-a)^2/(\log(b/a))^2$ compares
+two \emph{different} objects: the Hoeffding constant for the \emph{sum}
+$S_n=\sum_iX_i$ (in units of $X^2$) against the Hoeffding constant for the
+\emph{product} $P_n$ (dimensionless). The numerator is scale-dependent (under
+$X\mapsto\lambda X$ it is multiplied by $\lambda^2$), the denominator is not, so
+$\Gamma$ can be made arbitrary by rescaling and is not a function of $b/a$ alone.
+For one \emph{fixed} functional there is no such factor
+(Proposition~\ref{prop:intrinsic}).
+\end{remark}
+
+\begin{theorem}[Qualitative gain for heavy tails]\label{thm:heavy}
+Suppose $X>0$ is heavy-tailed: it admits no finite sub-Gaussian (or
+Bernstein-type) parameter in the identity chart, while $\log X$ is
+bounded/sub-Gaussian. Then no Hoeffding/Bernstein bound exists for $X$ directly,
+whereas Theorem~\ref{thm:product} and Lemma~\ref{lem:cov} yield finite
+concentration for the multiplicative functionals of $X$ (products, geometric
+means, quantiles). The improvement is \emph{qualitative} (finite versus infinite),
+not a numerical ratio on a common quantity.
+\end{theorem}
+
+\begin{proof}
+Direct from Lemma~\ref{lem:cov}: sub-Gaussianity of $\log X$ transports to all
+functionals expressible through $\log X$; no statement about $X$ in the identity
+chart is implied or claimed.
+\end{proof}
+
+\begin{theorem}[Worst case over a bounded class, corrected]\label{thm:minimax}
+Over all $\mu$ supported in $[a,b]$, the sub-Gaussian functional is maximized,
+not minimized, at the two-point (Rademacher) law on $\{a,b\}$:
+\[
+\sup_{\mathrm{supp}(\mu)\subseteq[a,b]} F[\mu,\mathrm{id}]=\frac{(b-a)^2}{4},
+\qquad
+\inf_{\mathrm{supp}(\mu)\subseteq[a,b]} F[\mu,\mathrm{id}]=0\ (\text{Dirac}).
+\]
+Hence the \emph{class-uniform} Hoeffding constant in the identity chart is
+$(b-a)^2/4$ (a $\sup$), and in the logarithmic chart $(\log(b/a))^2/4$; these
+are worst-case constants for \emph{different} functionals/units and are not
+directly comparable.
+\end{theorem}
+
+\begin{proof}
+For a distribution on $[a,b]$, $\Var\le (b-a)^2/4$ with equality at the endpoints
+two-point law (Popoviciu/Bhatia--Davis), and $\Var\ge0$ with equality at a Dirac.
+The earlier statement labelled this extremum an ``$\inf$''; it is a $\sup$.
+\end{proof}
+
+\section{Information-geometric coordinate (corrected)}
+\label{sec:infogeom}
+
+\begin{proposition}[Expectation coordinate as the matched chart]\label{prop:expfam}
+Let $P_\theta(dx)=\exp(\langle\theta,T(x)\rangle-A(\theta))\,\mu_0(dx)$ be a
+regular exponential family with log-partition $A$. The expectation coordinate
+$\eta=\nabla A(\theta)=\E_\theta[T]$ is the canonical chart for the sufficient
+statistic: the Fisher information $\nabla^2 A(\theta)=\Var_\theta(T)$ transforms
+into $\nabla^2 A^\ast(\eta)$ with $A^\ast$ the Legendre dual, and the family is
+\emph{dually flat} (the $e$- and $m$-connections are flat).
+\end{proposition}
+
+\begin{proof}
+Standard convex-duality computation; $\eta=\nabla A(\theta)$, $\theta=\nabla
+A^\ast(\eta)$, $\nabla^2A^\ast=(\nabla^2A)^{-1}$.
+\end{proof}
+
+\begin{remark}[Correction to ``Fisher--Rao becomes Euclidean'']
+Dual flatness is \emph{not} the same as making the Fisher--Rao (Levi-Civita)
+metric Euclidean. For $\dim\ge 2$ the Fisher--Rao metric of an exponential family
+generally has nonzero Riemannian curvature, so \emph{no} chart renders it
+Euclidean; only the dual-affine structure flattens. The matched chart $\eta$ is
+canonical in the dually-flat sense, which is the correct statement.
+\end{remark}
+
+\section{The scale-invariant object: affinity concentration and the link to estimation}
+\label{sec:link}
+
+The well-posed, scale-invariant concentration object is not $F[\mu,\phi]$ but the
+\emph{Hellinger affinity}
+\[
+\rho(P,Q)=\int\sqrt{dP\,dQ}\in(0,1],\qquad h^2(P,Q)=1-\rho(P,Q).
+\]
+
+\begin{proposition}[Evidence concentrates in the logarithmic twin coordinate]\label{prop:affinity}
+The affinity is multiplicative under products, $\rho(P^{\otimes n},Q^{\otimes
+n})=\rho(P,Q)^n$, so $-\log\rho$ is additive. For a countable model family
+$\{f_m\}$ with prefix code lengths satisfying the half-Kraft condition
+$\sum_m 2^{-L(m)/2}\le 1$, the minimum-description-length selector $\widehat f$
+obeys the partition-function (large-deviation) bound
+\begin{equation}\label{eq:bc}
+\E_{P^\star}\!\Big[2^{-L(\widehat m)/2}\textstyle\prod_{i=1}^n\sqrt{\widehat f(X_i)/f^\star(X_i)}\Big]
+\ \le\ \sum_m 2^{-L(m)/2}\rho(f^\star,f_m)^n\ \le\ 1,
+\end{equation}
+whence $\E[h^2(P^\star,\widehat f)]\le\inf_m\{\KL(P^\star\|f_m)+(\log2)L(m)/n\}$.
+\end{proposition}
+
+\begin{proof}
+Multiplicativity of $\rho$ is Fubini; \eqref{eq:bc} is the Barron--Cover
+argument: $\widehat m$ maximizes $2^{-L(m)}\prod_i f_m(X_i)$, take square roots
+and bound the max by the sum; then take $\E_{P^\star}$. The resolvability bound
+follows by the standard passage (Jensen, $h^2\le-\log\rho\le\KL$).
+\end{proof}
+
+This is the correct form of ``concentration in a twin space'': the relevant
+non-additive structure is the \emph{multiplicative} space of affinities/likelihood
+ratios, whose additive (logarithmic) chart is canonical and \emph{scale
+invariant} --- precisely the normalization that $F[\mu,\phi]$ lacks.
+
+\begin{remark}[Scope: near-minimax, not exact]
+The resolvability bound of Proposition~\ref{prop:affinity} is the genuine
+contribution to orbital/MDL estimation, but it must be read precisely. On a
+nonparametric sieve the code length is $L(m)\asymp D_m\log n$, so the bound yields
+the rate $(\log n/n)^{2s/(2s+d)}$ --- minimax \emph{up to a logarithmic factor},
+the per-coefficient quantization cost of the description-length code. The
+affinity/MDL machinery is thus \emph{near-minimax}; the \emph{exact} rate
+$n^{-2s/(2s+d)}$ is attained not by this code but by a projection /
+penalized-projection estimator paying the metric complexity $D_m/n$. What these
+corrected results contribute is the concentration step (the affinity bound), not
+the removal of the log, which is a separate, estimator-level refinement.
+\end{remark}
+
+\section{Honest scope: what is, and is not, a contribution}
+\label{sec:scope}
+
+\noindent\textbf{Retained / correct.}
+\begin{itemize}[leftmargin=1.4em]
+\item The covariance dictionary (Lemma~\ref{lem:cov}): a clean transport of
+sub-Gaussianity, log-Sobolev, Poincar\'e, isoperimetry between a measure and its
+pushforward.
+\item The matched-coordinate principle for multiplicative/heavy-tailed data
+(Theorems~\ref{thm:product}--\ref{thm:heavy}): a \emph{qualitative} extension of
+applicability.
+\item The expectation/dually-flat chart for exponential families
+(Proposition~\ref{prop:expfam}).
+\item The affinity formulation (Proposition~\ref{prop:affinity}) as the
+scale-invariant concentration object.
+\end{itemize}
+
+\noindent\textbf{Withdrawn / corrected.}
+\begin{itemize}[leftmargin=1.4em]
+\item No universal optimal coordinate: $\inf_\phi F[\mu,\phi]=0$
+(Proposition~\ref{prop:degenerate}).
+\item No order-of-magnitude ``strict improvement'': the factor
+$(b-a)^2/(\log(b/a))^2$ mixes units and functionals
+(Proposition~\ref{prop:intrinsic}, Theorem~\ref{thm:product}).
+\item The internal inconsistency between a threshold $b/a=e^2$ and a uniformly
+$\ge1$ improvement factor is removed (there is no such factor for a fixed
+functional).
+\item Minimax $\inf$ corrected to $\sup$ (Theorem~\ref{thm:minimax}).
+\item No unification of Hoeffding/Bernstein/Talagrand/Gaussian isoperimetry; no
+chart making Fisher--Rao Euclidean.
+\end{itemize}
+
+\begin{thebibliography}{9}
+\bibitem{boucheron} S.~Boucheron, G.~Lugosi, P.~Massart, \emph{Concentration
+Inequalities}, Oxford Univ.\ Press, 2013.
+\bibitem{barroncover} A.~Barron, T.~Cover, ``Minimum complexity density
+estimation,'' \emph{IEEE Trans.\ Inform.\ Theory} 37 (1991) 1034--1054.
+\bibitem{amari} S.~Amari, \emph{Information Geometry and Its Applications},
+Springer, 2016.
+\bibitem{villani} C.~Villani, \emph{Optimal Transport: Old and New}, Springer,
+2009.
+\end{thebibliography}
+
+\end{document}
